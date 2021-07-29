@@ -1,0 +1,56 @@
+{
+  "dkp_table_headers": {
+    "game_id": {
+      "text": "游戏ID",
+      "type": "String"
+    },
+    "game_name": {
+      "text": "游戏名称",
+      "type": "String"
+    },
+    "gang": {
+      "text": "帮会",
+      "type": "String"
+    },
+    "profession": {
+      "text": "职业",
+      "type": "String"
+    },
+    "tianjiang": {
+      "text": "周四天江",
+      "type": "Number"
+    },
+    "league_friday": {
+      "text": "周五联赛",
+      "type": "Number"
+    },
+    "league_saturday": {
+      "text": "周六联赛",
+      "type": "Number"
+    },
+    "gemstone": {
+      "text": "宝石",
+      "type": "Number"
+    },
+    "field": {
+      "text": "野外开红",
+      "type": "Number"
+    },
+    "territorial_stronghold": {
+      "text": "据点战",
+      "type": "Number"
+    },
+    "original": {
+      "text": "原始分",
+      "type": "Number"
+    },
+    "payment": {
+      "text": "消费",
+      "type": "Number"
+    },
+    "sum": {
+      "text": "总和",
+      "type": "Number"
+    }
+  }
+}

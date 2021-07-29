@@ -1,0 +1,12 @@
+{
+  "SERVER_API_BASE_URL": "http://127.0.0.1:9000",
+  "SOCKET_CONNECT_URL": "http://127.0.0.1:9000",
+  "DEV_CLIENT_HOST": "127.0.0.1",
+  "DEV_CLIENT_PORT": "8088",
+  "MONGODB_URI": "mongodb://127.0.0.1/dkp-system-prod",
+  "PROTOCOL": "http",
+  "SERVER_HOST": "127.0.0.1",
+  "SERVER_PORT": 9000,
+  "SERVER_IP": "127.0.0.1",
+  "SEED_DB": true
+}

@@ -1,0 +1,17 @@
+.DS_Store
+global_configs.json
+node_modules
+client/node_modules
+server/node_modules
+
+client/dist
+
+server/dist/api
+server/dist/auth
+server/dist/components
+server/dist/config
+server/dist/app.js
+server/dist/index.js
+server/dist/routes.js
+
+server/src/uploads/images/goods/*

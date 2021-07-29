@@ -1,0 +1,26 @@
+{
+  "name": "mengxue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-all": "concurrently \"cd client && npm run build\" \"cd server && npm run build\"",
+    "install-client": "cd client && npm install",
+    "install-server": "cd server && npm install",
+    "install-all": "concurrently \"cd client && npm install\" \"cd server && npm install\"",
+    "start": "cd server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HdSeKenny/yaoguang.git"
+  },
+  "author": "Kenny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HdSeKenny/yaoguang/issues"
+  },
+  "homepage": "https://github.com/HdSeKenny/yaoguang#readme",
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  }
+}

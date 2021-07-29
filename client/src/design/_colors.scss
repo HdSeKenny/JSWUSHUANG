@@ -1,0 +1,28 @@
+// CONTENT
+$color-body-bg: #f9f7f5;
+$color-text: #303133;
+$color-heading-text: #35495e;
+
+// LINKS
+$color-link-text: #39a275;
+$color-link-text-active: $color-text;
+
+// INPUTS
+$color-input-border: lighten($color-heading-text, 50%);
+
+// BUTTONS
+$color-button-bg: $color-link-text;
+$color-button-disabled-bg: darken(desaturate($color-button-bg, 20%), 10%);
+$color-button-text: white;
+
+$theme-color: #0386AC;
+$error-color: #F56C6C;
+$theme-common-bolder: 1px solid #ebeef5;
+$theme-gray-color: #999;
+
+$red-color: red;
+$value-blue: #0386AC;
+$border-color: #DCDFE6;
+
+$success-color: #67C23A;
+$danger-color: #F56C6C;
