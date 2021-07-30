@@ -1,5 +1,4 @@
 /*eslint no-process-env:0*/
-const _GlobalConfigs = require('../../../../global_configs.json')
 
 // Development specific configuration
 // ==================================
@@ -10,5 +9,5 @@ module.exports = {
   },
 
   // Seed database on startup
-  seedDB: _GlobalConfigs.SEED_DB || false
+  seedDB: process.env.SEED_DB || false
 }

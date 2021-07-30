@@ -1,10 +1,14 @@
 const SvgStore = require('webpack-svgstore-plugin')
+const appConfig = require('./src/app.config')
 
 require('dotenv').config()
 
-const appConfig = require('./src/app.config')
-const { DEV_CLIENT_HOST, DEV_CLIENT_PORT } = appConfig.config
-const { SERVER_API_BASE_URL, NODE_ENV } = process.env
+const {
+  SERVER_API_BASE_URL,
+  NODE_ENV,
+  CLIENT_DEV_HOST,
+  CLIENT_DEV_PORT,
+} = process.env
 
 /** @type import('@vue/cli-service').ProjectOptions */
 const _allConfigs = {
@@ -15,10 +19,14 @@ const _allConfigs = {
       new SvgStore({
         prefix: 'icon--',
         svgoOptions: {
-          plugins: [{ cleanupIDs: false }, { collapseGroups: false }, { removeTitle: true }]
-        }
-      })
-    ]
+          plugins: [
+            { cleanupIDs: false },
+            { collapseGroups: false },
+            { removeTitle: true },
+          ],
+        },
+      }),
+    ],
   },
   // https://github.com/neutrinojs/webpack-chain/tree/v4#getting-started
   chainWebpack(config) {
@@ -35,7 +43,11 @@ const _allConfigs = {
 
     // Only enable performance hints for production builds,
     // outside of tests.
-    config.performance.hints(process.env.NODE_ENV === 'production' && !process.env.VUE_APP_TEST && 'warning')
+    config.performance.hints(
+      process.env.NODE_ENV === 'production' &&
+        !process.env.VUE_APP_TEST &&
+        'warning'
+    )
   },
 
   css: {
@@ -54,20 +66,19 @@ const _allConfigs = {
       // `scss` syntax requires an semicolon at the end of a statement, while `sass` syntax requires none
       // in that case, we can target the `scss` syntax separately using the `scss` option
       scss: {
-        prependData: `@import "src/design/_colors.scss";`
-      }
-    }
- 
+        prependData: `@import "src/design/_colors.scss";`,
+      },
+    },
   },
 
   devServer: {
-    public: `${DEV_CLIENT_HOST || '127.0.0.1'}:${DEV_CLIENT_PORT || 8080}`,
-    port: DEV_CLIENT_PORT || 8080,
+    public: `${CLIENT_DEV_HOST || '127.0.0.1'}:${CLIENT_DEV_PORT || 8088}`,
+    port: CLIENT_DEV_PORT || 8088,
     watchOptions: {
-      poll: true
+      poll: true,
     },
-    proxy: SERVER_API_BASE_URL
-  }
+    proxy: SERVER_API_BASE_URL,
+  },
 }
 
 if (SERVER_API_BASE_URL && NODE_ENV === 'development') {

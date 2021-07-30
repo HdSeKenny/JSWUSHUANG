@@ -2,7 +2,6 @@
 
 import path from 'path'
 import _ from 'lodash'
-import _GlobalConfigs from '../../../../global_configs.json'
 
 // All configurations will extend these options
 // ============================================
@@ -11,15 +10,15 @@ const _root = path.normalize(`${__dirname}/../../../../`)
 const all = {
   env: process.env.NODE_ENV,
   root: _root,
-  protocol: _GlobalConfigs.PROTOCOL || 'http',
-  host: _GlobalConfigs.SERVER_HOST || '127.0.0.1',
-  port: _GlobalConfigs.SERVER_PORT || 9000,
+  protocol: process.env.PROTOCOL || 'http',
+  host: process.env.SERVER_HOST || '127.0.0.1',
+  port: process.env.SERVER_PORT || 9000,
 
   // Server IP
-  ip: _GlobalConfigs.SERVER_IP || process.env.IP || '0.0.0.0',
+  ip: process.env.SERVER_IP || process.env.IP || '0.0.0.0',
 
   // Should we populate the DB with sample data?
-  seedDB: _GlobalConfigs.SEED_DB || false,
+  seedDB: process.env.SEED_DB || false,
 
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {

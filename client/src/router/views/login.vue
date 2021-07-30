@@ -1,68 +1,75 @@
 <template>
-  <div class="login-page" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.6)">
-    <el-card shadow="never" class="login-card" v-if="showLogin">
-      <h2 class="tac mb5 header">
-        登录到 <span class="theme-color">{{gangName}}</span>
+  <div
+    class="login-page"
+    v-loading="loading"
+    :element-loading-background="elementLoadingBackground"
+  >
+    <div>
+      <h2 class="header">
+        <img src="@assets/images/logo.png" alt="logo" width="150" />
+        <span class="theme-color ml10">DKP系统</span>
       </h2>
-      <p class="m0 tac app-url">{{appUrl}}
-        <el-button type="text" class="p0 bold fr mb10 mt10 mr5" @click="signup">
-          {{chiSims.create_account}}
-        </el-button>
-      </p>
-      <form class="login-form mt15" @submit.prevent="tryToLogIn">
-        <el-input
-          v-model="gameId"
-          name="gameId"
-          prefix-icon="el-icon-user"
-          :placeholder="chiSims.enter_game_id"
-          autofocus
-        />
-        <el-input
-          v-model="password"
-          name="password"
-          prefix-icon="el-icon-key"
-          :placeholder="chiSims.enter_password"
-          @keyup.enter.native="tryToLogIn"
-          type="password"
-          class="mt15"
-        />
-        <p class="error" v-if="error">{{error}}</p>
-        <el-row class="signin">
-          <el-button type="primary" @click="tryToLogIn" class="login-btn bold">
-            {{chiSims.login}}
-          </el-button>
-        </el-row>
-      </form>
-    </el-card>
+      <el-card shadow="never" class="login-card" v-if="showLogin">
+        <form class="login-form mt15" @submit.prevent="tryToLogIn">
+          <el-input
+            v-model="gameId"
+            name="gameId"
+            prefix-icon="el-icon-user"
+            :placeholder="chiSims.enter_game_id"
+            autofocus
+          />
+          <el-input
+            v-model="password"
+            name="password"
+            prefix-icon="el-icon-key"
+            :placeholder="chiSims.enter_password"
+            @keyup.enter.native="tryToLogIn"
+            type="password"
+            class="mt15"
+          />
+          <p class="error" v-if="error">{{ error }}</p>
+          <el-row class="signin">
+            <el-button
+              type="primary"
+              @click="tryToLogIn"
+              class="login-btn bold"
+            >
+              {{ chiSims.login }}
+            </el-button>
 
-    <template v-if="!showLogin">
-      <SignUp :onShowLogin="onShowLogin" />
-    </template>
+            <div class="no-account bold value-blue" @click="signup">
+              没有账号？ {{ chiSims.create_account }}
+            </div>
+          </el-row>
+        </form>
+      </el-card>
+
+      <template v-if="!showLogin">
+        <SignUp :onShowLogin="onShowLogin" />
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
 import { authMethods } from '@state/helpers'
-import { CHI_SIMS, app } from '@src/app.config'
-import loginBackgroundImage from '@assets/images/nsh_bg_6.png'
+import { CHI_SIMS } from '@src/app.config'
 import SignUp from './sign-up.vue'
 
 export default {
-  name: 'login',
+  name: 'Login',
   components: { SignUp },
   data() {
     return {
       chiSims: CHI_SIMS,
-      appName: app.name,
-      appUrl: app.url,
-      gangName: app.gangName,
       gameId: null,
       password: null,
       error: null,
       tryingToLogIn: false,
       checked: true,
       loading: true,
-      showLogin: true
+      showLogin: true,
+      elementLoadingBackground: 'rgba(0, 0, 0, 0.6)',
     }
   },
   methods: {
@@ -93,22 +100,20 @@ export default {
         username: this.gameId,
         password: this.password,
       })
-      .then((token) => {
-        this.loading = false
-        this.tryingToLogIn = false
-        this.$router.push(
-          this.$route.query.redirectFrom || { name: 'home' }
-        )
-      })
-      .catch((error) => {
-        this.loading = false
-        this.tryingToLogIn = false
-        this.$message({
-          type: 'error',
-          message: error.message,
-          duration: 3000,
+        .then((token) => {
+          this.loading = false
+          this.tryingToLogIn = false
+          this.$router.push(this.$route.query.redirectFrom || { name: 'home' })
         })
-      })
+        .catch((error) => {
+          this.loading = false
+          this.tryingToLogIn = false
+          this.$message({
+            type: 'error',
+            message: error.message,
+            duration: 3000,
+          })
+        })
     },
 
     signup() {
@@ -117,55 +122,72 @@ export default {
 
     onShowLogin() {
       this.showLogin = true
-    }
+    },
   },
 
   mounted() {
-    const _bg = document.createElement('img')
+    this.loading = false
+    // const _bg = document.createElement('img')
     // const imgUrl = '../../src/assets/images/nsh_bg_6.png'
-    _bg.src = loginBackgroundImage
-    _bg.style.visibility = 'hidden'
-    _bg.onload = () => {
-      this.loading = false
-      _bg.remove() 
-    }
-  }
+    // _bg.src = loginBackgroundImage
+    // _bg.style.visibility = 'hidden'
+    // _bg.onload = () => {
+    //   _bg.remove()
+    // }
+  },
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@design';
+
+$app-name-font-size: 35px;
+$login-card-width: 500px;
+$login-card-margin: 10px auto;
+
 .login-page {
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
-  background-image: url('../../assets/images/nsh_bg_6.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $app-name-font-size;
+    color: $theme-color;
+  }
   .login-card {
-    width: 360px;
-    background-color: rgba(255, 255, 255, 0);
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-    border: none;
-    position: absolute;
-    .header,
-    .app-url {
-      color: rgba(255, 255, 255, 0.7);
-    }
+    width: $login-card-width;
+    text-align: left;
+    box-shadow: $card-box-shadow;
   }
   .login-form {
+    .signin {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
     .el-input {
       margin: 5px 0;
     }
     .login-btn {
-      width: 100%;
-      margin: 20px 0 0 0;
+      width: 30%;
     }
     .error {
       margin: 5px 0;
       font-size: 14px;
       color: $error-color;
     }
+    .no-account {
+      width: 70%;
+      text-align: right;
+    }
+  }
+
+  &-footer {
+    width: $login-card-width;
+    margin: $login-card-margin;
   }
 }
 </style>

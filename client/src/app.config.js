@@ -1,9 +1,7 @@
-const _GlobalConfigs = require('../../global_configs.json')
-
 const app = {
-  name: '半梦暮雪',
+  name: '举世无双',
   url: '',
-  gangName: '系统',
+  gangName: 'DKP系统',
   GANGS: ['举世皆敌', '举世无双', '举世无敌', '举世风月', '举世至尊'],
 }
 
@@ -108,38 +106,32 @@ const STATUS_TEXTS = {
 }
 
 const PROFESSIONS = [
-  { label: '碎梦', value: '碎梦' },
-  { label: '玄机', value: '玄机' },
-  { label: '血河', value: '血河' },
-  { label: '铁衣', value: '铁衣' },
-  { label: '九灵', value: '九灵' },
-  { label: '素问', value: '素问' },
-  { label: '龙吟', value: '龙吟' },
-  { label: '神相', value: '神相' },
-  { label: '玄机', value: '玄机' },
+  {label: '碎梦', value: '碎梦'},
+  {label: '玄机', value: '玄机'},
+  {label: '血河', value: '血河'},
+  {label: '铁衣', value: '铁衣'},
+  {label: '九灵', value: '九灵'},
+  {label: '素问', value: '素问'},
+  {label: '龙吟', value: '龙吟'},
+  {label: '神相', value: '神相'},
+  {label: '玄机', value: '玄机'},
 ]
 
 const USER_TABLE_HEADERS = [
   // { prop: 'email', label: '用户名' },
-  { prop: 'game_id', label: '游戏ID' },
-  { prop: 'game_name', label: '游戏名称' },
+  {prop: 'game_id', label: '游戏ID'},
+  {prop: 'game_name', label: '游戏名称'},
   // { prop: 'gang', label: '帮会' },
-  { prop: 'name', label: '名字' },
-  { prop: 'profession', label: '职业' },
-  { prop: 'role', label: '权限' },
+  {prop: 'name', label: '名字'},
+  {prop: 'profession', label: '职业'},
+  {prop: 'role', label: '权限'},
 ]
 
 module.exports = {
-  STATUS_TEXTS,
   app,
+  STATUS_TEXTS,
   CHI_SIMS,
   DKP_HEADERS,
   PROFESSIONS,
   USER_TABLE_HEADERS,
-  config: {
-    SOCKET_CONNECT_URL: _GlobalConfigs.SOCKET_CONNECT_URL,
-    SERVER_API_BASE_URL: _GlobalConfigs.SERVER_API_BASE_URL,
-    DEV_CLIENT_HOST: _GlobalConfigs.DEV_CLIENT_HOST,
-    DEV_CLIENT_PORT: _GlobalConfigs.DEV_CLIENT_PORT,
-  },
 }

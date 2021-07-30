@@ -1,10 +1,11 @@
-$system-default-font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+$system-default-font-family: 'Roboto', sans-serif, 'Arial', 'Helvetica',
+  'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
 $heading-font-family: $system-default-font-family;
 $heading-font-weight: 600;
 
 $content-font-family: $system-default-font-family;
-$content-font-weight: 400;
+$content-font-weight: 500;
 
 %font-heading {
   font-family: $heading-font-family;

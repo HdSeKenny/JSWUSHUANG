@@ -13,8 +13,7 @@ export default {
   },
   sockets: {
     auction_payer_message(val) {
-      if (this.currentUser
-        && val.payer_id._id === this.currentUser._id) {
+      if (this.currentUser && val.payer_id._id === this.currentUser._id) {
         this.$notify({
           title: '提示',
           message: '你成功竞拍了一件物品',
@@ -65,25 +64,20 @@ export default {
 *::before,
 *::after {
   box-sizing: border-box;
+  user-select: none;
 }
-
 html,
 body {
   height: 100%;
+  margin: 0px;
 }
 
 body {
-  // background: $color-body-bg;
-  // font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-  //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
-  // background-image: url('/assets/images/nsh_bg_5.jpeg');
-  // background-repeat: no-repeat;
-  // background-size: cover;
-  height: 100%;
-  background-color: #f4f4f5;
-  // background: #eef0f4;
+  font-family: $system-default-font-family;
+  font-weight: $content-font-weight;
+  background: $color-body-bg;
 }
+
 #app {
   @extend %typography-small;
   height: 100%;
@@ -130,7 +124,7 @@ h6 {
 
 .page-content {
   padding: 15px 60px;
-  // min-height: 700px; 
+  // min-height: 700px;
 }
 
 .container {
@@ -407,5 +401,4 @@ input[type='number'] {
     padding: 10px 15px;
   }
 }
-
 </style>

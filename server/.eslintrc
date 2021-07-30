@@ -218,7 +218,7 @@
     "require-jsdoc": 0, //Require JSDoc comment
     "semi-spacing": 2, //enforce spacing before and after semicolons
     "sort-imports": 0, //sort import declarations within module
-    "semi": 2, //require or disallow use of semicolons instead of ASI
+    "semi": 0, //require or disallow use of semicolons instead of ASI
     "sort-vars": 0, //sort variables within the same declaration block
     "space-before-blocks": 2, //require or disallow a space before blocks
     // "space-before-function-paren": [2, "never"],                //require or disallow a space before function opening parenthesis

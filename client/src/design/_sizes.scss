@@ -17,3 +17,11 @@ $size-button-padding-vertical: $size-grid-padding / 2;
 $size-button-padding-horizontal: $size-grid-padding / 1.5;
 $size-button-padding: $size-button-padding-vertical
   $size-button-padding-horizontal;
+
+$size-common-padding: 30px 50px;
+$size-horizontal-padding: 0 50px;
+
+$header-box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%),
+  0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
+$card-box-shadow: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%),
+  0 1px 5px 0 rgb(0 0 0 / 12%);

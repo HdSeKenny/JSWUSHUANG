@@ -29,12 +29,12 @@
   // Event Triggers
   // ===
 
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": false,
-    "source.fixAll.stylelint": false,
-    "source.fixAll.markdownlint": false
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true,
+    "source.fixAll.markdownlint": true
   },
   "eslint.validate": [
     "javascript",

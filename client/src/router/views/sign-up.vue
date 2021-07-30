@@ -1,10 +1,11 @@
 <template>
   <el-card shadow="never" class="signup-card" v-loading="loading">
-    <h4>申请 <span class="theme-color bold">{{gangName}}</span> 的账户</h4>
-    <p class="error" v-if="error">{{error}}</p>
+    <h4 class="theme-color bold m0">申请账户</h4>
+    <p class="error" v-if="error">{{ error }}</p>
     <el-form
       :model="ruleForm"
-      status-icon :rules="rules"
+      status-icon
+      :rules="rules"
       autocomplete="off"
       ref="ruleForm"
       class="signup-form"
@@ -42,8 +43,18 @@
         />
       </el-form-item>
       <div class="submit inb mt10">
-        <el-button type="primary" @click="tryToSignup('ruleForm')" class="signup-btn bold">申请</el-button>
-        <p class="already-has m0">已经有账号, <el-button type="text" class="create bold" @click="signin">登陆</el-button></p>
+        <el-button
+          type="primary"
+          @click="tryToSignup('ruleForm')"
+          class="signup-btn bold"
+          >申请</el-button
+        >
+        <p class="already-has m0">
+          已经有账号,
+          <span class="create bold value-blue" @click="signin">
+            登陆
+          </span>
+        </p>
       </div>
     </el-form>
   </el-card>
@@ -57,8 +68,8 @@ export default {
   props: {
     onShowLogin: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -78,26 +89,26 @@ export default {
           {
             required: true,
             message: CHI_SIMS.enter_game_id,
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         password: [
           {
             required: true,
             message: CHI_SIMS.enter_password,
-            trigger: 'change'
+            trigger: 'change',
           },
           {
             min: 6,
             message: CHI_SIMS.short_password,
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         confirmPassword: [
           {
             required: true,
             message: CHI_SIMS.enter_confirm_password,
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             validator: (rule, value, callback) => {
@@ -107,9 +118,9 @@ export default {
                 callback()
               }
             },
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       loading: false,
     }
@@ -117,14 +128,13 @@ export default {
   methods: {
     ...authMethods,
     tryToSignup(formName) {
-      this.$refs[formName]
-        .validate((valid) => {
-          if (valid) {
-            this.loading = true
-            return this.signUp({
-              game_id: this.ruleForm.gameId,
-              password: this.ruleForm.password,
-            })
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          return this.signUp({
+            game_id: this.ruleForm.gameId,
+            password: this.ruleForm.password,
+          })
             .then(() => {
               this.$message({
                 type: 'success',
@@ -145,14 +155,14 @@ export default {
               this.loading = false
               this.error = error.message
             })
-          }
+        }
 
-          return false
-        })
+        return false
+      })
     },
     signin() {
       this.onShowLogin()
-    }
+    },
   },
 }
 </script>
@@ -160,20 +170,14 @@ export default {
 <style lang="scss" scoped>
 .signup-card {
   width: 360px;
-  background-color: rgba(255, 255, 255, 0.8);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%,-50%);
-  position: absolute;
   border: none;
 }
 .signup-form {
-  margin-top: 20px;
   .el-input {
     margin: 5px 0;
   }
   .signup-btn {
-    width: 150px;
+    width: 30%;
   }
   .error {
     margin: 5px 0;
@@ -182,9 +186,12 @@ export default {
   }
   .submit {
     width: 100%;
+    display: flex;
+    align-items: center;
     .already-has {
+      width: 70%;
       font-size: 16px;
-      float: right;
+      text-align: right;
     }
   }
   .proselection {
