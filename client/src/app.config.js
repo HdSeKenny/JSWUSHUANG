@@ -58,12 +58,16 @@ const DKP_HEADERS = {
     type: 'String',
   },
   game_name: {
-    text: '游戏名称',
+    text: '名称',
     type: 'String',
   },
   profession: {
     text: '职业',
     type: 'String',
+  },
+  fighting_score: {
+    text: '总战力',
+    type: 'Number',
   },
   gang: {
     text: '帮会',
@@ -106,26 +110,27 @@ const STATUS_TEXTS = {
 }
 
 const PROFESSIONS = [
-  {label: '碎梦', value: '碎梦'},
-  {label: '玄机', value: '玄机'},
-  {label: '血河', value: '血河'},
-  {label: '铁衣', value: '铁衣'},
-  {label: '九灵', value: '九灵'},
-  {label: '素问', value: '素问'},
-  {label: '龙吟', value: '龙吟'},
-  {label: '神相', value: '神相'},
-  {label: '玄机', value: '玄机'},
+  { label: '碎梦', value: '碎梦' },
+  { label: '血河', value: '血河' },
+  { label: '铁衣', value: '铁衣' },
+  { label: '九灵', value: '九灵' },
+  { label: '素问', value: '素问' },
+  { label: '龙吟', value: '龙吟' },
+  { label: '神相', value: '神相' },
+  { label: '玄机', value: '玄机' },
+  { label: '鸿音', value: '鸿音' },
 ]
 
 const USER_TABLE_HEADERS = [
-  // { prop: 'email', label: '用户名' },
-  {prop: 'game_id', label: '游戏ID'},
-  {prop: 'game_name', label: '游戏名称'},
-  // { prop: 'gang', label: '帮会' },
-  {prop: 'name', label: '名字'},
-  {prop: 'profession', label: '职业'},
-  {prop: 'role', label: '权限'},
+  { prop: 'game_id', label: '游戏ID' },
+  { prop: 'game_name', label: '游戏名称' },
+  { prop: 'gang', label: '帮会' },
+  { prop: 'name', label: '名字' },
+  { prop: 'profession', label: '职业' },
+  { prop: 'role', label: '权限' },
 ]
+
+const GAME_NAME_TITLES = ['游戏ID', '游戏名称', '名称', '玩家']
 
 module.exports = {
   app,
@@ -134,4 +139,5 @@ module.exports = {
   DKP_HEADERS,
   PROFESSIONS,
   USER_TABLE_HEADERS,
+  GAME_NAME_TITLES,
 }

@@ -47,6 +47,7 @@
       <template v-if="!showLogin">
         <SignUp :onShowLogin="onShowLogin" />
       </template>
+      <Footer></Footer>
     </div>
   </div>
 </template>
@@ -54,11 +55,12 @@
 <script>
 import { authMethods } from '@state/helpers'
 import { CHI_SIMS } from '@src/app.config'
+import Footer from '@components/snippet/Footer.vue'
 import SignUp from './sign-up.vue'
 
 export default {
   name: 'Login',
-  components: { SignUp },
+  components: { SignUp, Footer },
   data() {
     return {
       chiSims: CHI_SIMS,
@@ -185,9 +187,10 @@ $login-card-margin: 10px auto;
     }
   }
 
-  &-footer {
-    width: $login-card-width;
-    margin: $login-card-margin;
+  .footer {
+    // width: $login-card-width;
+    // margin: $login-card-margin;
+    padding: 20px 0px 10px 0px;
   }
 }
 </style>

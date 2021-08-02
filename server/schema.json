@@ -16,10 +16,6 @@
       "text": "职业",
       "type": "String"
     },
-    "tianjiang": {
-      "text": "周四天江",
-      "type": "Number"
-    },
     "league_friday": {
       "text": "周五联赛",
       "type": "Number"
@@ -28,16 +24,12 @@
       "text": "周六联赛",
       "type": "Number"
     },
-    "gemstone": {
-      "text": "宝石",
-      "type": "Number"
-    },
     "field": {
-      "text": "野外开红",
+      "text": "野外打架",
       "type": "Number"
     },
     "territorial_stronghold": {
-      "text": "据点战",
+      "text": "周日据点",
       "type": "Number"
     },
     "original": {
@@ -50,6 +42,10 @@
     },
     "sum": {
       "text": "总和",
+      "type": "Number"
+    },
+    "fighting_score": {
+      "text": "总战力",
       "type": "Number"
     }
   }

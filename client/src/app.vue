@@ -254,7 +254,7 @@ h6 {
 }
 
 .time {
-  color: rgb(10, 124, 218);
+  color: $theme-color;
   font-size: 14px;
   font-weight: 600;
 }

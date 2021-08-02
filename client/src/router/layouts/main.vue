@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="main">
     <Navbar></Navbar>
     <slot></slot>
     <Footer></Footer>
@@ -17,3 +17,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.main {
+  height: 100%;
+}
+</style>

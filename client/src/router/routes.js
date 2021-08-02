@@ -7,16 +7,16 @@ export default [
     component: () => lazyLoadView(import('@views/home.vue')),
     meta: {
       authRequired: true,
-    }
+    },
   },
-  {
-    path: '/auction',
-    name: 'auction',
-    component: () => lazyLoadView(import('@views/auction.vue')),
-    meta: {
-      authRequired: true,
-    }
-  },
+  // {
+  //   path: '/auction',
+  //   name: 'auction',
+  //   component: () => lazyLoadView(import('@views/auction.vue')),
+  //   meta: {
+  //     authRequired: true,
+  //   }
+  // },
   {
     path: '/settings',
     name: 'settings',
@@ -29,24 +29,24 @@ export default [
         } else {
           next({ name: '404' })
         }
-      }
-    }
+      },
+    },
   },
-  {
-    path: '/order-manage',
-    name: 'order-manage',
-    component: () => lazyLoadView(import('@views/order-manage.vue')),
-    meta: {
-      authRequired: true,
-      beforeResolve(routeTo, routeFrom, next) {
-        if (store.getters['auth/isAdmin']) {
-          next()
-        } else {
-          next({ name: '404' })
-        }
-      }
-    }
-  },
+  // {
+  //   path: '/order-manage',
+  //   name: 'order-manage',
+  //   component: () => lazyLoadView(import('@views/order-manage.vue')),
+  //   meta: {
+  //     authRequired: true,
+  //     beforeResolve(routeTo, routeFrom, next) {
+  //       if (store.getters['auth/isAdmin']) {
+  //         next()
+  //       } else {
+  //         next({ name: '404' })
+  //       }
+  //     }
+  //   }
+  // },
   {
     path: '/login',
     name: 'login',
@@ -58,42 +58,42 @@ export default [
         } else {
           next()
         }
-      }
-    }
+      },
+    },
   },
-  {
-    path: '/notice',
-    name: 'notice',
-    component: () => lazyLoadView(import('@views/notice.vue')),
-    meta: {
-      beforeResolve(routeTo, routeFrom, next) {
-        if (store.getters['auth/isAdmin']) {
-          next()
-        } else {
-          next({ name: 'home' })
-        }
-      }
-    }
-  },
-  {
-    path: '/dkp-exchange',
-    name: 'dkp-exchange',
-    component: () => lazyLoadView(import('@views/dkp-exchange.vue')),
-    meta: {
-      authRequired: true,
-      beforeResolve(routeTo, routeFrom, next) {
-        next()
-      }
-    }
-  },
+  // {
+  //   path: '/notice',
+  //   name: 'notice',
+  //   component: () => lazyLoadView(import('@views/notice.vue')),
+  //   meta: {
+  //     beforeResolve(routeTo, routeFrom, next) {
+  //       if (store.getters['auth/isAdmin']) {
+  //         next()
+  //       } else {
+  //         next({ name: 'home' })
+  //       }
+  //     }
+  //   }
+  // },
+  // {
+  //   path: '/dkp-exchange',
+  //   name: 'dkp-exchange',
+  //   component: () => lazyLoadView(import('@views/dkp-exchange.vue')),
+  //   meta: {
+  //     authRequired: true,
+  //     beforeResolve(routeTo, routeFrom, next) {
+  //       next()
+  //     }
+  //   }
+  // },
   {
     path: '/profile',
     name: 'profile',
     component: () => lazyLoadView(import('@views/profile.vue')),
     meta: {
-      authRequired: true
+      authRequired: true,
     },
-    props: (route) => ({ user: store.state.auth.currentUser || {} })
+    props: (route) => ({ user: store.state.auth.currentUser || {} }),
   },
   {
     path: '/profile/:username',
@@ -121,11 +121,11 @@ export default [
             // found, redirect to the 404 page.
             next({ name: '404', params: { resource: 'User' } })
           })
-      }
+      },
     },
     // Set the user from the route params, once it's set in the
     // beforeResolve route guard.
-    props: (route) => ({ user: route.meta.tmp.user })
+    props: (route) => ({ user: route.meta.tmp.user }),
   },
   {
     path: '/404',
@@ -133,19 +133,19 @@ export default [
     component: require('@views/_404.vue').default,
     // Allows props to be passed to the 404 page through route
     // params, such as `resource` to define what wasn't found.
-    props: true
+    props: true,
   },
   // Redirect any unmatched routes to the 404 page. This may
   // require some server configuration to work in production:
   // https://router.vuejs.org/en/essentials/history-mode.html#example-server-configurations
   {
     path: '/',
-    redirect: 'home'
+    redirect: 'home',
   },
   {
     path: '*',
-    redirect: '404'
-  }
+    redirect: '404',
+  },
 ]
 
 // Lazy-loads view components, but with better UX. A loading view
@@ -175,7 +175,7 @@ function lazyLoadView(AsyncView) {
     error: require('@views/_timeout.vue').default,
     // Time before giving up trying to load the component.
     // Default: Infinity (milliseconds).
-    timeout: 10000
+    timeout: 10000,
   })
 
   return Promise.resolve({
@@ -184,6 +184,6 @@ function lazyLoadView(AsyncView) {
       // Transparently pass any props or children
       // to the view component.
       return h(AsyncHandler, data, children)
-    }
+    },
   })
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="">
-    <el-table
+  <div class="mb15">
+    <vxe-table
       :data="tableData"
       :cell-style="getCellStyle"
       :header-cell-style="headerStyle"
@@ -8,71 +8,55 @@
       :lazy="true"
       border
       class="table"
-      max-height="800"
+      max-height="600"
       empty-text="0"
       size="small"
     >
-      <el-table-column
+      <vxe-table-column
         v-for="h in tableHeaders"
         :fixed="h.fixed"
-        :key="h.prop"
-        :prop="h.prop"
-        :label="h.label"
+        :key="h.field"
+        :field="h.field"
+        :title="h.title"
         :formatter="columnFormatter"
-        :type="h.type"
         :sortable="h.sortable"
         :width="h.width"
       >
-      </el-table-column>
+      </vxe-table-column>
 
-      <el-table-column
+      <vxe-table-column
         fixed="right"
-        label="操作"
-        :width="isAdmin ? '140px' : '70px'"
+        field="操作"
+        title="操作"
+        :width="70"
         align="center"
         v-if="includeUserAction"
       >
         <template slot-scope="scope">
-          <el-button
-            v-if="isAdmin"
-            type="primary"
-            icon="el-icon-edit"
-            @click="onViewPersonalInfo(scope.row)"
-            size="small"
-            circle
+          <el-dropdown
+            @command="(command) => onDropDownClick(command, scope.row)"
           >
-          </el-button>
-          <el-button
-            v-if="isAdminLoggedIn"
-            type="success"
-            icon="el-icon-document"
-            @click="onListHistories(scope.row)"
-            size="small"
-            circle
-          >
-          </el-button>
-          <el-button
-            v-if="isAdmin"
-            type="danger"
-            icon="el-icon-delete"
-            @click="onDeleteDkp(scope.row)"
-            size="small"
-            circle
-          >
-          </el-button>
-
-          <el-button
-            v-if="isAdmin"
-            type="warning"
-            icon="el-icon-refresh-left"
-            @click="onResetDKPAndUserInfo(scope.row)"
-            size="small"
-            circle
-          >
-          </el-button>
+            <el-button v-if="isAdmin" type="primary" size="small" circle>
+              <i class="el-icon-more"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="edit">
+                <i class="el-icon-edit"></i> 编辑
+              </el-dropdown-item>
+              <el-dropdown-item command="history">
+                <i class="el-icon-document"></i> 历史
+              </el-dropdown-item>
+              <el-dropdown-item command="delete">
+                <i class="el-icon-delete"></i> 删除
+              </el-dropdown-item>
+              <el-dropdown-item command="recover">
+                <i class="el-icon-refresh-left"></i> 恢复
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
-      </el-table-column>
-    </el-table>
+      </vxe-table-column>
+    </vxe-table>
     <el-dialog
       :title="dialogTitle"
       :visible.sync="dialogVisible"
@@ -216,8 +200,27 @@ export default {
     ...authMethods,
     ...DKPMethods,
 
+    onDropDownClick(command, row) {
+      switch (command) {
+        case 'edit':
+          this.onViewPersonalInfo(row)
+          break
+        case 'history':
+          this.onListHistories(row)
+          break
+        case 'delete':
+          this.onDeleteDkp(row)
+          break
+        case 'recover':
+          this.onResetDKPAndUserInfo(row)
+          break
+        default:
+          break
+      }
+    },
+
     getTableHeaders() {
-      const defaultInvalid = ['_id', '__v']
+      const defaultInvalid = ['_id', '__v', '_XID']
       const _invalid = this.invalid
         ? defaultInvalid.concat(this.invalid)
         : defaultInvalid
@@ -230,31 +233,27 @@ export default {
           const isProfession = dsk === 'profession'
           const isPayment = dsk === 'payment'
 
-          let fixed = false
+          const result = {
+            field: dsk,
+            title: DKP_HEADERS[dsk]['text'],
+          }
+
           if (isGameName) {
-            fixed = 'left'
+            result.fixed = 'left'
           }
           if (isPayment) {
-            fixed = 'right'
+            result.fixed = 'right'
           }
 
-          let width = false
           if (isGameName) {
-            width = '95px'
+            result.width = '95px'
           } else if (isGameId) {
-            width = '115px'
+            result.width = '115px'
           } else if (isProfession) {
-            width = '50px'
+            result.width = '50px'
           }
 
-          return {
-            fixed,
-            prop: dsk,
-            label: DKP_HEADERS[dsk]['text'],
-            type: DKP_HEADERS[dsk].type.toLocaleLowerCase(),
-            // sortable: isSum,
-            width,
-          }
+          return result
         })
     },
 
@@ -378,14 +377,10 @@ export default {
       return style
     },
 
-    columnFormatter(row, column, cellValue, index) {
+    columnFormatter({ row, column, cellValue, index }) {
       const isPayment = column.property === 'payment'
       const value = cellValue || 0
-      return isPayment && value !== 0
-        ? `- ${value}`
-        : value === '半梦半醒半浮生'
-        ? '半梦'
-        : value
+      return isPayment && value !== 0 ? `- ${value}` : value
     },
 
     onDeleteDkp(row) {
@@ -448,7 +443,7 @@ export default {
       return this.isAdmin || this.isLookedAdmin
     },
     edittedFields() {
-      const filtered = ['game_name', 'game_id', 'profession', 'sum']
+      const filtered = ['game_name', 'game_id', 'profession', 'sum', '_XID']
       return Object.keys(this.edittedObj)
         .filter((vd) => !filtered.includes(vd))
         .map((fvd) => ({ label: DKP_HEADERS[fvd]['text'], value: fvd }))
@@ -456,13 +451,16 @@ export default {
 
     tableData() {
       const tableHeaders = this.getTableHeaders()
-      return this.data.map((u) => {
+      const tableData = this.data.map((u) => {
         const data = {}
         tableHeaders.forEach((h) => {
-          data[h.prop] = u[h.prop]
+          data[h.field] = u[h.field]
         })
         return data
       })
+
+      console.log(tableHeaders, this.data)
+      return tableData
     },
   },
 }

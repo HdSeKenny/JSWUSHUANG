@@ -155,7 +155,7 @@ export function createAdminUser(req, res) {
     game_id: '187632535',
     profession: '玄机',
     gang: '暮雪寒城',
-    avatar: '/uploads/images/users/玄机.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
     created_at: new Date(),
   }

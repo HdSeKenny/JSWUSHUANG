@@ -6,9 +6,12 @@
       class="el-menu-demo"
       mode="horizontal"
       text-color="#2c3e50"
-      menu-trigger="hover">
+      menu-trigger="hover"
+    >
       <div class="brand">
-        <h3 class="theme-text-color bold logo" @click="goBackHome">{{appName}}</h3>
+        <h3 class="logo" @click="goBackHome">
+          <img src="@assets/images/logo.png" alt="logo" width="70" />
+        </h3>
       </div>
       <el-submenu index="" v-if="loggedIn" class="user-info-nav">
         <template slot="title">
@@ -17,46 +20,49 @@
         <el-menu-item index="/profile">个人中心</el-menu-item>
         <el-menu-item @click="onLogOut">登出</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/notice" v-if="loggedIn" :style="{ lineHeight: '20px' }">
+      <!-- <el-menu-item
+        index="/notice"
+        v-if="loggedIn"
+        :style="{ lineHeight: '20px' }"
+      >
         <el-badge :value="members.length" class="item" type="warning">
           <font-awesome-icon icon="bell" class="icon" />
         </el-badge>
-      </el-menu-item>
+      </el-menu-item> -->
 
-      <el-menu-item index="/order-manage" v-if="isAdmin">
+      <!-- <el-menu-item index="/order-manage" v-if="isAdmin">
         <font-awesome-icon icon="tasks" class="icon" />
         <span slot="title"> 订单管理</span>
-      </el-menu-item>
-
+      </el-menu-item> -->
+      <!--
       <el-menu-item index="/auction" v-if="loggedIn">
         <font-awesome-icon icon="fire" class="icon" />
         <span slot="title"> 竞拍</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <!-- <el-menu-item index="/dkp-exchange" v-if="loggedIn">
         <font-awesome-icon icon="yen-sign" class="icon" />
         <span slot="title"> 积分交易</span>
       </el-menu-item> -->
-      <el-menu-item index="/home" v-if="loggedIn">
+      <!-- <el-menu-item index="/home" v-if="loggedIn">
         <font-awesome-icon icon="info" class="icon" />
         <span slot="title"> DKP信息</span>
-      </el-menu-item>
-      <el-menu-item index="/login" v-else> 登陆</el-menu-item>
+      </el-menu-item> -->
+      <!-- <el-menu-item index="/login" v-else> 登陆</el-menu-item> -->
     </el-menu>
   </div>
 </template>
 
 <script>
 import { authComputed, authMethods } from '@state/helpers'
-import { app, config } from '@src/app.config'
+import { app } from '@src/app.config'
 
 export default {
-  name: 'navbar',
+  name: 'Navbar',
   data() {
     return {
       appName: app.name,
       appUrl: app.url,
       defaultActive: this.$router.history.current.path,
-      baseUrl: config.SERVER_API_BASE_URL
     }
   },
 
@@ -80,24 +86,18 @@ export default {
   },
   created() {
     this.$store.dispatch('auth/getMembers')
-  }
+  },
 }
 </script>
 
 <style lang="scss">
 .navbar-wrapper {
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 .el-menu.el-menu--horizontal {
   padding: 0 60px;
-  // border-bottom: none;
   .brand {
-    font-size: 30px;
-    font-weight: bold;
-    color: $theme-color;
-    height: 80px;
-    line-height: 80px;
     display: inline-block;
     user-select: none;
     &:hover {
@@ -108,7 +108,9 @@ export default {
       outline: none;
     }
     .logo {
-      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
     }
   }
   .avatar {
@@ -119,8 +121,8 @@ export default {
     float: right;
     font-size: 17px;
     font-weight: 500;
-    height: 80px;
-    line-height: 80px;
+    height: 60px;
+    line-height: 60px;
     &.is-active {
       color: $theme-color;
       border-bottom: none;
@@ -141,8 +143,8 @@ export default {
     .el-submenu__title {
       font-size: 17px;
       font-weight: 500;
-      height: 80px;
-      line-height: 80px;
+      height: 60px;
+      line-height: 60px;
     }
     .el-submenu__icon-arrow {
       display: none;
@@ -169,8 +171,8 @@ export default {
   .el-submenu__title {
     font-size: 17px;
     font-weight: 500;
-    height: 80px;
-    line-height: 80px;
+    height: 60px;
+    line-height: 60px;
     &:hover,
     &:focus {
       background-color: #fff !important;

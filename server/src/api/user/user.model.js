@@ -50,7 +50,8 @@ const UserSchema = new Schema({
       created: Date
     }
   ],
-  gold: Number
+  gold: Number,
+  fighting_score: Number
 })
 
 // Public profile information

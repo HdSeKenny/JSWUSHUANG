@@ -7,7 +7,10 @@ import VueCountdown from '@chenfengyuan/vue-countdown'
 // import VueSocketIO from 'vue-socket.io';
 import imagePreloader from 'vue-image-preloader'
 
-import ElementUI from 'element-ui'
+// import ElementUI from 'element-ui'
+import '@src/plugins/elementui'
+import '@src/plugins/vxe-table'
+
 import '@assets/styles/theme/index.css'
 import '@assets/slim/slim.min.css'
 import '@components/_globals'
@@ -16,15 +19,14 @@ import '@components/_globals'
 import router from '@router'
 import store from '@state/store'
 import App from './app.vue'
-import svgSpriteLoader from './utils/svg-sprite-loader'
+// import svgSpriteLoader from './utils/svg-sprite-loader'
 
-// import appConfig from './app.config'
+// const __svg__ = {
+//   path: './assets/images/icons/*.svg',
+//   name: 'assets/images/[hash].sprite.svg',
+// }
 
-const __svg__ = {
-  path: './assets/images/icons/*.svg',
-  name: 'assets/images/[hash].sprite.svg'
-}
-svgSpriteLoader(__svg__.filename)
+// svgSpriteLoader(__svg__.filename)
 
 // Don't warn about using the dev version of Vue in development.
 Vue.config.productionTip = process.env.NODE_ENV === 'production'
@@ -37,7 +39,7 @@ if (process.env.VUE_APP_TEST === 'e2e') {
 
 library.add(fas)
 
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component(VueCountdown.name, VueCountdown)
 Vue.use(imagePreloader)
@@ -45,7 +47,7 @@ Vue.use(imagePreloader)
 const app = new Vue({
   router,
   store,
-  render: (h) => h(App)
+  render: (h) => h(App),
 }).$mount('#app')
 
 // If running e2e tests...

@@ -92,7 +92,7 @@ export function create(req, res) {
           newUser.game_name = dkp._doc.game_name
           newUser.gang = dkp._doc.gang
           newUser.profession = dkp._doc.profession
-          newUser.avatar = `/uploads/images/users/${newUser.profession}.png`
+          newUser.avatar = `/uploads/images/users/user.png`
 
           return Member.create(newUser)
             .then(respondWithResult(res, 201))

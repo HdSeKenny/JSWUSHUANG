@@ -5,7 +5,8 @@
         @tab-click="onHomeTabClick"
         :value="homeTab"
         :type="isAdmin || isLookedAdmin ? 'border-card' : ''"
-        :class="currentUser.role">
+        :class="currentUser.role"
+      >
         <el-tab-pane name="ALL" label="所有数据">
           <DKPList :DKPData="DKPData" v-if="isAdmin || isLookedAdmin" />
           <div v-else>
@@ -14,20 +15,22 @@
                 <div class="field mt15">
                   <p class="mt0 mb0 mr15 inb">
                     <span class="bold">游戏名: </span>
-                    <span class="value-blue">{{currentUser.game_name}}</span>
+                    <span class="value-blue">{{ currentUser.game_name }}</span>
                   </p>
                   <p class="mt0 mb0 mr15 inb">
                     <span class="bold">游戏ID: </span>
-                    <span class="value-blue">{{currentUser.game_id}}</span>
+                    <span class="value-blue">{{ currentUser.game_id }}</span>
                   </p>
                   <p class="mt0 mb0 mr15 inb">
                     <span class="bold">职业: </span>
-                    <span class="value-blue">{{currentUser.profession}}</span>
+                    <span class="value-blue">{{ currentUser.profession }}</span>
                   </p>
                   <p class="mt0 mb0 mr15 inb">
                     <span class="bold">帮会: </span>
                     <span class="value-blue">
-                      {{currentUser.dkp_score ? currentUser.dkp_score.gang : ''}}
+                      {{
+                        currentUser.dkp_score ? currentUser.dkp_score.gang : ''
+                      }}
                     </span>
                   </p>
                 </div>
@@ -36,7 +39,9 @@
                 <DKPList :DKPData="DKPData"></DKPList>
               </div>
               <div class="dkp-history">
-                <el-button type="text" class="value-blue">DKP历史记录</el-button>
+                <el-button type="text" class="value-blue"
+                  >DKP历史记录</el-button
+                >
                 <DKPHistory :histories="currentUserHistories" />
               </div>
               <div class="auction-history">
@@ -46,8 +51,10 @@
             </div>
             <div class="rigth-nav">
               <div class="notice-info">
-                <p class="bold mb5"><i class="el-icon-warning-outline mr5"></i>公告</p>
-                <p class="mt0 mb5">{{announcement}}</p>
+                <p class="bold mb5"
+                  ><i class="el-icon-warning-outline mr5"></i>公告</p
+                >
+                <p class="mt0 mb5">{{ announcement }}</p>
               </div>
               <div class="recent-goods">
                 <el-button type="text" class="ftz18">最新上架</el-button>
@@ -57,7 +64,7 @@
           </div>
         </el-tab-pane>
         <template v-if="isAdmin">
-          <el-tab-pane name="DKPEDIT" label="导入数据" >
+          <el-tab-pane name="DKPEDIT" label="导入数据">
             <DKPEdit :DKPData="DKPData"></DKPEdit>
           </el-tab-pane>
           <el-tab-pane name="DATAMANAGE" label="数据管理">
@@ -113,9 +120,11 @@ export default {
       isLookedAdmin: (state) => state.isLookedAdmin(),
     }),
     currentUserHistories() {
-      const currentUserDkp = this.DKPData.find(dd => dd.game_name === this.currentUser.game_name)
-      return currentUserDkp ? (currentUserDkp.histories || []) : []
-    }
+      const currentUserDkp = this.DKPData.find(
+        (dd) => dd.game_name === this.currentUser.game_name
+      )
+      return currentUserDkp ? currentUserDkp.histories || [] : []
+    },
   },
 
   methods: {
@@ -154,6 +163,10 @@ export default {
           })
         })
     },
+  },
+
+  mounted() {
+    // this.loading = false
   },
 }
 </script>

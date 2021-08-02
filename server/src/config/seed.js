@@ -24,7 +24,7 @@ const defaultUsers = [
     game_id: '187632523',
     profession: '碎梦',
     gang: '举世无双',
-    avatar: '/uploads/images/users/碎梦.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
   },
   {
@@ -37,7 +37,7 @@ const defaultUsers = [
     game_id: '187632524',
     profession: '血河',
     gang: '举世无敌',
-    avatar: '/uploads/images/users/血河.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
   },
   {
@@ -50,7 +50,7 @@ const defaultUsers = [
     game_id: '187632534',
     profession: '玄机',
     gang: '举世无敌',
-    avatar: '/uploads/images/users/玄机.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
   },
   {
@@ -63,7 +63,7 @@ const defaultUsers = [
     game_id: '187632535',
     profession: '玄机',
     gang: '举世无双',
-    avatar: '/uploads/images/users/玄机.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
   },
   {
@@ -76,7 +76,7 @@ const defaultUsers = [
     game_id: '187632536',
     profession: '玄机',
     gang: '举世皆敌',
-    avatar: '/uploads/images/users/玄机.png',
+    avatar: '/uploads/images/users/user.png',
     is_default_account: true,
   },
 ]
