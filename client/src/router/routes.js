@@ -175,7 +175,7 @@ function lazyLoadView(AsyncView) {
     error: require('@views/_timeout.vue').default,
     // Time before giving up trying to load the component.
     // Default: Infinity (milliseconds).
-    timeout: 10000,
+    timeout: 100000,
   })
 
   return Promise.resolve({
