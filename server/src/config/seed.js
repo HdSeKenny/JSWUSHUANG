@@ -44,8 +44,8 @@ const defaultUsers = [
     provider: 'local',
     role: 'admin',
     name: 'Admin',
-    email: 'jushi@admin.site',
-    password: 'jushi2021..',
+    email: 'jiangh@admin.site',
+    password: 'jiangh2021..',
     game_name: '管理员',
     game_id: '187632534',
     profession: '玄机',
@@ -57,8 +57,8 @@ const defaultUsers = [
     provider: 'local',
     role: 'looked_admin',
     name: 'Looked Admin',
-    email: 'jushi@looked_admin.site',
-    password: 'jushi2021',
+    email: 'jiangh@looked_admin.site',
+    password: 'jiangh2021',
     game_name: '普通管理员',
     game_id: '187632535',
     profession: '玄机',
@@ -70,8 +70,8 @@ const defaultUsers = [
     provider: 'local',
     role: 'root',
     name: 'Super Admin',
-    email: 'jushi@super_admin.site',
-    password: 'jushi20212022',
+    email: 'jiangh@super_admin.site',
+    password: 'jiangh20212022',
     game_name: '超级管理员',
     game_id: '187632536',
     profession: '玄机',
@@ -159,76 +159,67 @@ const defaultDKPs = [
   },
 ]
 
-export default () => new Promise((resolve, reject) => {
-  if (!JSON.parse(config.seedDB)) {
-    resolve()
-    return
-  } else {
-    const userPromise = () =>
-      User.find({})
-        .deleteMany()
-        .then(() =>
-          User.create(...defaultUsers)
-            .then((users) => users)
-            .catch((err) => Promise.reject(err))
-        )
-
-    const GoodPromise = () =>
-      Good.find({})
-        .deleteMany()
-        .then(() => console.log('===> finished populating goods'))
-        .catch((err) => console.log('error populating goods', err))
-
-    const OrderPromise = () =>
-      Order.find({})
-        .deleteMany()
-        .then(() => console.log('===> finished populating orders'))
-        .catch((err) => console.log('error populating orders', err))
-
-    const MemberPromise = () =>
-      Member.find({})
-        .deleteMany()
-        .then(() => console.log('===> finished populating members'))
-        .catch((err) => console.log('error populating members', err))
-
-    const DKKPromise = () =>
-      DKP.find({})
-        .deleteMany()
-        .then(() =>
-          DKP.create(...defaultDKPs).then((dkps) => {
-            console.log('===> finished populating dkps')
-            return dkps
-          })
-        )
-        .catch((err) => Promise.reject(err))
-
-    const HistoryPromise = () =>
-      History.find({})
-        .deleteMany()
-        .then(() => console.log('===> finished populating history'))
-        .catch((err) => console.log('error populating history', err))
-
-    Promise.all([
-      userPromise(),
-      DKKPromise(),
-      GoodPromise(),
-      OrderPromise(),
-      MemberPromise(),
-      HistoryPromise(),
-    ])
-      .then(async (data) => {
-        const users = data[0]
-        const dkps = data[1]
-        for (let i = 0; i < users.length; i++) {
-          const dkp = dkps.find((dd) => dd._doc.game_id === users[i].game_id)
-          await User.findOneAndUpdate(
-            { _id: users[i]._id },
-            { dkp_score: dkp._doc._id }
+export default () =>
+  new Promise((resolve, reject) => {
+    if (!JSON.parse(config.seedDB)) {
+      resolve()
+      return
+    } else {
+      const userPromise = () =>
+        User.find({})
+          .deleteMany()
+          .then(() =>
+            User.create(...defaultUsers)
+              .then((users) => users)
+              .catch((err) => Promise.reject(err))
           )
-        }
 
-        resolve()
-      })
-      .catch((err) => reject(err))
-  }
-})
+      const GoodPromise = () =>
+        Good.find({})
+          .deleteMany()
+          .then(() => console.log('===> finished populating goods'))
+          .catch((err) => console.log('error populating goods', err))
+
+      const OrderPromise = () =>
+        Order.find({})
+          .deleteMany()
+          .then(() => console.log('===> finished populating orders'))
+          .catch((err) => console.log('error populating orders', err))
+
+      const MemberPromise = () =>
+        Member.find({})
+          .deleteMany()
+          .then(() => console.log('===> finished populating members'))
+          .catch((err) => console.log('error populating members', err))
+
+      const DKKPromise = () =>
+        DKP.find({})
+          .deleteMany()
+          .then(() =>
+            DKP.create(...defaultDKPs).then((dkps) => {
+              console.log('===> finished populating dkps')
+              return dkps
+            })
+          )
+          .catch((err) => Promise.reject(err))
+
+      const HistoryPromise = () =>
+        History.find({})
+          .deleteMany()
+          .then(() => console.log('===> finished populating history'))
+          .catch((err) => console.log('error populating history', err))
+
+      Promise.all([userPromise(), DKKPromise(), GoodPromise(), OrderPromise(), MemberPromise(), HistoryPromise()])
+        .then(async (data) => {
+          const users = data[0]
+          const dkps = data[1]
+          for (let i = 0; i < users.length; i++) {
+            const dkp = dkps.find((dd) => dd._doc.game_id === users[i].game_id)
+            await User.findOneAndUpdate({ _id: users[i]._id }, { dkp_score: dkp._doc._id })
+          }
+
+          resolve()
+        })
+        .catch((err) => reject(err))
+    }
+  })

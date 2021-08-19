@@ -17,7 +17,6 @@ Vue.use(VueMeta, {
 //   template: "<div class='kuankuan'>...</div>"
 // });
 
-
 const router = new VueRouter({
   routes,
   // Use the HTML5 history API (i.e. normal-looking routes)

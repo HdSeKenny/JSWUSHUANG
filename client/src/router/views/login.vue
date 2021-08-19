@@ -5,12 +5,12 @@
     :element-loading-background="elementLoadingBackground"
   >
     <div>
-      <h2 class="header">
-        <img src="@assets/images/logo.png" alt="logo" width="150" />
-        <span class="theme-color ml10">DKP系统</span>
-      </h2>
-      <el-card shadow="never" class="login-card" v-if="showLogin">
-        <form class="login-form mt15" @submit.prevent="tryToLogIn">
+      <el-card shadow="never" class="login-card tac" v-if="showLogin">
+        <img src="@assets/images/logo.png" alt="logo" width="170" />
+        <div class="no-account bold pointer" @click="signup">
+          {{ chiSims.create_account }}
+        </div>
+        <form class="login-form mt5" @submit.prevent="tryToLogIn">
           <el-input
             v-model="gameId"
             name="gameId"
@@ -28,18 +28,10 @@
             class="mt15"
           />
           <p class="error" v-if="error">{{ error }}</p>
-          <el-row class="signin">
-            <el-button
-              type="primary"
-              @click="tryToLogIn"
-              class="login-btn bold"
-            >
+          <el-row class="signin mt5">
+            <el-button type="primary" @click="tryToLogIn" class="login-btn bold">
               {{ chiSims.login }}
             </el-button>
-
-            <div class="no-account bold value-blue" @click="signup">
-              没有账号？ {{ chiSims.create_account }}
-            </div>
           </el-row>
         </form>
       </el-card>
@@ -47,7 +39,6 @@
       <template v-if="!showLogin">
         <SignUp :onShowLogin="onShowLogin" />
       </template>
-      <Footer></Footer>
     </div>
   </div>
 </template>
@@ -55,12 +46,14 @@
 <script>
 import { authMethods } from '@state/helpers'
 import { CHI_SIMS } from '@src/app.config'
-import Footer from '@components/snippet/Footer.vue'
+// import Footer from '@components/snippet/Footer.vue'
+// import loginBackgroundImage from '@assets/images/nsh_bg_4.jpeg'
+// import signupBackgroundImage from '@assets/images/signup-bg.jpeg'
 import SignUp from './sign-up.vue'
 
 export default {
   name: 'Login',
-  components: { SignUp, Footer },
+  components: { SignUp },
   data() {
     return {
       chiSims: CHI_SIMS,
@@ -129,13 +122,6 @@ export default {
 
   mounted() {
     this.loading = false
-    // const _bg = document.createElement('img')
-    // const imgUrl = '../../src/assets/images/nsh_bg_6.png'
-    // _bg.src = loginBackgroundImage
-    // _bg.style.visibility = 'hidden'
-    // _bg.onload = () => {
-    //   _bg.remove()
-    // }
   },
 }
 </script>
@@ -144,7 +130,7 @@ export default {
 @import '@design';
 
 $app-name-font-size: 35px;
-$login-card-width: 500px;
+$login-card-width: 350px;
 $login-card-margin: 10px auto;
 
 .login-page {
@@ -152,6 +138,8 @@ $login-card-margin: 10px auto;
   align-items: center;
   justify-content: center;
   height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
   .header {
     display: flex;
     align-items: center;
@@ -161,36 +149,37 @@ $login-card-margin: 10px auto;
   }
   .login-card {
     width: $login-card-width;
+    background: $transparent-six-color;
     text-align: left;
-    box-shadow: $card-box-shadow;
+    border: none;
   }
   .login-form {
-    .signin {
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-    }
     .el-input {
       margin: 5px 0;
     }
     .login-btn {
-      width: 30%;
+      width: 100%;
+      margin-top: 10px;
     }
     .error {
       margin: 5px 0;
       font-size: 14px;
       color: $error-color;
     }
-    .no-account {
-      width: 70%;
-      text-align: right;
-    }
+  }
+  .no-account {
+    color: $white-color;
+    width: 100%;
+    text-align: right;
+    font-size: 14px;
+    margin: -10px 5px 0 0;
+    padding: 0 10px;
   }
 
   .footer {
     // width: $login-card-width;
     // margin: $login-card-margin;
-    padding: 20px 0px 10px 0px;
+    padding: 0px 0px 10px 0px;
   }
 }
 </style>

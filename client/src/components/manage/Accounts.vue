@@ -12,63 +12,45 @@
         搜素
       </el-button>
     </div>
-    <el-button type="text" class="pt0">
+    <el-button type="text bold" class="pt0">
       账户信息
     </el-button>
-    <el-table
+    <vxe-table
       :data="tableData"
       style="width: 100%"
       max-height="450"
       size="small"
       class="mt15"
+      empty-text="没有数据"
       border
     >
-      <el-table-column
+      <vxe-table-column
         v-for="h in tableHeaders"
         :fixed="h.fixed"
-        :key="h.prop"
-        :prop="h.prop"
-        :label="h.label"
+        :key="h.field"
+        :field="h.field"
+        :title="h.title"
         :width="h.width"
       />
 
-      <el-table-column fixed="right" label="操作" align="center">
+      <vxe-table-column fixed="right" title="操作" align="center">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            @click="onResetPassword(scope.row)"
-            size="small"
-          >
+          <el-button type="primary" @click="onResetPassword(scope.row)" size="small">
             重置密码
           </el-button>
-          <el-button
-            type="primary"
-            @click="onShowRecoverModal(scope.row)"
-            size="small"
-          >
+          <el-button type="primary" @click="onShowRecoverModal(scope.row)" size="small">
             恢复数据
           </el-button>
         </template>
-      </el-table-column>
-    </el-table>
-    <el-dialog
-      title="恢复个人数据"
-      :visible.sync="recoverVisible"
-      width="250px"
-    >
+      </vxe-table-column>
+    </vxe-table>
+    <el-dialog title="恢复个人数据" :visible.sync="recoverVisible" width="250px">
       <el-select v-model="backupFilename" placeholder="请选择需要恢复的备份">
-        <el-option
-          v-for="bi in backupedList"
-          :key="bi"
-          :label="bi"
-          :value="bi"
-        ></el-option>
+        <el-option v-for="bi in backupedList" :key="bi" :label="bi" :value="bi"></el-option>
       </el-select>
       <span slot="footer" class="dialog-footer">
         <el-button @click="recoverVisible = false">取消</el-button>
-        <el-button type="primary" @click="onRecoverPersonalData"
-          >恢复</el-button
-        >
+        <el-button type="primary" @click="onRecoverPersonalData">恢复</el-button>
       </span>
     </el-dialog>
   </section>
@@ -161,7 +143,7 @@ export default {
       return this.users.map((u) => {
         const _ud = {}
         this.tableHeaders.forEach((th) => {
-          _ud[th.prop] = u[th.prop]
+          _ud[th.field] = u[th.field]
         })
         return _ud
       })
@@ -177,6 +159,9 @@ export default {
   .announcement {
     display: block;
     width: 400px;
+  }
+  .int-medium {
+    width: 35%;
   }
 }
 </style>

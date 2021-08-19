@@ -1,48 +1,39 @@
 <template>
   <section class="user-info">
-    <div class="mt10 mb10">
-      <el-button type="text">个人信息</el-button>
+    <div class="avatar-wrapper">
+      <el-button type="text bold">更新头像</el-button>
+      <SlimWrapper :imageDidLoad="imageDidLoad" label="上传头像" />
+      <el-button type="primary mt10" @click="onUploadAvatar">上传</el-button>
+    </div>
+    <div class="personal mt15">
+      <el-button type="text bold">个人信息</el-button>
       <p class="field mt0 mb5">
         <span class="label">游戏ID: </span>
-        <span class="value">{{currentUser.game_id}}</span>
+        <span class="value">{{ currentUser.game_id }}</span>
       </p>
       <p class="field mt0 mb5">
         <span class="label">游戏名: </span>
-        <span class="value">{{currentUser.game_name}}</span>
+        <span class="value">{{ currentUser.game_name }}</span>
       </p>
       <p class="field mt0 mb5">
         <span class="label">职业: </span>
-        <span class="value">{{currentUser.profession}}</span>
+        <span class="value">{{ currentUser.profession }}</span>
       </p>
       <p class="field mt0 mb5">
         <span class="label">帮会: </span>
-        <span class="value">{{currentUser.gang}}</span>
+        <span class="value">{{ currentUser.gang }}</span>
       </p>
       <p class="field mt0 mb5">
         <span class="label">邮箱: </span>
-        <span class="value">{{currentUser.email}}</span>
+        <span class="value">{{ currentUser.email }}</span>
       </p>
-    </div>
-    <div class="mt10" v-if="editable">
-      <el-button type="text">修改信息</el-button>
-      <div class="edit-fields">
-        <el-select v-model="editValue" placeholder="请选择">
-          <el-option v-for="item in editOptions" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-        <div class="mt10">
-          <el-input type="text" class="new-value" placeholder="请填写新的名字" v-model="newFieldValue"></el-input>
-        </div>
-        <div class="mt10">
-          <el-button type="warning" class="update-btn" @click="onChangeUserInfo">更新</el-button>
-        </div>
-      </div>
     </div>
   </section>
 </template>
 
 <script>
-import { authMethods, authComputed } from '@src/state/helpers';
+import { mapActions, mapState } from 'vuex'
+import SlimWrapper from '@components/slim/slim-wrapper.vue'
 
 export default {
   name: 'user-info',
@@ -51,67 +42,59 @@ export default {
       type: Object,
     },
   },
-  data(prop) {
+  data() {
     return {
-      editValue: 'game_name',
-      newFieldValue: '',
-      editOptions: [
-        { label: '游戏名称', value: 'game_name' },
-      ],
-      editable: false
+      avatar: '',
     }
+  },
+  components: {
+    SlimWrapper,
   },
   computed: {
-    ...authComputed,
+    ...mapState('auth', {
+      currentUser: (state) => state.currentUser,
+    }),
   },
   methods: {
-    ...authMethods,
+    ...mapActions('auth', ['changeUserAvatar']),
 
-    onChangeUserInfo() {
-      if (!this.newFieldValue) {
-        return this.$notify({
-          title: '提示',
-          message: '不能为空',
-          type: 'error',
-          duration: 3000,
+    imageDidLoad(file, image) {
+      this.avatar = file
+    },
+    onUploadAvatar() {
+      if (!this.avatar) {
+        return this.$message({
+          type: 'warning',
+          message: '请选择一张图片',
         })
       }
+      const fd = new FormData()
+      fd.append('avatar', this.avatar)
 
-      if (this.newFieldValue === this.currentUser.game_name) {
-        return this.$notify({
+      this.loading = true
+      this.changeUserAvatar(fd).then(() => {
+        this.loading = false
+        this.$message({
           title: '提示',
-          message: '新名字和旧名字不能一样',
-          type: 'error',
+          message: '上传成功',
+          type: 'success',
           duration: 3000,
         })
-      }
-
-      this.changeUserInfo({ game_name: this.newFieldValue })
-        .then(() => {
-          this.$notify({
-            title: '提示',
-            message: '操作成功',
-            type: 'success',
-            duration: 3000,
-          })
-        })
-        .catch((err) => {
-          this.$notify({
-            title: '提示',
-            message: err.message,
-            type: 'error',
-            duration: 3000,
-          })
-        })
-    }
-  }
+      })
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@design';
+
 .user-info {
-  padding: 0 20px;
-  min-height: 500px;
+  height: $tab-content-normal-height;
+  .avatar-wrapper {
+    width: 190px;
+    vertical-align: top;
+  }
   .dkp-info {
     margin-top: 30px;
   }
@@ -120,18 +103,10 @@ export default {
       font-size: 16px;
       font-weight: 500;
       margin-right: 5px;
-      // color: #909399;
     }
     .value {
       font-size: 16px;
-      // color: #909399;
     }
-  }
-  .new-value {
-    width: 216px;
-  }
-  .update-btn {
-    margin-top: -1px;
   }
 }
 </style>

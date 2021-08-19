@@ -5,16 +5,17 @@
         @tab-click="onSettingsTabClick"
         :value="settingsTab"
         type="border-card"
-        :class="currentUser.role">
+        :class="currentUser.role"
+      >
         <el-tab-pane name="RECOVER" label="数据恢复">
           <DataRecover />
         </el-tab-pane>
-        <el-tab-pane name="USERS" label="用户管理">
+        <el-tab-pane name="USERS" label="用户管理" :lazy="true">
           <Accounts />
         </el-tab-pane>
         <el-tab-pane name="OTHER" label="其他设置">
           <div class="">
-            <el-button type="text" class="pt0">
+            <el-button type="text bold" class="pt0">
               编辑公告
             </el-button>
             <el-input
@@ -22,29 +23,27 @@
               type="textarea"
               :rows="2"
               :placeholder="announcement"
-              v-model="newAnnouncement">
+              v-model="newAnnouncement"
+            >
             </el-input>
             <el-button
               class="mt10 mb10"
               type="warning"
               size="small"
               :disabled="newAnnouncement === ''"
-              @click="onUpdateAnnouncement">
+              @click="onUpdateAnnouncement"
+            >
               更新
             </el-button>
           </div>
-          <div>
-            <el-button type="text" class="pt0">
+          <!-- <div>
+            <el-button type="text bold" class="pt0">
               重置铜钱
             </el-button>
-            <el-button
-              class="mt10 mb10 ml0 disb"
-              type="warning"
-              size="small"
-              @click="onAddGold">
+            <el-button class="mt10 mb10 ml0 disb" type="warning" size="small" @click="onAddGold">
               每个人的铜钱会被重置为 100000 W
             </el-button>
-          </div>
+          </div> -->
         </el-tab-pane>
       </el-tabs>
     </section>
@@ -123,8 +122,8 @@ export default {
     ...mapState('auth', {
       currentUser: (state) => state.currentUser,
       announcement: (state) => state.announcement,
-      isAdmin: (state) => state.isAdmin(),
-      isLookedAdmin: (state) => state.isLookedAdmin(),
+      isAdmin: (state) => state.isAdmin,
+      isLookedAdmin: (state) => state.isLookedAdmin,
     }),
     ...mapState('admin', {
       settingsTab: (state) => state.settingsTab,
@@ -136,4 +135,3 @@ export default {
   },
 }
 </script>
-

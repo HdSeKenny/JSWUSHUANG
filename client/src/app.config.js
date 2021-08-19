@@ -1,6 +1,6 @@
 const app = {
   name: '举世无双',
-  url: '',
+  url: 'www.jianghu.club',
   gangName: 'DKP系统',
   GANGS: ['举世皆敌', '举世无双', '举世无敌', '举世风月', '举世至尊'],
 }
@@ -122,12 +122,12 @@ const PROFESSIONS = [
 ]
 
 const USER_TABLE_HEADERS = [
-  { prop: 'game_id', label: '游戏ID' },
-  { prop: 'game_name', label: '游戏名称' },
-  { prop: 'gang', label: '帮会' },
-  { prop: 'name', label: '名字' },
-  { prop: 'profession', label: '职业' },
-  { prop: 'role', label: '权限' },
+  { field: 'game_id', title: '游戏ID' },
+  { field: 'game_name', title: '游戏名称' },
+  { field: 'gang', title: '帮会' },
+  { field: 'name', title: '名字' },
+  { field: 'profession', title: '职业' },
+  { field: 'role', title: '权限' },
 ]
 
 const GAME_NAME_TITLES = ['游戏ID', '游戏名称', '名称', '玩家']

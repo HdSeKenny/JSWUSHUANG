@@ -1,7 +1,7 @@
 'use strict'
 
 import jwt from 'jsonwebtoken'
-import crypto from 'crypto'
+// import crypto from 'crypto'
 import multer from 'multer'
 import path from 'path'
 import User from './user.model'
@@ -76,7 +76,7 @@ export function create(req, res) {
     .then((dkp) => {
       if (!dkp) {
         return res.status(403).json({
-          message: '你输入的游戏id无效, 如果id正确请联系管理员'
+          message: '你输入的游戏id无效, 如果id正确请联系管理员',
         })
       }
       return User.findOne({ game_id: newUser.game_id })
@@ -84,7 +84,7 @@ export function create(req, res) {
         .then((user) => {
           if (user) {
             return res.status(403).json({
-              message: '你已经是该网站的用户了'
+              message: '你已经是该网站的用户了',
             })
           }
 
@@ -94,9 +94,7 @@ export function create(req, res) {
           newUser.profession = dkp._doc.profession
           newUser.avatar = `/uploads/images/users/user.png`
 
-          return Member.create(newUser)
-            .then(respondWithResult(res, 201))
-            .catch(handleError(res))
+          return Member.create(newUser).then(respondWithResult(res, 201)).catch(handleError(res))
         })
         .catch(handleError(res))
     })
@@ -116,7 +114,7 @@ export function thoughMemberToUser(req, res) {
       const member = data[1]._doc
       Reflect.deleteProperty(member, '_id')
       Reflect.deleteProperty(member, '__v')
-      const newMember = Object.assign({}, member, { dkp_score: dkp._id })
+      const newMember = Object.assign({}, member, { dkp_score: dkp._id, game_name: dkp.game_name, gang: dkp.gang })
       return User.create(newMember)
         .then(() => {
           return Member.findByIdAndRemove(req.params.id)
@@ -137,7 +135,7 @@ export function createUser(req, res) {
     .save()
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, config.secrets.session, {
-        expiresIn: 60 * 60 * 5
+        expiresIn: 60 * 60 * 5,
       })
       return res.json({ token })
     })
@@ -219,23 +217,23 @@ export function changePassword(req, res) {
     })
 }
 
-function encryptPassword(_salt, password, callback) {
-  const defaultIterations = 10000
-  const defaultKeyLength = 64
-  const salt = Buffer.from(_salt, 'base64')
+// function encryptPassword(_salt, password, callback) {
+//   const defaultIterations = 10000
+//   const defaultKeyLength = 64
+//   const salt = Buffer.from(_salt, 'base64')
 
-  if (!callback) {
-    return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength, 'sha256').toString('base64')
-  }
+//   if (!callback) {
+//     return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength, 'sha256').toString('base64')
+//   }
 
-  return crypto.pbkdf2(password, salt, defaultIterations, defaultKeyLength, 'sha256', (err, key) => {
-    if (err) {
-      return callback(err)
-    } else {
-      return callback(null, key.toString('base64'))
-    }
-  })
-}
+//   return crypto.pbkdf2(password, salt, defaultIterations, defaultKeyLength, 'sha256', (err, key) => {
+//     if (err) {
+//       return callback(err)
+//     } else {
+//       return callback(null, key.toString('base64'))
+//     }
+//   })
+// }
 
 export function resetPassword(req, res) {
   return User.findById(req.params.id)
@@ -260,7 +258,7 @@ export function upsert(req, res) {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
-    runValidators: true
+    runValidators: true,
   })
     .exec()
     .then(respondWithResult(res))
@@ -273,11 +271,11 @@ export function changeUserInfo(req, res) {
   }
   return Promise.all([
     User.findOneAndUpdate({ game_id: req.params.id }, req.body, {
-      new: true
+      new: true,
     }).exec(),
     DKP.findOneAndUpdate({ game_id: req.params.id }, req.body, {
-      new: true
-    }).exec()
+      new: true,
+    }).exec(),
   ])
     .then(() => {
       return res.status(200).json(req.body)
@@ -292,20 +290,20 @@ export function me(req, res, next) {
       populate: [
         {
           path: 'good_id',
-          model: 'Good'
+          model: 'Good',
         },
         {
           path: 'payer_id',
-          model: 'User'
-        }
-      ]
+          model: 'User',
+        },
+      ],
     })
     .populate({
       path: 'dkp_score',
       populate: {
         path: 'histories',
-        model: 'History'
-      }
+        model: 'History',
+      },
     })
     .exec()
     .then((user) => {
@@ -334,7 +332,7 @@ const storage = multer.diskStorage({
     const fileParams = file.originalname.split('.')
     const fileFormat = fileParams[fileParams.length - 1]
     cb(null, `avatar.${fileFormat}`)
-  }
+  },
 })
 
 const upload = multer({ storage })
@@ -351,7 +349,7 @@ export function changeUserAvatar(req, res) {
           .then(() =>
             res.status(200).json({
               message: 'Upload successfully',
-              avatar: user.avatar
+              avatar: user.avatar,
             })
           )
           .catch(validationError(res))
@@ -364,7 +362,7 @@ export async function dealDkp(req, res) {
     DKP.findOne({ game_id: req.body.payer.game_id }).exec(),
     DKP.findOne({ game_id: req.body.receiver.game_id }).exec(),
     User.findOne({ _id: req.params.id }).exec(),
-    User.findOne({ _id: req.body.receiver._id }).exec()
+    User.findOne({ _id: req.body.receiver._id }).exec(),
   ])
     .then((data) => {
       const payer_dkp = data[0]._doc
@@ -376,23 +374,23 @@ export async function dealDkp(req, res) {
         note: req.body.note,
         payer: {
           game_id: payer.game_id,
-          game_name: payer.game_name
+          game_name: payer.game_name,
         },
         receiver: {
           game_id: receiver.game_id,
-          game_name: receiver.game_name
+          game_name: receiver.game_name,
         },
-        created: new Date()
+        created: new Date(),
       }
 
       const payer_dkp_update = {
         sum: parseInt(payer_dkp.sum) - parseInt(req.body.amount),
-        transaction: parseInt(payer_dkp.transaction || 0) - parseInt(req.body.amount)
+        transaction: parseInt(payer_dkp.transaction || 0) - parseInt(req.body.amount),
       }
 
       const receiver_dkp_update = {
         sum: parseInt(receiver_dkp.sum) + parseInt(req.body.amount),
-        transaction: parseInt(receiver_dkp.transaction || 0) + parseInt(req.body.amount)
+        transaction: parseInt(receiver_dkp.transaction || 0) + parseInt(req.body.amount),
       }
 
       const payer_transactions = payer.dkp_transaction_records || []
@@ -412,15 +410,26 @@ export async function dealDkp(req, res) {
           { _id: receiver._id },
           { dkp_transaction_records: receiver_transactions },
           { new: true }
-        ).exec()
+        ).exec(),
       ])
         .then(() => {
           res.json({
             new_transaction_records: payer_transactions,
-            new_dkp_update: payer_dkp_update
+            new_dkp_update: payer_dkp_update,
           })
         })
         .catch(handleError(res))
     })
     .catch(handleError(res))
+}
+
+export async function setUserCheckedName(name, checkedName) {
+  console.log('setUserCheckedName')
+  try {
+    await User.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
+    await DKP.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
+  } catch (error) {
+    console.log(error)
+    handleError(error)
+  }
 }

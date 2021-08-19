@@ -8,12 +8,7 @@
       show-icon
     ></el-alert>
     <div class="dkp-info">
-      <el-form
-        :model="dkpForm"
-        label-position="left"
-        label-width="80px"
-        class="dkp-form"
-      >
+      <el-form :model="dkpForm" label-position="left" label-width="80px" class="dkp-form">
         <el-form-item label="编辑模式" prop="members">
           <el-select v-model="editModel" placeholder="请选择参与的活动">
             <el-option
@@ -26,10 +21,7 @@
         </el-form-item>
         <template v-if="['importBatch', 'OCR'].includes(editModel)">
           <el-form-item label="参与活动" prop="activity">
-            <el-select
-              v-model="dkpForm.activity"
-              placeholder="请选择参与的活动"
-            >
+            <el-select v-model="dkpForm.activity" placeholder="请选择参与的活动">
               <el-option
                 v-for="a in dkpActivities"
                 :key="a.value"
@@ -66,9 +58,7 @@
             drag
           >
             <i class="el-icon-upload"></i>
-            <div class="el-upload__text"
-              >将文件拖到此处，或<em>点击上传</em></div
-            >
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           </el-upload>
         </el-form-item>
         <template v-if="editModel === 'OCR'">
@@ -89,22 +79,18 @@
               multiple
             >
               <i class="el-icon-upload"></i>
-              <div class="el-upload__text"
-                >将文件拖到此处，或<em>点击上传</em></div
-              >
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             </el-upload>
           </el-form-item>
         </template>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('dkpForm')"
-            >提交编辑</el-button
-          >
+        <el-form-item class="m0">
+          <el-button type="primary" @click="submitForm('dkpForm')">
+            提交编辑
+          </el-button>
         </el-form-item>
       </el-form>
       <div class="ocr-members" v-if="this.dkpForm.members.length">
-        <h5 class="mb10"
-          >识别出的人员名单 ({{ this.dkpForm.members.length }}):</h5
-        >
+        <h5 class="mb10">识别出的人员名单 ({{ this.dkpForm.members.length }}):</h5>
         <div class="memvers-wrapper">
           <el-tag
             v-for="(item, i) in dkpForm.members"
@@ -117,9 +103,7 @@
           >
         </div>
         <div class="memvers-wrapper mt15" v-if="invalidMembers.length">
-          <h5 class="mb5 mt5"
-            >未识别出的人员名单 ({{ invalidMembers.length }}):</h5
-          >
+          <h5 class="mb5 mt5">未识别出的人员名单 ({{ invalidMembers.length }}):</h5>
           <el-tag
             v-for="(item, i) in invalidMembers"
             :key="i"
@@ -140,11 +124,7 @@
             @blur="handleNewMemberConfirm"
           >
           </el-input>
-          <el-button
-            v-else
-            class="button-new-tag"
-            size="small"
-            @click="showNewMemberInput"
+          <el-button v-else class="button-new-tag" size="small" @click="showNewMemberInput"
             >+ 添加</el-button
           >
         </div>
@@ -159,12 +139,7 @@
 <script>
 import XLSX from 'xlsx'
 import { DKP_HEADERS, app, GAME_NAME_TITLES } from '@src/app.config'
-import {
-  DKPMethods,
-  DKPComputed,
-  authMethods,
-  authComputed,
-} from '@state/helpers'
+import { DKPMethods, DKPComputed, authMethods, authComputed } from '@state/helpers'
 
 export default {
   name: 'DKPEdit',
@@ -236,9 +211,8 @@ export default {
 
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 1 个文件，本次选择了 ${
-          files.length
-        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length +
+          fileList.length} 个文件`
       )
     },
 
@@ -255,9 +229,7 @@ export default {
 
     onOCRRemove(file, fileList) {
       this.errMsg = ''
-      this.ocrFileList = this.ocrFileList.filter(
-        (ofl) => ofl.name !== file.name
-      )
+      this.ocrFileList = this.ocrFileList.filter((ofl) => ofl.name !== file.name)
       this.dkpForm.members = this.ocrFileList.length
         ? this.ocrFileList
             .filter((ofl) => ofl.data && ofl.data.length)
@@ -299,7 +271,7 @@ export default {
         } else {
           const fd = new FormData()
           fd.append('image-file', file.raw)
-          this.getMembersByOCR(fd)
+          this.getMembersByOCR({ formData: fd })
             .then((data) => {
               this.ocrFileList.push({
                 name: file.name,
@@ -359,10 +331,7 @@ export default {
         }
 
         const validRows = XLRowArr.filter(
-          (row) =>
-            !!dkps.find((dpd) =>
-              GAME_NAME_TITLES.some((t) => dpd.game_name == row[t])
-            )
+          (row) => !!dkps.find((dpd) => GAME_NAME_TITLES.some((t) => dpd.game_name == row[t]))
         )
 
         const invalidRows = XLRowArr.filter((row) => {
@@ -389,9 +358,7 @@ export default {
                 game_name: row['游戏名称'] || row['名称'] || row['玩家'],
                 gang: row['帮会名'] || row['帮会'],
               }
-              const _localDkp = dkps.find(
-                (d) => d.game_name == member.game_name
-              )
+              const _localDkp = dkps.find((d) => d.game_name == member.game_name)
               if (_localDkp) {
                 member.game_id = member.game_id || _localDkp.game_id
                 member.gang = member.gang || _localDkp.gang
@@ -406,9 +373,7 @@ export default {
     calculateImportAll(XLRowArr) {
       return XLRowArr.map((row) => {
         return Object.keys(row).reduce((obj, key) => {
-          const fieldMatched = Object.keys(DKP_HEADERS).find(
-            (hk) => DKP_HEADERS[hk].text === key
-          )
+          const fieldMatched = Object.keys(DKP_HEADERS).find((hk) => DKP_HEADERS[hk].text === key)
 
           if (fieldMatched) {
             obj[fieldMatched] = row[key] || 0
@@ -475,9 +440,7 @@ export default {
 
       const invalidMembers = []
       this.dkpForm.members.forEach((dm) => {
-        const corrMember = this.DKPData.find((dpd) =>
-          dpd.game_name.includes(dm.game_name)
-        )
+        const corrMember = this.DKPData.find((dpd) => dpd.game_name.includes(dm.game_name))
         if (!corrMember) {
           invalidMembers.push(dm.game_name)
         }
@@ -533,9 +496,7 @@ export default {
     },
 
     onCloseOCRMember(tag) {
-      this.dkpForm.members = this.dkpForm.members.filter(
-        (m) => m.game_id != tag.game_id
-      )
+      this.dkpForm.members = this.dkpForm.members.filter((m) => m.game_id != tag.game_id)
     },
 
     showNewMemberInput() {
@@ -547,9 +508,7 @@ export default {
 
     handleNewMemberConfirm() {
       if (this.newMemberValue) {
-        const dkp = this.DKPData.find(
-          (dd) => dd.game_name == this.newMemberValue
-        )
+        const dkp = this.DKPData.find((dd) => dd.game_name == this.newMemberValue)
         if (!dkp) {
           return this.$notify({
             title: '提示',
@@ -574,14 +533,11 @@ export default {
 
 <style lang="scss">
 .dkp-edit {
-  // min-height: 700px;
-  background-color: #fff;
   padding: 0 15px;
   .notification {
-    margin-top: 20px;
+    margin-bottom: 20px;
   }
   .dkp-info {
-    margin-top: 30px;
     .dkp-form {
       width: 330px;
       display: inline-block;

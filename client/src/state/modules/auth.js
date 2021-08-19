@@ -9,24 +9,23 @@ export const state = {
   _token: getSavedState('auth._token'),
   profileTab: getSavedState('current_user_tab') || 'INFO',
   homeTab: getSavedState('current_home_tab') || 'ALL',
-  isRoot() {
-    return this.currentUser ? this.currentUser.role === 'root' : false
-  },
-  isAdmin() {
-    return this.currentUser ? ['admin', 'root'].includes(this.currentUser.role) : false
-  },
-  isLookedAdmin() {
-    return this.currentUser ? this.currentUser.role === 'looked_admin' : false
-  },
+  isRoot: false,
+  isAdmin: false,
+  isLookedAdmin: false,
+  isUser: false,
   members: [],
   backupedList: [],
   currentUser: {},
-  announcement: '如果有改名的, 自己登陆网站, 去个人主页更改名字'
+  announcement: '如果有改名的, 自己登陆网站, 去个人主页更改名字',
 }
 
 export const mutations = {
   GET_CURRENT_USER_SUCCESS(state, newValue) {
     state.currentUser = newValue
+    state.isRoot = newValue.role === 'root'
+    state.isAdmin = ['admin', 'root'].includes(newValue.role)
+    state.isLookedAdmin = newValue.role === 'looked_admin'
+    state.isUser = newValue.role === 'user'
   },
 
   GET_TOKEN_SUCCESS(state, newValue) {
@@ -62,12 +61,12 @@ export const mutations = {
     const dkpScore = state.currentUser.dkp_score
     const newDkpScore = Object.assign({}, dkpScore, {
       sum: newVal.new_dkp_update.sum,
-      transaction: newVal.new_dkp_update.transaction
+      transaction: newVal.new_dkp_update.transaction,
     })
 
     state.currentUser = Object.assign({}, state.currentUser, {
       dkp_transaction_records: newVal.new_transaction_records,
-      dkp_score: newDkpScore
+      dkp_score: newDkpScore,
     })
   },
 
@@ -90,6 +89,10 @@ export const mutations = {
     }
   },
 
+  UPDATE_AVATAR_SUCCESS(state, newVal) {
+    state.currentUser.avatar = newVal.avatar
+  },
+
   UPDATE_ANNOUNCEMENT_SUCCESS(state, newVal) {
     state.announcement = newVal.announcement
   },
@@ -108,7 +111,7 @@ export const mutations = {
         Object.assign(state.currentUser, { gold: state.currentUser.gold + previous_price })
       }
     }
-  }
+  },
 }
 
 export const getters = {
@@ -116,13 +119,13 @@ export const getters = {
     return !!state._token
   },
   isRoot(state) {
-    return state.currentUser ? state.currentUser.role === 'root' : false
+    return state.isRoot
   },
   isAdmin(state) {
-    return state.currentUser ?  ['admin', 'root'].includes(state.currentUser.role) : false
+    return state.isAdmin
   },
   isLookedAdmin(state) {
-    return state.currentUser ? state.currentUser.role === 'looked_admin' : false
+    return state.isLookedAdmin
   },
 }
 
@@ -139,10 +142,11 @@ export const actions = {
       .then((data) => {
         commit(ACTIONS.GET_ANNOUNCEMENT_SUCCESS, data)
         return data
-      }).catch((err) => {
+      })
+      .catch((err) => {
         return Promise.reject({
           message: err.toString(),
-          status: err.response.status
+          status: err.response.status,
         })
       })
   },
@@ -152,10 +156,11 @@ export const actions = {
       .then((data) => {
         commit(ACTIONS.UPDATE_ANNOUNCEMENT_SUCCESS, data)
         return data
-      }).catch((err) => {
+      })
+      .catch((err) => {
         return Promise.reject({
           message: err.toString(),
-          status: err.response.status
+          status: err.response.status,
         })
       })
   },
@@ -174,23 +179,27 @@ export const actions = {
       .catch((err) => {
         commit(ACTIONS.GET_CURRENT_USER_SUCCESS, null)
         return Promise.reject({
-          message: err.response.data.message
+          message: err.response.data.message,
         })
       })
   },
 
-  signUp({ commit, dispatch }, params = {}) {
-    return HttpRequest
-      .post('/api/users', {
+  signUp({ commit }, params = {}) {
+    return HttpRequest.post(
+      '/api/users',
+      {
         email: params.game_id,
         game_id: params.game_id,
+        game_name: params.game_name,
+        wechat: params.wechat,
         password: params.password,
-        profession: params.profession
-      }, true)
+      },
+      true
+    )
       .then((data) => data)
       .catch((error) => {
         const errObj = {
-          message: error.response.data.message
+          message: error.response.data.message,
         }
         if (error.response && error.response.status === 401) {
           commit(ACTIONS.GET_CURRENT_USER_SUCCESS, null)
@@ -236,7 +245,7 @@ export const actions = {
   },
 
   getMembers({ commit, state }) {
-    if (!state.isAdmin()) {
+    if (!state.isAdmin) {
       return Promise.resolve()
     }
 
@@ -245,42 +254,67 @@ export const actions = {
         commit(ACTIONS.GET_MEMBERS_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   throughApplication({ commit, state }, params) {
-    return HttpRequest
-      .post(`/api/users/${params.mid}/though/application`, params)
+    return HttpRequest.post(`/api/users/${params.mid}/though/application`, params)
       .then((data) => {
         commit(ACTIONS.DELETE_MEMBERS_SUCCESS, params.mid)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   deleteApplication({ commit, state }, id) {
-    return HttpRequest
-      .delete(`/api/users/${id}/member`)
+    return HttpRequest.delete(`/api/users/${id}/member`)
       .then((data) => {
         commit(ACTIONS.DELETE_MEMBERS_SUCCESS, id)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
-  changePassword({ commit, state }, params) {
-    return HttpRequest
-      .put(`/api/users/${state.currentUser._id}/password`, params)
+  changePassword({ state }, params) {
+    return HttpRequest.put(`/api/users/${state.currentUser._id}/password`, params)
       .then((data) => data)
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
+  },
+
+  changeUserAvatar({ state, commit }, formData) {
+    return HttpRequest.post(
+      `/api/users/${state.currentUser._id}/avatar?fieldname=avatar`,
+      formData,
+      false,
+      {
+        'Content-Type': 'multipart/form-data',
+      }
+    )
+      .then((data) => {
+        console.log(data)
+        commit(ACTIONS.UPDATE_AVATAR_SUCCESS, data)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   getUsers({ commit }) {
@@ -291,42 +325,42 @@ export const actions = {
 
   dealDkp({ commit, state, dispatch }, params) {
     const { _id } = state.currentUser
-    return HttpRequest
-      .post(`${BASE_URL}/${_id}/deal/dkp`, params)
-      .then((data) => {
-        commit(ACTIONS.DEAL_DKP_SUCCESS, data)
+    return HttpRequest.post(`${BASE_URL}/${_id}/deal/dkp`, params).then((data) => {
+      commit(ACTIONS.DEAL_DKP_SUCCESS, data)
 
-        const dkpScore = state.currentUser.dkp_score
-        const newDkpScore = Object.assign({}, dkpScore, {
-          sum: data.new_dkp_update.sum,
-          transaction: data.new_dkp_update.transaction
-        })
-        return dispatch('dkps/updateSingleDkp', newDkpScore, { root: true })
+      const dkpScore = state.currentUser.dkp_score
+      const newDkpScore = Object.assign({}, dkpScore, {
+        sum: data.new_dkp_update.sum,
+        transaction: data.new_dkp_update.transaction,
       })
+      return dispatch('dkps/updateSingleDkp', newDkpScore, { root: true })
+    })
   },
 
   backup({ commit }) {
-    return HttpRequest
-      .post('/api/admin/backup')
+    return HttpRequest.post('/api/admin/backup')
       .then((data) => {
         commit(ACTIONS.UPDATE_BACKUP_LIST_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   getBackupList({ commit }) {
-    return HttpRequest
-      .get('/api/admin/backup/list')
+    return HttpRequest.get('/api/admin/backup/list')
       .then((data) => {
         commit(ACTIONS.GET_BACKUP_LIST_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   downloadExcel({ state }) {
@@ -346,68 +380,74 @@ export const actions = {
   },
 
   resetPassword({ commit }, id) {
-    return HttpRequest
-      .put(`/api/users/${id}/password/reset`)
+    return HttpRequest.put(`/api/users/${id}/password/reset`)
       .then((data) => {
         // commit(ACTIONS.GET_USERS_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   createNewLookedAdminUser() {
-    return HttpRequest
-      .post(`/api/admin/create/admin_user`)
+    return HttpRequest.post(`/api/admin/create/admin_user`)
       .then((data) => {
         // commit(ACTIONS.GET_USERS_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   changeUserInfo({ commit, state }, params) {
-    return HttpRequest
-    .post(`/api/users/${state.currentUser.game_id}/change/userinfo`, params)
-    .then((data) => {
-      commit(ACTIONS.CHANGE_USER_INFO_SUCCESS, data)
-      return data
-    })
-    .catch((error) => Promise.reject({
-      message: error.response.data.message
-    }))
+    return HttpRequest.post(`/api/users/${state.currentUser.game_id}/change/userinfo`, params)
+      .then((data) => {
+        commit(ACTIONS.CHANGE_USER_INFO_SUCCESS, data)
+        return data
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   recoverBackupData({ commit }, params) {
-    return HttpRequest
-      .post(`/api/admin/recover`, params)
+    return HttpRequest.post(`/api/admin/recover`, params)
       .then((data) => {
         // commit(ACTIONS.CHANGE_USER_INFO_SUCCESS, data)
         return data
       })
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   addGold({ commit }, params) {
-    return HttpRequest
-      .post('/api/admin/gold/add', params)
+    return HttpRequest.post('/api/admin/gold/add', params)
       .then((data) => data)
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
   },
 
   recoverPersonalData({ commit }, params) {
-    return HttpRequest
-      .post('/api/admin/recover/personal', params)
+    return HttpRequest.post('/api/admin/recover/personal', params)
       .then((data) => data)
-      .catch((error) => Promise.reject({
-        message: error.response.data.message
-      }))
-  }
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
+  },
 }

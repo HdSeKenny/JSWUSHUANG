@@ -10,15 +10,15 @@ const UserSchema = new Schema({
   email: {
     type: String,
     lowercase: true,
-    required: true
+    required: true,
   },
   role: {
     type: String,
-    default: 'user'
+    default: 'user',
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   avatar: String,
   profile_background_image: String,
@@ -29,46 +29,50 @@ const UserSchema = new Schema({
   created_at: Date,
   dkp_score: {
     type: Schema.ObjectId,
-    ref: 'DKP'
+    ref: 'DKP',
   },
-  orders: [{
-    type: Schema.ObjectId,
-    ref: 'Order'
-  }],
+  orders: [
+    {
+      type: Schema.ObjectId,
+      ref: 'Order',
+    },
+  ],
   is_default_account: Boolean,
   dkp_transaction_records: [
     {
       amount: Number,
       payer: {
         game_id: String,
-        game_name: String
+        game_name: String,
       },
       receiver: {
         game_id: String,
-        game_name: String
+        game_name: String,
       },
-      created: Date
-    }
+      created: Date,
+    },
   ],
   gold: Number,
-  fighting_score: Number
+  fighting_score: Number,
+  checked_name: String,
+  wechat: String,
 })
 
 // Public profile information
-UserSchema.virtual('profile').get(function() {
+UserSchema.virtual('profile').get(function () {
   return {
     name: this.name,
     email: this.email,
     images: this.images,
-    role: this.role
+    role: this.role,
   }
 })
 
 // Non-sensitive info we'll be putting in the token
-UserSchema.virtual('token').get(function() {
+UserSchema.virtual('token').get(function () {
   return {
     _id: this._id,
-    role: this.role
+    role: this.role,
   }
 })
 
@@ -76,17 +80,17 @@ UserSchema.virtual('token').get(function() {
  * Validations
  */
 // Validate empty email
-UserSchema.path('email').validate(function(email) {
+UserSchema.path('email').validate(function (email) {
   return email.length
 }, 'Email cannot be blank')
 
 // Validate empty password
-UserSchema.path('password').validate(function(password) {
+UserSchema.path('password').validate(function (password) {
   return password.length
 }, 'Password cannot be blank')
 
 // Validate email is not taken
-UserSchema.path('email').validate(function(value) {
+UserSchema.path('email').validate(function (value) {
   return this.constructor
     .findOne({ email: value })
     .exec()
@@ -99,19 +103,19 @@ UserSchema.path('email').validate(function(value) {
       }
       return true
     })
-    .catch(function(err) {
+    .catch(function (err) {
       throw err
     })
 }, 'The specified email address is already in use.')
 
-const validatePresenceOf = function(value) {
+const validatePresenceOf = function (value) {
   return value && value.length
 }
 
 /**
  * Pre-save hook
  */
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
   // Handle new/update passwords
   if (!this.isModified('password')) {
     return next()
@@ -146,13 +150,13 @@ UserSchema.pre('save', function(next) {
  */
 UserSchema.methods = {
   /**
-     * Authenticate - check if the passwords are the same
-     *
-     * @param {String} password
-     * @param {Function} callback
-     * @return {Boolean}
-     * @api public
-     */
+   * Authenticate - check if the passwords are the same
+   *
+   * @param {String} password
+   * @param {Function} callback
+   * @return {Boolean}
+   * @api public
+   */
   authenticate(password, callback) {
     if (!callback) {
       return this.password === this.encryptPassword(password)
@@ -172,13 +176,13 @@ UserSchema.methods = {
   },
 
   /**
-     * Make salt
-     *
-     * @param {Number} [byteSize] - Optional salt byte size, default to 16
-     * @param {Function} callback
-     * @return {String}
-     * @api public
-     */
+   * Make salt
+   *
+   * @param {Number} [byteSize] - Optional salt byte size, default to 16
+   * @param {Function} callback
+   * @return {String}
+   * @api public
+   */
   makeSalt(...args) {
     var defaultByteSize = 16
     let byteSize
@@ -207,13 +211,13 @@ UserSchema.methods = {
   },
 
   /**
-     * Encrypt password
-     *
-     * @param {String} password
-     * @param {Function} callback
-     * @return {String}
-     * @api public
-     */
+   * Encrypt password
+   *
+   * @param {String} password
+   * @param {Function} callback
+   * @return {String}
+   * @api public
+   */
   encryptPassword(password, callback) {
     if (!password || !this.salt) {
       if (!callback) {
@@ -238,7 +242,7 @@ UserSchema.methods = {
         return callback(null, key.toString('base64'))
       }
     })
-  }
+  },
 }
 
 registerEvents(UserSchema)

@@ -2,92 +2,112 @@
   <Layout v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.6)">
     <section class="page-content auction">
       <el-tabs
+        type="border-card"
         @tab-click="onGoodTabClick"
         :value="goodTab"
-        :type="isAdmin || isLookedAdmin ? 'border-card' : ''"
-        :class="currentUser.role">
-          <el-tab-pane name="ALL" label="所有商品">
-            <div class="search-wrapper">
-              <el-input class="search" placeholder="请输入内容" prefix-icon="el-icon-search" v-model="search" autocomplete />
-              <div class="money">
-                <p class="inb m0">
-                  <span>我的DKP: <span class="price">
-                    {{currentUser.dkp_score ? currentUser.dkp_score.sum : 0}}
-                  </span></span>
-                  <span class="ml15">我的铜钱: <span class="price">{{currentUser.gold || 0}}W</span></span>
-                </p>
-              </div>
+        :class="currentUser.role"
+      >
+        <el-tab-pane name="ALL" label="所有商品">
+          <div class="search-wrapper">
+            <el-input
+              class="search"
+              placeholder="请输入内容"
+              prefix-icon="el-icon-search"
+              v-model="search"
+              autocomplete
+            />
+            <div class="money">
+              <p class="inb m0">
+                <span
+                  >我的DKP:
+                  <span class="price">
+                    {{ currentUser.dkp_score ? currentUser.dkp_score.sum : 0 }}
+                  </span></span
+                >
+                <span class="ml15"
+                  >我的铜钱: <span class="price">{{ currentUser.gold || 0 }}W</span></span
+                >
+              </p>
             </div>
-            <div class="all-goods-wrapper mt15">
-              <div class="good-wrapper" v-for="(g, i) in source" :key="i" @click="lookUpGoodInfo(g)">
-                <el-card :body-style="cardBorderStyle">
-                  <div class="image-wrapper">
-                    <el-image fit="contain" class="good-image" :src="g.image_url" :lazy="false" />
-                  </div>
-                  <div class="info-wrapper">
-                    <p class="field" v-if="g.countdown > 0 && g.status === 1">
-                      <countdown :time="g.countdown" class="countdown" :interval="1000">
-                        <template slot-scope="props">
-                          <span class="countdown-time">{{props.days}}</span> 天
-                          <span class="countdown-time">{{props.hours}}</span> 时
-                          <span class="countdown-time">{{props.minutes}}</span> 分
-                          <span class="countdown-time">{{props.seconds}}</span> 秒
-                        </template>
-                      </countdown>
-                    </p>
-                    <p class="title mb5 mt0">{{g.good_name}}</p>
-                    <div class="fields-wrapper">
-                      <p class="field">
-                        {{CHI_SIMS['min_price']}}:
-                        <span class="value price">{{g.min_price}}</span></p>
-                      <p class="field">
-                        {{CHI_SIMS['range_price']}}:
-                        <span class="value price">{{g.range_price}}</span></p>
-                      <p class="field">
-                        {{CHI_SIMS['au_type']}}:
-                        <span class="value value-blue">{{g.au_type}}</span></p>
+          </div>
+          <div class="all-goods-wrapper mt15">
+            <div class="good-wrapper" v-for="(g, i) in source" :key="i" @click="lookUpGoodInfo(g)">
+              <el-card :body-style="cardBorderStyle">
+                <div class="image-wrapper">
+                  <el-image fit="contain" class="good-image" :src="g.image_url" :lazy="false" />
+                </div>
+                <div class="info-wrapper">
+                  <p class="field" v-if="g.countdown > 0 && g.status === 1">
+                    <countdown :time="g.countdown" class="countdown" :interval="1000">
+                      <template slot-scope="props">
+                        <span class="countdown-time">{{ props.days }}</span> 天
+                        <span class="countdown-time">{{ props.hours }}</span> 时
+                        <span class="countdown-time">{{ props.minutes }}</span> 分
+                        <span class="countdown-time">{{ props.seconds }}</span> 秒
+                      </template>
+                    </countdown>
+                  </p>
+                  <p class="title mb5 mt0">{{ g.good_name }}</p>
+                  <div class="fields-wrapper">
+                    <p class="field">
+                      {{ CHI_SIMS['min_price'] }}:
+                      <span class="value price">{{ g.min_price }}</span></p
+                    >
+                    <p class="field">
+                      {{ CHI_SIMS['range_price'] }}:
+                      <span class="value price">{{ g.range_price }}</span></p
+                    >
+                    <p class="field">
+                      {{ CHI_SIMS['au_type'] }}:
+                      <span class="value value-blue">{{ g.au_type }}</span></p
+                    >
 
-                      <p class="field mt5">
-                        <span v-if="g.status !== 2">当前价格: </span>
-                        <span v-if="g.status === 2">最终价格: </span>
-                        <span class="value price">{{g.current_price}} {{g.au_type === 'DKP' ? '' : 'W'}}</span></p>
-                      <p class="field">
-                        <span v-if="g.status !== 2">当前竞拍者: </span>
-                        <span v-if="g.status === 2">最终竞拍者: </span>
-                        <span class="value value-blue">
-                          {{g.current_payer ? g.current_payer.game_name : '无'}}
-                        </span>
-                      </p>
-                    </div>
-                    <div class="bottom mt15 mb10" :class="getStyle(g.status)">
-                      <font-awesome-icon icon="fire-alt" class="icon"></font-awesome-icon>
-                      <span class="ml10">{{STATUS_TEXTS[g.status]}}</span>
-                    </div>
+                    <p class="field mt5">
+                      <span v-if="g.status !== 2">当前价格: </span>
+                      <span v-if="g.status === 2">最终价格: </span>
+                      <span class="value price"
+                        >{{ g.current_price }} {{ g.au_type === 'DKP' ? '' : 'W' }}</span
+                      ></p
+                    >
+                    <p class="field">
+                      <span v-if="g.status !== 2">当前竞拍者: </span>
+                      <span v-if="g.status === 2">最终竞拍者: </span>
+                      <span class="value value-blue">
+                        {{ g.current_payer ? g.current_payer.game_name : '无' }}
+                      </span>
+                    </p>
                   </div>
-                </el-card>
-              </div>
+                  <div class="bottom mt15 mb10" :class="getStyle(g.status)">
+                    <font-awesome-icon icon="fire-alt" class="icon"></font-awesome-icon>
+                    <span class="ml10">{{ STATUS_TEXTS[g.status] }}</span>
+                  </div>
+                </div>
+              </el-card>
             </div>
-            <div class="no-data tac" v-if="!source.length">
-              <h4>
-                <font-awesome-icon icon="exclamation-circle" class="icon mr10"></font-awesome-icon>
-                目前没有竞拍的商品, 等待管理上架
-              </h4>
-            </div>
-            <el-dialog
-              :width="auctionModalWidth"
-              :title="auctionModalTitle"
-              :visible="showModal"
-              @close="onGoodAucationCancel">
-              <GoodDetails :good="viewedGood" :onDeleteGood="onDeleteGood"></GoodDetails>
-              <div slot="footer" class="dialog-footer mt15"></div>
-            </el-dialog>
-            <image-preloader
-              :srcs="imageUrls.length === 0 ? [currentUser.avatar] : imageUrls"
-              @loaded-all="allImagesLoaded" />
-          </el-tab-pane>
-          <el-tab-pane name="ADD" label="上架商品" v-if="isAdmin">
-            <AuctionAdd />
-          </el-tab-pane>
+          </div>
+          <div class="no-data tac" v-if="!source.length">
+            <h4>
+              <font-awesome-icon icon="exclamation-circle" class="icon mr10"></font-awesome-icon>
+              目前没有竞拍的商品, 等待管理上架
+            </h4>
+          </div>
+          <el-dialog
+            :width="auctionModalWidth"
+            :title="auctionModalTitle"
+            :visible="showModal"
+            @close="onGoodAucationCancel"
+          >
+            <GoodDetails :good="viewedGood" :onDeleteGood="onDeleteGood"></GoodDetails>
+            <div slot="footer" class="dialog-footer mt15"></div>
+          </el-dialog>
+          <image-preloader
+            :srcs="imageUrls.length === 0 ? [currentUser.avatar] : imageUrls"
+            @loaded-all="allImagesLoaded"
+          />
+        </el-tab-pane>
+        <el-tab-pane name="ADD" label="上架商品" v-if="isAdmin">
+          <AuctionAdd />
+        </el-tab-pane>
       </el-tabs>
     </section>
   </Layout>
@@ -138,19 +158,21 @@ export default {
     },
 
     onDeleteGood(gId) {
-      this.$confirm('确定要关闭竞拍吗? 关闭竞拍这个商品会被删除', '提示',{
+      this.$confirm('确定要关闭竞拍吗? 关闭竞拍这个商品会被删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        center: true
-      }).then(() => {
-        this.deleteGood(gId)
-          .then(() => {
-            this.showModal = false
-            this.$message(MESSAGE_TYPES.SUCCESS)
-          })
-          .catch(() => this.$message(MESSAGE_TYPES.ERROR))
-      }).catch(() => {})
+        center: true,
+      })
+        .then(() => {
+          this.deleteGood(gId)
+            .then(() => {
+              this.showModal = false
+              this.$message(MESSAGE_TYPES.SUCCESS)
+            })
+            .catch(() => this.$message(MESSAGE_TYPES.ERROR))
+        })
+        .catch(() => {})
     },
 
     allImagesLoaded() {
@@ -159,7 +181,7 @@ export default {
 
     onGoodTabClick(tab) {
       this.updateGoodTab(tab.name)
-    }
+    },
   },
 
   computed: {
@@ -168,24 +190,24 @@ export default {
 
     ...mapState('auth', {
       currentUser: (state) => state.currentUser,
-      isAdmin: (state) => state.isAdmin(),
-      isLookedAdmin: (state) => state.isLookedAdmin()
+      isAdmin: (state) => state.isAdmin,
+      isLookedAdmin: (state) => state.isLookedAdmin,
     }),
     source() {
-      const filtereds = this.goods.filter(
-        (g) => g.good_name.includes(this.search)
-      )
-      return filtereds.map(good => {
-        const now = new Date().getTime()
-        const started = new Date(good.started_at).getTime()
-        return Object.assign({}, good, { countdown: started - now })
-      }).sort((a, b) => {
-        const aOrder = a.status === 1 ? 2 : (a.status === 0 ? 1 : 0)
-        const bOrder = b.status === 1 ? 2 : (b.status === 0 ? 1 : 0)
-        return bOrder - aOrder
-      })
-    }
-  }
+      const filtereds = this.goods.filter((g) => g.good_name.includes(this.search))
+      return filtereds
+        .map((good) => {
+          const now = new Date().getTime()
+          const started = new Date(good.started_at).getTime()
+          return Object.assign({}, good, { countdown: started - now })
+        })
+        .sort((a, b) => {
+          const aOrder = a.status === 1 ? 2 : a.status === 0 ? 1 : 0
+          const bOrder = b.status === 1 ? 2 : b.status === 0 ? 1 : 0
+          return bOrder - aOrder
+        })
+    },
+  },
 }
 </script>
 
@@ -293,7 +315,7 @@ export default {
 }
 
 .auction-will {
-  color: #E6A23C;
+  color: #e6a23c;
   font-weight: 600;
 }
 

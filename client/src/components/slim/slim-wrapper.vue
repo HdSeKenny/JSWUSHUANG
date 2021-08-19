@@ -8,10 +8,9 @@
 import Slim from './slim.vue'
 
 // called when slim has initialized
-function slimInit (data, slim) {
+function slimInit(data, slim) {
   // slim instance reference
   // console.log(slim)
-
   // current slim data object and slim reference
   // console.log(data)
 }
@@ -29,30 +28,33 @@ function slimInit (data, slim) {
 //   // console.log(progress, success, failure)
 // }
 
-function didSave(data) {
-  
-}
+function didSave(data) {}
 
 export default {
   name: 'slim-wrapper',
   components: {
-    'slim-cropper': Slim
+    'slim-cropper': Slim,
   },
   props: {
     imageDidLoad: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
+    label: {
+      type: String,
+      default: '点击或者拖动上传图片',
+    },
   },
-  data () {
+  data(props) {
     return {
       slimOptions: {
         ratio: '1:1',
         // service: slimService,
         didInit: slimInit,
         didSave: didSave,
-        didLoad: this.didLoad
-      }
+        didLoad: this.didLoad,
+        label: props.label,
+      },
     }
   },
   methods: {
@@ -61,9 +63,7 @@ export default {
         this.imageDidLoad(file, image)
       }
       return true
-    }
-  }
+    },
+  },
 }
 </script>
-
-

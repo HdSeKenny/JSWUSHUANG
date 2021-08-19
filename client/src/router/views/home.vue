@@ -4,65 +4,52 @@
       <el-tabs
         @tab-click="onHomeTabClick"
         :value="homeTab"
-        :type="isAdmin || isLookedAdmin ? 'border-card' : ''"
+        type="border-card"
         :class="currentUser.role"
+        class="left-tab"
       >
-        <el-tab-pane name="ALL" label="所有数据">
-          <DKPList :DKPData="DKPData" v-if="isAdmin || isLookedAdmin" />
-          <div v-else>
-            <div class="list">
-              <div class="user-info">
-                <div class="field mt15">
-                  <p class="mt0 mb0 mr15 inb">
-                    <span class="bold">游戏名: </span>
-                    <span class="value-blue">{{ currentUser.game_name }}</span>
-                  </p>
-                  <p class="mt0 mb0 mr15 inb">
-                    <span class="bold">游戏ID: </span>
-                    <span class="value-blue">{{ currentUser.game_id }}</span>
-                  </p>
-                  <p class="mt0 mb0 mr15 inb">
-                    <span class="bold">职业: </span>
-                    <span class="value-blue">{{ currentUser.profession }}</span>
-                  </p>
-                  <p class="mt0 mb0 mr15 inb">
-                    <span class="bold">帮会: </span>
-                    <span class="value-blue">
-                      {{
-                        currentUser.dkp_score ? currentUser.dkp_score.gang : ''
-                      }}
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div class="dkp-info">
-                <DKPList :DKPData="DKPData"></DKPList>
-              </div>
-              <div class="dkp-history">
-                <el-button type="text" class="value-blue"
-                  >DKP历史记录</el-button
-                >
-                <DKPHistory :histories="currentUserHistories" />
-              </div>
-              <div class="auction-history">
-                <el-button type="text" class="value-blue">竞拍记录</el-button>
-                <AuctionHistory :orders="currentUser.orders" />
+        <el-tab-pane name="ALL" label="DKP信息" :lazy="true">
+          <DKPList :DKPData="DKPData" v-if="!isUser" />
+          <div class="list" v-else>
+            <div class="user-info">
+              <div class="field">
+                <p class="mt0 mb0 mr15 inb">
+                  <span class="bold">游戏名: </span>
+                  <span class="value-blue">{{ currentUser.game_name }}</span>
+                </p>
+                <p class="mt0 mb0 mr15 inb">
+                  <span class="bold">游戏ID: </span>
+                  <span class="value-blue">{{ currentUser.game_id }}</span>
+                </p>
+                <p class="mt0 mb0 mr15 inb">
+                  <span class="bold">职业: </span>
+                  <span class="value-blue">{{ currentUser.profession }}</span>
+                </p>
+                <p class="mt0 mb0 mr15 inb">
+                  <span class="bold">帮会: </span>
+                  <span class="value-blue">
+                    {{ currentUser.dkp_score ? currentUser.dkp_score.gang : '' }}
+                  </span>
+                </p>
               </div>
             </div>
-            <div class="rigth-nav">
-              <div class="notice-info">
-                <p class="bold mb5"
-                  ><i class="el-icon-warning-outline mr5"></i>公告</p
-                >
-                <p class="mt0 mb5">{{ announcement }}</p>
-              </div>
-              <div class="recent-goods">
-                <el-button type="text" class="ftz18">最新上架</el-button>
-                <RecentGoods />
-              </div>
+            <div class="dkp-info mt10">
+              <DKPList :DKPData="DKPData"></DKPList>
             </div>
           </div>
         </el-tab-pane>
+        <template v-if="isUser">
+          <el-tab-pane name="DKP_HISTORY" label="DKP记录">
+            <div class="dkp-history">
+              <DKPHistory :histories="currentUserHistories" />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane name="AU_HISTORY" label="竞拍记录">
+            <div class="auction-history">
+              <AuctionHistory :orders="currentUser.orders" />
+            </div>
+          </el-tab-pane>
+        </template>
         <template v-if="isAdmin">
           <el-tab-pane name="DKPEDIT" label="导入数据">
             <DKPEdit :DKPData="DKPData"></DKPEdit>
@@ -72,6 +59,16 @@
           </el-tab-pane>
         </template>
       </el-tabs>
+      <div class="rigth-nav" v-if="isUser">
+        <div class="notice-info">
+          <p class="bold mb5"><i class="el-icon-warning-outline mr5"></i>公告</p>
+          <p class="mt0 mb5">{{ announcement }}</p>
+        </div>
+        <div class="recent-goods">
+          <el-button type="text bold" class="ftz18">最新上架</el-button>
+          <RecentGoods />
+        </div>
+      </div>
     </section>
   </Layout>
 </template>
@@ -98,6 +95,7 @@ export default {
   data() {
     return {
       loading: true,
+      listTab: 'LIST',
     }
   },
   created() {
@@ -116,13 +114,12 @@ export default {
       currentUser: (state) => state.currentUser,
       homeTab: (state) => state.homeTab,
       announcement: (state) => state.announcement,
-      isAdmin: (state) => state.isAdmin(),
-      isLookedAdmin: (state) => state.isLookedAdmin(),
+      isAdmin: (state) => state.isAdmin,
+      isLookedAdmin: (state) => state.isLookedAdmin,
+      isUser: (state) => state.isUser,
     }),
     currentUserHistories() {
-      const currentUserDkp = this.DKPData.find(
-        (dd) => dd.game_name === this.currentUser.game_name
-      )
+      const currentUserDkp = this.DKPData.find((dd) => dd.game_name === this.currentUser.game_name)
       return currentUserDkp ? currentUserDkp.histories || [] : []
     },
   },
@@ -173,24 +170,23 @@ export default {
 
 <style lang="scss">
 .home {
-  .list {
-    width: calc(100% - 300px);
-    background-color: #fff;
-    float: left;
+  // .el-tabs__content {
+  //   height: 603px;
+  // }
+  .left-tab {
+    &.user {
+      width: calc(100% - 300px);
+      float: left;
+    }
     .dkp-history,
     .auction-history {
       font-size: 14px;
-      padding: 0px 25px;
-      margin-top: 20px;
-      height: 220px;
-      overflow: auto;
     }
     .user-info {
       font-size: 16px;
-      padding: 15px;
     }
     .dkp-history {
-      height: 225px;
+      height: 583px;
     }
   }
   .rigth-nav {
@@ -207,7 +203,12 @@ export default {
     }
     .notice-info {
       font-size: 14px;
+      height: 204px;
     }
+  }
+
+  .el-tabs {
+    background: $transparent-seven-color;
   }
 }
 </style>

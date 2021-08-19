@@ -9,67 +9,101 @@
           <button class="menubar__button" @click="commands.redo">
             <icon name="redo" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.bold() }" @click="commands.bold">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.bold() }"
+            @click="commands.bold"
+          >
             <icon name="bold" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.italic() }" @click="commands.italic">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.italic() }"
+            @click="commands.italic"
+          >
             <icon name="italic" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.strike() }" @click="commands.strike">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.strike() }"
+            @click="commands.strike"
+          >
             <icon name="strike" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.underline() }" @click="commands.underline">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.underline() }"
+            @click="commands.underline"
+          >
             <icon name="underline" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.code() }" @click="commands.code">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.code() }"
+            @click="commands.code"
+          >
             <icon name="code" />
           </button>
-          <button class="menubar__button"
-            :class="{ 'is-active': isActive.paragraph() }" @click="commands.paragraph">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.paragraph() }"
+            @click="commands.paragraph"
+          >
             <icon name="paragraph" />
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-            @click="commands.heading({ level: 1 })">
+            @click="commands.heading({ level: 1 })"
+          >
             H1
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-            @click="commands.heading({ level: 2 })">
+            @click="commands.heading({ level: 2 })"
+          >
             H2
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-            @click="commands.heading({ level: 3 })">
+            @click="commands.heading({ level: 3 })"
+          >
             H3
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.bullet_list() }"
-            @click="commands.bullet_list">
+            @click="commands.bullet_list"
+          >
             <icon name="ul" />
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.ordered_list() }"
-            @click="commands.ordered_list">
+            @click="commands.ordered_list"
+          >
             <icon name="ol" />
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.blockquote() }"
-            @click="commands.blockquote">
+            @click="commands.blockquote"
+          >
             <icon name="quote" />
           </button>
-          <button class="menubar__button"
+          <button
+            class="menubar__button"
             :class="{ 'is-active': isActive.code_block() }"
-            @click="commands.code_block">
+            @click="commands.code_block"
+          >
             <icon name="code" />
           </button>
-          <button class="menubar__button"
-            @click="commands.createTable({ rowsCount: 3, colsCount: 3, withHeaderRow: false })">
+          <button
+            class="menubar__button"
+            @click="commands.createTable({ rowsCount: 3, colsCount: 3, withHeaderRow: false })"
+          >
             <icon name="table" />
           </button>
           <span v-if="isActive.table()">
@@ -149,7 +183,7 @@ export default {
     },
     onUpdateEditorHtmlStr: {
       type: Function,
-    }
+    },
   },
 
   data(props) {
@@ -184,7 +218,9 @@ export default {
         onUpdate: ({ state, getHTML, getJSON, transaction }) => {
           const htmlStr = getHTML()
           const jsonObj = getJSON()
-          const textStrWithNoFormat = jsonObj.content.map(joc => joc.content ? joc.content[0].text : '').join(' ')
+          const textStrWithNoFormat = jsonObj.content
+            .map((joc) => (joc.content ? joc.content[0].text : ''))
+            .join(' ')
           props.onUpdateEditorHtmlStr(htmlStr, textStrWithNoFormat)
           // console.log(state, transaction)
           // console.log(getHTML(), getJSON())
@@ -217,7 +253,7 @@ export default {
   max-width: unset;
   padding: 20px;
   margin: 0;
-  border: 1px solid #ebeef5;
+  border: 2px solid #ebeef5;
   &.readonly {
     padding: 0;
     border: none;

@@ -5,7 +5,7 @@ module.exports = {
   htmlWhitespaceSensitivity: 'strict',
   jsxBracketSameLine: false,
   jsxSingleQuote: true,
-  printWidth: 80,
+  printWidth: 100,
   proseWrap: 'never',
   quoteProps: 'as-needed',
   semi: false,
@@ -13,5 +13,5 @@ module.exports = {
   tabWidth: 2,
   trailingComma: 'es5',
   useTabs: false,
-  vueIndentScriptAndStyle: false
+  vueIndentScriptAndStyle: false,
 }

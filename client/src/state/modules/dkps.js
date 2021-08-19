@@ -25,9 +25,7 @@ export const getters = {
 
 export const mutations = {
   GET_DKP_DATA_SUCCESS(state, newVal) {
-    state.DKPData = newVal.sort(
-      (a, b) => new Date(b.updated) - new Date(a.updated)
-    )
+    state.DKPData = newVal.sort((a, b) => new Date(b.updated) - new Date(a.updated))
     saveState(STOREKEYS.DKPS, state.DKPData)
   },
   IMPORT_DKP_DATA_SUCCESS(state, newVal) {
@@ -37,18 +35,14 @@ export const mutations = {
   UPDATE_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = state.DKPData.filter((d) => d.game_id !== newVal.game_id)
     state.DKPData.push(newVal)
-    state.DKPData = state.DKPData.sort(
-      (a, b) => new Date(b.updated) - new Date(a.updated)
-    )
+    state.DKPData = state.DKPData.sort((a, b) => new Date(b.updated) - new Date(a.updated))
     saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   UPDATE_MANY_DKP_SUCCESS(state, newVal) {
     const gameIds = newVal.map((nv) => nv.game_id)
     const temp = state.DKPData.filter((d) => !gameIds.includes(d.game_id))
-    const newDKPData = temp
-      .concat(newVal)
-      .sort((a, b) => new Date(b.updated) - new Date(a.updated))
+    const newDKPData = temp.concat(newVal).sort((a, b) => new Date(b.updated) - new Date(a.updated))
     state.DKPData = newDKPData
     saveState(STOREKEYS.DKPS, state.DKPData)
   },
@@ -73,24 +67,15 @@ export const mutations = {
       return
     }
 
-    const {
-      previous_price,
-      current_price,
-      previous_payer,
-      current_payer,
-    } = val.newStatusGood
+    const { previous_price, current_price, previous_payer, current_payer } = val.newStatusGood
     const isSamePayer = previous_payer._id === current_payer._id
-    const currentPayerDkp = state.DKPData.find(
-      (d) => current_payer.game_name === d.game_name
-    )
+    const currentPayerDkp = state.DKPData.find((d) => current_payer.game_name === d.game_name)
     const payment = currentPayerDkp.payment + current_price
     const sum = currentPayerDkp.sum - current_price
     Object.assign(currentPayerDkp, { payment, sum })
 
     if (!isSamePayer) {
-      const previousPayerDkp = state.DKPData.find(
-        (d) => previous_payer.game_name === d.game_name
-      )
+      const previousPayerDkp = state.DKPData.find((d) => previous_payer.game_name === d.game_name)
       const previousPayment = previousPayerDkp.payment - previous_price
       const previousSum = previousPayerDkp.sum + previous_price
       Object.assign(previousPayerDkp, {
@@ -150,9 +135,7 @@ export const actions = {
 
   updateDKPInfo({ commit, state, rootState }, params) {
     const { currentUser } = rootState.auth
-    const edittedDkp = state.DKPData.find(
-      (d) => d.game_id === params.edittedObj.game_id
-    )
+    const edittedDkp = state.DKPData.find((d) => d.game_id === params.edittedObj.game_id)
     return HttpRequest.post(`/api/dkps/${edittedDkp._id}/info`, {
       ...params,
       operator: currentUser._id,
@@ -232,7 +215,7 @@ export const actions = {
     commit(ACTIONS.CLEAR_DKP_DATA_SUCCESS)
   },
 
-  deleteDkp({ commit, state, rootState }, gameId) {
+  deleteDkp({ commit, state }, gameId) {
     const _dkp = state.DKPData.find((d) => d.game_id === gameId)
     return HttpRequest.delete(`/api/dkps/${_dkp._id}`)
       .then(() => {
@@ -245,13 +228,14 @@ export const actions = {
       )
   },
 
-  getMembersByOCR({ dispatch, state }, formData) {
+  getMembersByOCR({ state }, { formData, name }) {
     return HttpRequest.post('/api/ocr', formData, false, {
       'Content-Type': 'multipart/form-data',
     })
       .then((data) => {
+        if (name) return Promise.resolve()
+
         const members = []
-        console.log(JSON.stringify(data.words_result, null, 2))
         data.words_result.forEach((wr) => {
           const wdkp = state.DKPData.find((dp) => {
             let dkpChinese = dp.game_name.replace(CHINESE_REGEX, '')
@@ -264,9 +248,10 @@ export const actions = {
             })
 
             return (
-              !INVALID_CHARACTERS.includes(readableWords) &&
-              readableWords &&
-              dkpChinese.includes(readableWords)
+              dp.checked_name === ocrChinese ||
+              (!INVALID_CHARACTERS.includes(readableWords) &&
+                readableWords &&
+                dkpChinese.includes(readableWords))
             )
           })
           if (wdkp) {

@@ -7,16 +7,17 @@ export default [
     component: () => lazyLoadView(import('@views/home.vue')),
     meta: {
       authRequired: true,
+      // beforeResolve(routeTo, routeFrom, next) {},
     },
   },
-  // {
-  //   path: '/auction',
-  //   name: 'auction',
-  //   component: () => lazyLoadView(import('@views/auction.vue')),
-  //   meta: {
-  //     authRequired: true,
-  //   }
-  // },
+  {
+    path: '/auction',
+    name: 'auction',
+    component: () => lazyLoadView(import('@views/auction.vue')),
+    meta: {
+      authRequired: true,
+    },
+  },
   {
     path: '/settings',
     name: 'settings',
@@ -61,20 +62,21 @@ export default [
       },
     },
   },
-  // {
-  //   path: '/notice',
-  //   name: 'notice',
-  //   component: () => lazyLoadView(import('@views/notice.vue')),
-  //   meta: {
-  //     beforeResolve(routeTo, routeFrom, next) {
-  //       if (store.getters['auth/isAdmin']) {
-  //         next()
-  //       } else {
-  //         next({ name: 'home' })
-  //       }
-  //     }
-  //   }
-  // },
+  {
+    path: '/notice',
+    name: 'notice',
+    component: () => lazyLoadView(import('@views/notice.vue')),
+    meta: {
+      authRequired: true,
+      beforeResolve(routeTo, routeFrom, next) {
+        if (store.getters['auth/isAdmin']) {
+          next()
+        } else {
+          next({ name: 'home' })
+        }
+      },
+    },
+  },
   // {
   //   path: '/dkp-exchange',
   //   name: 'dkp-exchange',

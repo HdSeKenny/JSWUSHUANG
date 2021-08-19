@@ -1,26 +1,17 @@
 <template>
   <section class="dkp-list">
     <div class="table-wrapper">
-      <div class="search-wrapper mt15" v-if="isAdminLoggedIn">
+      <div class="search-wrapper" v-if="isAdminLoggedIn">
         <el-input
           class="search"
           :placeholder="searchHolder"
           prefix-icon="el-icon-search"
           v-model="search"
         ></el-input>
-        <el-button
-          class="fr ml10"
-          type="warning"
-          @click="onDownloadExcel"
-          size="medium"
+        <el-button class="fr ml10" type="warning" @click="onDownloadExcel" size="medium"
           >下载数据</el-button
         >
-        <el-button
-          class="fr"
-          type="primary"
-          @click="showAddNewDKP"
-          v-if="isAdmin"
-          size="medium"
+        <el-button class="fr" type="primary" @click="showAddNewDKP" v-if="isAdmin" size="medium"
           >增加dkp</el-button
         >
       </div>
@@ -44,11 +35,7 @@
         @current-change="onPageChange"
         v-if="isAdminLoggedIn">
       </el-pagination> -->
-      <el-dialog
-        title="增加DKP记录"
-        :visible.sync="newDKPVisible"
-        width="450px"
-      >
+      <el-dialog title="增加DKP记录" :visible.sync="newDKPVisible" width="450px">
         <el-form
           :model="newDKPForm"
           :rules="rules"
@@ -58,23 +45,13 @@
           @submit.prevent="onAddNewDKP"
         >
           <el-form-item label="游戏ID" prop="game_id">
-            <el-input
-              class="field-input"
-              v-model="newDKPForm.game_id"
-            ></el-input>
+            <el-input class="field-input" v-model="newDKPForm.game_id"></el-input>
           </el-form-item>
           <el-form-item label="游戏名" prop="game_name">
-            <el-input
-              class="field-input"
-              v-model="newDKPForm.game_name"
-            ></el-input>
+            <el-input class="field-input" v-model="newDKPForm.game_name"></el-input>
           </el-form-item>
           <el-form-item label="初始分">
-            <el-input
-              class="field-input"
-              v-model="newDKPForm.original"
-              type="number"
-            ></el-input>
+            <el-input class="field-input" v-model="newDKPForm.original" type="number"></el-input>
           </el-form-item>
           <el-form-item label="职业">
             <el-select v-model="newDKPForm.profession" class="field-input">
@@ -88,12 +65,7 @@
           </el-form-item>
           <el-form-item label="帮会名">
             <el-select v-model="newDKPForm.gang" class="field-input">
-              <el-option
-                v-for="p in GANGS"
-                :key="p"
-                :label="p"
-                :value="p"
-              ></el-option>
+              <el-option v-for="p in GANGS" :key="p" :label="p" :value="p"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="" v-if="error">
@@ -102,9 +74,9 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="newDKPVisible = false">取 消</el-button>
-          <el-button type="primary" @click="onAddNewDKP('newDKPForm')"
-            >更 新</el-button
-          >
+          <el-button type="primary" @click="onAddNewDKP('newDKPForm')">
+            更 新
+          </el-button>
         </span>
       </el-dialog>
     </div>
@@ -180,12 +152,8 @@ export default {
       }
 
       const filtered = this.DKPData.filter((td) => {
-        const nameInclude = td.game_name
-          ? td.game_name.includes(this.search)
-          : false
-        const idInclude = td.game_id
-          ? td.game_id.toString().includes(this.search)
-          : false
+        const nameInclude = td.game_name ? td.game_name.includes(this.search) : false
+        const idInclude = td.game_id ? td.game_id.toString().includes(this.search) : false
         return nameInclude || idInclude
       })
 
@@ -199,9 +167,7 @@ export default {
     },
 
     currentDkp() {
-      return this.DKPData.find(
-        (td) => td.game_id === this.currentUser.game_id.toString()
-      )
+      return this.DKPData.find((td) => td.game_id === this.currentUser.game_id.toString())
     },
   },
 
@@ -270,13 +236,10 @@ export default {
 
 <style lang="scss" scoped>
 .dkp-list {
-  background-color: #fff;
-  padding: 0 15px;
   .header {
     font-size: 15px;
     margin-top: 15px;
     padding: 0 15px;
-    background-color: #f4f4f5;
     border-radius: 5px;
     .field {
       line-height: 50px;

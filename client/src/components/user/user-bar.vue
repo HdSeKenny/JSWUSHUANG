@@ -16,7 +16,7 @@
     <el-menu :default-active="profileTab" class="menu-vertical tac" @select="onUserTabClick">
       <div class="tac inb user-avatar">
         <el-avatar :size="60" :src="user.avatar"></el-avatar>
-        <p class="mt5 mb5 bold">{{user.game_name}}</p>
+        <p class="mt5 mb5 bold">{{ user.game_name }}</p>
       </div>
       <el-menu-item index="INFO">
         <i class="el-icon-info"></i>
@@ -41,70 +41,70 @@ export default {
   name: 'user-bar',
   props: {
     user: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   methods: {
     updateProfileTab: authMethods.updateProfileTab,
     onUploadAvatar() {
       this.$message({
         message: '此功能还未完成',
-        type: 'info'
+        type: 'info',
       })
     },
     onUserTabClick(index) {
       this.updateProfileTab(index)
-    }
+    },
   },
   computed: {
-    ...authComputed
-  }
+    ...authComputed,
+  },
 }
 </script>
 
 <style lang="scss">
-  .user-bar {
+.user-bar {
+  height: 540px;
+  background-color: #fff;
+  .avatar {
+    margin: 60px 0 0 50px;
+    width: 80px;
+    padding: 1px;
+    background-color: rgb(255, 255, 255);
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+    }
+  }
+  .info {
+    font-size: 23px;
+    font-weight: 700;
+    margin: 80px 0 0 20px;
+    color: #fff;
+    display: inline-block;
+    vertical-align: top;
+    .profession {
+      font-size: 18px;
+    }
+  }
+  .menu-vertical {
     height: 540px;
+    border-right: none;
     background-color: #fff;
-    .avatar {
-      margin: 60px 0 0 50px;
-      width: 80px;
-      padding: 1px;
-      background-color: rgb(255,255,255);
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      &:hover {
-        cursor: pointer;
-        box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
-      }
+    .el-menu-item {
+      font-size: 17px;
+      font-weight: 500;
     }
-    .info {
-      font-size: 23px;
-      font-weight: 700;
-      margin: 80px 0 0 20px;
-      color: #fff;
-      display: inline-block;
-      vertical-align: top;
-      .profession {
-        font-size: 18px;
-      }
-    }
-    .menu-vertical {
-      height: 540px;
-      border-right: none;
-      background-color: #fff;
-      .el-menu-item {
-        font-size: 17px;
-        font-weight: 500;
-      }
-      .user-avatar {
-        margin: 30px 0;
-      }
+    .user-avatar {
+      margin: 30px 0;
     }
   }
+}
 
-  .el-popover--plain {
-    min-width: 0px;
-    padding: 8px 10px;
-  }
+.el-popover--plain {
+  min-width: 0px;
+  padding: 8px 10px;
+}
 </style>

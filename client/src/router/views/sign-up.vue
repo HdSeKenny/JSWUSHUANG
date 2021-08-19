@@ -1,6 +1,11 @@
 <template>
   <el-card shadow="never" class="signup-card" v-loading="loading">
-    <h4 class="theme-color bold m0">申请账户</h4>
+    <div class="apply bold m0 tac">
+      <img src="@assets/images/logo.png" alt="logo" width="170" />
+    </div>
+    <div class="already-has tar bold pointer" @click="signin">
+      登陆
+    </div>
     <p class="error" v-if="error">{{ error }}</p>
     <el-form
       :model="ruleForm"
@@ -11,7 +16,7 @@
       class="signup-form"
       @submit.prevent="tryToSignup"
     >
-      <el-form-item class="mb15" prop="gameId">
+      <el-form-item class="mb5" prop="gameId">
         <el-input
           :placeholder="CHI_SIMS.enter_game_id"
           v-model="ruleForm.gameId"
@@ -22,7 +27,29 @@
           autofocus
         />
       </el-form-item>
-      <el-form-item class="mb15" prop="password">
+      <el-form-item class="mb5" prop="gameName">
+        <el-input
+          placeholder="请输入游戏名称"
+          v-model="ruleForm.gameName"
+          prefix-icon="el-icon-user"
+          name="gameName"
+          type="string"
+          autocomplete="off"
+          autofocus
+        />
+      </el-form-item>
+      <el-form-item class="mb5" prop="wechat">
+        <el-input
+          placeholder="请输入微信号"
+          v-model="ruleForm.wechat"
+          prefix-icon="el-icon-user"
+          name="wechat"
+          type="string"
+          autocomplete="off"
+          autofocus
+        />
+      </el-form-item>
+      <el-form-item class="mb5" prop="password">
         <el-input
           :placeholder="CHI_SIMS.enter_password"
           v-model="ruleForm.password"
@@ -32,7 +59,7 @@
           autocomplete="nope"
         />
       </el-form-item>
-      <el-form-item class="mb15" prop="confirmPassword">
+      <el-form-item class="mb5" prop="confirmPassword">
         <el-input
           :placeholder="CHI_SIMS.enter_confirm_password"
           v-model="ruleForm.confirmPassword"
@@ -42,19 +69,10 @@
           autocomplete="off"
         />
       </el-form-item>
-      <div class="submit inb mt10">
-        <el-button
-          type="primary"
-          @click="tryToSignup('ruleForm')"
-          class="signup-btn bold"
-          >申请</el-button
-        >
-        <p class="already-has m0">
-          已经有账号,
-          <span class="create bold value-blue" @click="signin">
-            登陆
-          </span>
-        </p>
+      <div class="submit inb mt15">
+        <el-button type="primary" @click="tryToSignup('ruleForm')" class="signup-btn bold">
+          申请
+        </el-button>
       </div>
     </el-form>
   </el-card>
@@ -79,9 +97,10 @@ export default {
       CHI_SIMS,
       ruleForm: {
         gameId: null,
+        gameName: null,
+        wechat: null,
         password: null,
         confirmPassword: null,
-        profession: 'suimeng',
       },
       error: null,
       rules: {
@@ -89,6 +108,20 @@ export default {
           {
             required: true,
             message: CHI_SIMS.enter_game_id,
+            trigger: 'change',
+          },
+        ],
+        gameName: [
+          {
+            required: true,
+            message: '请输入游戏名称',
+            trigger: 'change',
+          },
+        ],
+        wechat: [
+          {
+            required: true,
+            message: '请输入微信号',
             trigger: 'change',
           },
         ],
@@ -134,6 +167,8 @@ export default {
           return this.signUp({
             game_id: this.ruleForm.gameId,
             password: this.ruleForm.password,
+            game_name: this.ruleForm.gameName,
+            wechat: this.ruleForm.wechat,
           })
             .then(() => {
               this.$message({
@@ -144,9 +179,10 @@ export default {
               })
               this.ruleForm = {
                 gameId: null,
+                gameName: null,
+                wechat: null,
                 password: null,
                 confirmPassword: null,
-                profession: 'suimeng',
               }
               this.loading = false
               this.$router.push({ name: 'login' })
@@ -171,13 +207,22 @@ export default {
 .signup-card {
   width: 360px;
   border: none;
+  background-color: $transparent-six-color;
+  .already-has {
+    color: $white-color;
+    width: 100%;
+    text-align: right;
+    font-size: 14px;
+    margin: -10px 5px 5px 0;
+    padding: 0 10px;
+  }
 }
 .signup-form {
   .el-input {
     margin: 5px 0;
   }
   .signup-btn {
-    width: 30%;
+    width: 100%;
   }
   .error {
     margin: 5px 0;
@@ -188,11 +233,6 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
-    .already-has {
-      width: 70%;
-      font-size: 16px;
-      text-align: right;
-    }
   }
   .proselection {
     width: 100%;

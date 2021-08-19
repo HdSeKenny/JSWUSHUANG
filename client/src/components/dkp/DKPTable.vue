@@ -1,5 +1,5 @@
 <template>
-  <div class="mb15">
+  <div class="">
     <vxe-table
       :data="tableData"
       :cell-style="getCellStyle"
@@ -8,9 +8,10 @@
       :lazy="true"
       border
       class="table"
-      max-height="600"
-      empty-text="0"
+      max-height="590"
+      empty-text="没有数据"
       size="small"
+      :resizable="true"
     >
       <vxe-table-column
         v-for="h in tableHeaders"
@@ -33,9 +34,7 @@
         v-if="includeUserAction"
       >
         <template slot-scope="scope">
-          <el-dropdown
-            @command="(command) => onDropDownClick(command, scope.row)"
-          >
+          <el-dropdown @command="(command) => onDropDownClick(command, scope.row)">
             <el-button v-if="isAdmin" type="primary" size="small" circle>
               <i class="el-icon-more"></i>
             </el-button>
@@ -57,24 +56,10 @@
         </template>
       </vxe-table-column>
     </vxe-table>
-    <el-dialog
-      :title="dialogTitle"
-      :visible.sync="dialogVisible"
-      width="40%"
-      v-loading="loading"
-    >
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="40%" v-loading="loading">
       <template v-if="dialogModel === 'EDIT'">
-        <el-alert
-          :title="notification"
-          type="info"
-          class="notification"
-          show-icon
-        ></el-alert>
-        <el-form
-          label-position="right"
-          label-width="80px"
-          class="dkp-form mt15"
-        >
+        <el-alert :title="notification" type="info" class="notification" show-icon></el-alert>
+        <el-form label-position="right" label-width="80px" class="dkp-form mt15">
           <el-form-item label="游戏ID:">
             <p>{{ edittedObj.game_id }}</p>
           </el-form-item>
@@ -116,9 +101,7 @@
         <template v-if="historyObj.histories && historyObj.histories.length">
           <DKPHistory :histories="historyObj.histories" />
         </template>
-        <template
-          v-if="!historyObj.histories || historyObj.histories.length === 0"
-        >
+        <template v-if="!historyObj.histories || historyObj.histories.length === 0">
           <div class="no-history">没有历史记录</div>
         </template>
       </template>
@@ -130,12 +113,7 @@
 import _ from 'lodash'
 import DKPHistory from '@components/dkp/DKPHistory.vue'
 import { DKP_HEADERS } from '@src/app.config'
-import {
-  authMethods,
-  DKPMethods,
-  DKPComputed,
-  authComputed,
-} from '@src/state/helpers'
+import { authMethods, DKPMethods, DKPComputed, authComputed } from '@src/state/helpers'
 
 export default {
   components: {
@@ -191,7 +169,6 @@ export default {
 
       headerStyle: {
         fontSize: '13px',
-        // fontWeight: '500'
       },
     }
   },
@@ -221,9 +198,7 @@ export default {
 
     getTableHeaders() {
       const defaultInvalid = ['_id', '__v', '_XID']
-      const _invalid = this.invalid
-        ? defaultInvalid.concat(this.invalid)
-        : defaultInvalid
+      const _invalid = this.invalid ? defaultInvalid.concat(this.invalid) : defaultInvalid
       return Object.keys(DKP_HEADERS)
         .filter((dsk) => !_invalid.includes(dsk))
         .map((dsk) => {
@@ -335,9 +310,7 @@ export default {
 
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       const isPayment = column.property === 'payment'
-      const isGameIdOrName = ['game_id', 'game_name', 'sum'].includes(
-        column.property
-      )
+      const isGameIdOrName = ['game_id', 'game_name', 'sum'].includes(column.property)
       const isGang = column.property === 'gang'
       const isOriginal = column.property === 'original'
 
@@ -423,9 +396,7 @@ export default {
 
     onListHistories(row) {
       if (this.isAdminLoggedIn) {
-        this.historyObj = this.DKPData.find(
-          (d) => d.game_name === row.game_name
-        )
+        this.historyObj = this.DKPData.find((d) => d.game_name === row.game_name)
       } else {
         this.historyObj = this.currentDkp
       }

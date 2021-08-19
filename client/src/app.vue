@@ -2,6 +2,7 @@
 import { mapState } from 'vuex'
 import appConfig from '@src/app.config'
 import GoodAuctionHandle from '@components/good/GoodAuctionHandle.vue'
+import loginBackgroundImage from '@assets/images/login-bg.jpeg'
 
 export default {
   page: {
@@ -30,6 +31,16 @@ export default {
   },
   components: {
     GoodAuctionHandle,
+  },
+  mounted() {
+    const _bg = document.createElement('img')
+    const _app = document.getElementById('app')
+    _bg.src = loginBackgroundImage
+    _bg.style.visibility = 'hidden'
+    _bg.onload = () => {
+      _app.style.backgroundImage = `url(${_bg.src})`
+      _bg.remove()
+    }
   },
 }
 </script>
@@ -64,7 +75,6 @@ export default {
 *::before,
 *::after {
   box-sizing: border-box;
-  user-select: none;
 }
 html,
 body {
@@ -81,17 +91,16 @@ body {
 #app {
   @extend %typography-small;
   height: 100%;
+  overflow: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .layout {
-  height: 100%;
   &.el-loading-parent--relative {
     overflow: hidden;
   }
 }
 
-// ===
-// Base element styles
-// ===
 a,
 a:visited {
   text-decoration: none;
@@ -123,12 +132,10 @@ h6 {
 }
 
 .page-content {
-  padding: 15px 60px;
-  // min-height: 700px;
+  padding: 0px 60px;
 }
 
 .container {
-  background: #fff;
   padding: 15px 25px;
 }
 
@@ -239,7 +246,7 @@ h6 {
 }
 
 .error {
-  color: $red-color;
+  color: $red-color !important;
 }
 
 .price {
@@ -283,16 +290,16 @@ h6 {
 
 // Element ui style overwrite ================= begin
 #nprogress {
-  width: 100%;
+  // width: 100%;
   // height: 100%;
-  position: relative;
-  z-index: 3;
-  .bar {
-    background: $theme-color;
-  }
-  .peg {
-    box-shadow: 0 0 10px $theme-color, 0 0 5px $theme-color;
-  }
+  // position: relative;
+  // z-index: 3;
+  // .bar {
+  //   background: $theme-color;
+  // }
+  // .peg {
+  //   box-shadow: 0 0 10px $theme-color, 0 0 5px $theme-color;
+  // }
   // .spinner-icon {
   //   top: 50%;
   //   left: 50%;
@@ -381,24 +388,66 @@ input[type='number'] {
   z-index: 4;
 }
 
-.user .el-tabs__header {
-  display: none;
-}
-
 .el-tabs--border-card,
 .el-tabs--top {
   .el-tabs__content {
-    max-height: 800px;
-    overflow-y: auto;
-    // background: #fff;
+    height: 700px;
+    padding: 20px 25px !important;
   }
+}
+
+.el-tabs__content {
+  padding: 20px;
+  background-color: $transparent-half-color;
 }
 
 .user-tabs,
 .auction {
   .user.el-tabs--top .el-tabs__content {
-    background: #fff;
     padding: 10px 15px;
   }
+}
+
+.login-page {
+  .el-input,
+  .el-input--prefix {
+    .el-input__inner {
+      border: 2px solid #fff;
+      color: $white-color;
+      &::placeholder {
+        color: $white-color;
+      }
+    }
+    .el-input__icon {
+      color: $white-color;
+    }
+  }
+}
+
+.el-input,
+.el-input--prefix {
+  .el-input__inner {
+    background: $transparent-six-color;
+    border: 2px solid $border-color;
+  }
+}
+
+.el-tabs__item {
+  &.is-top {
+    font-weight: bold;
+    outline: none;
+  }
+}
+
+.vxe-table--body-wrapper {
+  &.body--wrapper {
+    background: transparent;
+  }
+}
+
+.vxe-table--render-default.border--default .vxe-table--header-wrapper,
+.vxe-table--render-default.border--full .vxe-table--header-wrapper,
+.vxe-table--render-default.border--outer .vxe-table--header-wrapper {
+  background-color: $transparent-six-color;
 }
 </style>
