@@ -320,8 +320,8 @@ export default {
         this.dkpData = this.calculateImportAll(XLRowArr)
       } else if (this.editModel === 'importBatch') {
         const headerRowArr = Object.keys(XLRowArr[0])
-        const invalid = GAME_NAME_TITLES.some((t) => !headerRowArr.includes(t))
-        if (invalid) {
+        const valid = GAME_NAME_TITLES.some((t) => headerRowArr.includes(t))
+        if (!valid) {
           return this.$notify({
             title: '提示',
             message: '文件必须包含字段 "游戏ID" 或者 "游戏名称" 或者 "玩家"',
