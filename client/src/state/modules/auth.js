@@ -1,6 +1,5 @@
 import HttpRequest from '@state/request'
 import { ACTIONS } from '@state/constants'
-import { config } from '@src/app.config'
 import { getSavedState, saveState, clear } from './utils'
 
 const BASE_URL = '/api/users'
@@ -21,11 +20,11 @@ export const state = {
 
 export const mutations = {
   GET_CURRENT_USER_SUCCESS(state, newValue) {
-    state.currentUser = newValue
-    state.isRoot = newValue.role === 'root'
-    state.isAdmin = ['admin', 'root'].includes(newValue.role)
-    state.isLookedAdmin = newValue.role === 'looked_admin'
-    state.isUser = newValue.role === 'user'
+    state.currentUser = newValue || {}
+    state.isRoot = state.currentUser.role === 'root'
+    state.isAdmin = ['admin', 'root'].includes(state.currentUser.role)
+    state.isLookedAdmin = state.currentUser.role === 'looked_admin'
+    state.isUser = state.currentUser.role === 'user'
   },
 
   GET_TOKEN_SUCCESS(state, newValue) {
@@ -364,7 +363,7 @@ export const actions = {
   },
 
   downloadExcel({ state }) {
-    const downloadTarget = `${config.SERVER_API_BASE_URL}/api/dkps/all/download`
+    const downloadTarget = `${process.env.VUE_APP_SERVER_API_BASE_URL}/api/dkps/all/download`
     const url = `${downloadTarget}?access_token=${state._token}`
     // Create a HTML5 download link
     const a = document.createElement('a')

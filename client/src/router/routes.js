@@ -16,6 +16,7 @@ export default [
     component: () => lazyLoadView(import('@views/auction.vue')),
     meta: {
       authRequired: true,
+      // beforeResolve(routeTo, routeFrom, next) {},
     },
   },
   {

@@ -3,10 +3,7 @@
     <div class="apply bold m0 tac">
       <img src="@assets/images/logo.png" alt="logo" width="170" />
     </div>
-    <div class="already-has tar bold pointer" @click="signin">
-      登陆
-    </div>
-    <p class="error" v-if="error">{{ error }}</p>
+    <el-alert :title="error" type="error" v-if="error" class="mb10"> </el-alert>
     <el-form
       :model="ruleForm"
       status-icon
@@ -208,14 +205,6 @@ export default {
   width: 360px;
   border: none;
   background-color: $transparent-six-color;
-  .already-has {
-    color: $white-color;
-    width: 100%;
-    text-align: right;
-    font-size: 14px;
-    margin: -10px 5px 5px 0;
-    padding: 0 10px;
-  }
 }
 .signup-form {
   .el-input {

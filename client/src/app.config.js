@@ -1,8 +1,8 @@
 const app = {
-  name: '举世无双',
+  name: '江湖',
   url: 'www.jianghu.club',
   gangName: 'DKP系统',
-  GANGS: ['举世皆敌', '举世无双', '举世无敌', '举世风月', '举世至尊'],
+  GANGS: ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖寻梦'],
 }
 
 const CHI_SIMS = {
@@ -65,10 +65,10 @@ const DKP_HEADERS = {
     text: '职业',
     type: 'String',
   },
-  fighting_score: {
-    text: '总战力',
-    type: 'Number',
-  },
+  // fighting_score: {
+  //   text: '总战力',
+  //   type: 'Number',
+  // },
   gang: {
     text: '帮会',
     type: 'String',

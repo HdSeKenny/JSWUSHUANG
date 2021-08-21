@@ -7,9 +7,9 @@
     <div>
       <el-card shadow="never" class="login-card tac" v-if="showLogin">
         <img src="@assets/images/logo.png" alt="logo" width="170" />
-        <div class="no-account bold pointer" @click="signup">
+        <!-- <div class="no-account bold pointer" @click="signup">
           {{ chiSims.create_account }}
-        </div>
+        </div> -->
         <form class="login-form mt5" @submit.prevent="tryToLogIn">
           <el-input
             v-model="gameId"
@@ -27,7 +27,7 @@
             type="password"
             class="mt15"
           />
-          <p class="error" v-if="error">{{ error }}</p>
+          <el-alert :title="error" type="error" v-if="error"> </el-alert>
           <el-row class="signin mt5">
             <el-button type="primary" @click="tryToLogIn" class="login-btn bold">
               {{ chiSims.login }}
@@ -36,9 +36,16 @@
         </form>
       </el-card>
 
-      <template v-if="!showLogin">
+      <template v-else>
         <SignUp :onShowLogin="onShowLogin" />
       </template>
+
+      <div class="footer pointer" @click="signup" v-if="showLogin">
+        没有账户？点击注册
+      </div>
+      <div class="footer pointer" @click="onShowLogin" v-else>
+        已有账号？点击登录
+      </div>
     </div>
   </div>
 </template>
@@ -177,9 +184,10 @@ $login-card-margin: 10px auto;
   }
 
   .footer {
-    // width: $login-card-width;
-    // margin: $login-card-margin;
-    padding: 0px 0px 10px 0px;
+    color: $white-color;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
   }
 }
 </style>

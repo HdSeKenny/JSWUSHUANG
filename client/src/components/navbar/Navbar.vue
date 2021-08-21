@@ -100,7 +100,7 @@ export default {
     display: inline-block;
     user-select: none;
     float: left;
-    margin-right: 50px;
+    margin-right: 30px;
     &:hover {
       cursor: pointer;
     }
@@ -124,6 +124,7 @@ export default {
     font-weight: 500;
     height: 60px;
     line-height: 60px;
+    border-bottom: none;
     &.left {
       float: left;
     }

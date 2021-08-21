@@ -8,9 +8,8 @@
         :class="currentUser.role"
         class="left-tab"
       >
-        <el-tab-pane name="ALL" label="DKP信息" :lazy="true">
-          <DKPList :DKPData="DKPData" v-if="!isUser" />
-          <div class="list" v-else>
+        <el-tab-pane name="ALL" label="DKP信息">
+          <div class="list" v-if="isUser">
             <div class="user-info">
               <div class="field">
                 <p class="mt0 mb0 mr15 inb">
@@ -33,9 +32,9 @@
                 </p>
               </div>
             </div>
-            <div class="dkp-info mt10">
-              <DKPList :DKPData="DKPData"></DKPList>
-            </div>
+          </div>
+          <div class="dkp-info mt10">
+            <DKPList :DKPData="DKPData"></DKPList>
           </div>
         </el-tab-pane>
         <template v-if="isUser">

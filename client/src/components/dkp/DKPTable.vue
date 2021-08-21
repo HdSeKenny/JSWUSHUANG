@@ -6,12 +6,12 @@
       :header-cell-style="headerStyle"
       :stripe="true"
       :lazy="true"
-      border
+      :auto-resize="true"
       class="table"
       max-height="590"
       empty-text="没有数据"
       size="small"
-      :resizable="true"
+      border
     >
       <vxe-table-column
         v-for="h in tableHeaders"
@@ -31,7 +31,7 @@
         title="操作"
         :width="70"
         align="center"
-        v-if="includeUserAction"
+        v-if="isRoot"
       >
         <template slot-scope="scope">
           <el-dropdown @command="(command) => onDropDownClick(command, scope.row)">
@@ -226,6 +226,7 @@ export default {
             result.width = '115px'
           } else if (isProfession) {
             result.width = '50px'
+          } else {
           }
 
           return result
@@ -314,7 +315,9 @@ export default {
       const isGang = column.property === 'gang'
       const isOriginal = column.property === 'original'
 
-      let style = {}
+      let style = {
+        whiteSpace: 'nowrap',
+      }
       if (isPayment) {
         style = {
           color: 'red',
@@ -421,16 +424,14 @@ export default {
     },
 
     tableData() {
-      const tableHeaders = this.getTableHeaders()
       const tableData = this.data.map((u) => {
         const data = {}
-        tableHeaders.forEach((h) => {
+        this.tableHeaders.forEach((h) => {
           data[h.field] = u[h.field]
         })
         return data
       })
 
-      console.log(tableHeaders, this.data)
       return tableData
     },
   },

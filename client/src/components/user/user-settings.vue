@@ -1,5 +1,5 @@
 <template>
-  <section class="user-settings">
+  <section class="user-settings" v-loading="loading">
     <div class="left">
       <div class="ocr">
         <el-button type="text bold">
@@ -60,7 +60,7 @@ import { mapState } from 'vuex'
 import { authMethods, DKPMethods } from '@state/helpers'
 
 export default {
-  name: 'user-settings',
+  name: 'UserSettings',
 
   data() {
     return {
@@ -70,6 +70,7 @@ export default {
       editable: true,
       imageUrl: '',
       checkedName: '',
+      loading: false,
     }
   },
 
@@ -99,18 +100,17 @@ export default {
         this.getMembersByOCR({ formData: fd, name: this.currentUser.game_name })
           .then((data) => {
             this.loading = false
-
             this.$message({
               type: 'success',
               message: '校验成功',
             })
           })
-          .catch((err) => {
-            console.log(err)
+          .catch(() => {
             this.loading = false
+            this.imageUrl = null
             this.$message({
               type: 'error',
-              message: '校验时遇到错误',
+              message: '校验失败, 重新选择上传',
             })
           })
       }
@@ -168,7 +168,7 @@ export default {
 .user-settings {
   height: $tab-content-normal-height;
   overflow: auto;
-  padding: 0 20px;
+  // padding: 0 10px;
   display: flex;
   flex-wrap: wrap;
   .left,
@@ -182,7 +182,7 @@ export default {
     width: 400px;
   }
   .new-value {
-    width: 45%;
+    width: 195px;
     margin-top: 15px;
     display: inline-block;
   }

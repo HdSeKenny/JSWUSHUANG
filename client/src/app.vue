@@ -292,8 +292,8 @@ h6 {
 #nprogress {
   // width: 100%;
   // height: 100%;
-  // position: relative;
-  // z-index: 3;
+  position: relative;
+  z-index: 333333;
   // .bar {
   //   background: $theme-color;
   // }

@@ -9,7 +9,7 @@
       <el-tab-pane name="INFO" label="个人信息">
         <UserInfo :user="user" />
       </el-tab-pane>
-      <el-tab-pane name="SETTINGS" label="用户设置">
+      <el-tab-pane name="SETTINGS" label="名称校验">
         <UserSettings :user="user" />
       </el-tab-pane>
 
@@ -61,7 +61,7 @@ import UserInfo from './user-info.vue'
 import UserSettings from './user-settings.vue'
 
 export default {
-  name: 'user-tabs',
+  name: 'UserTabs',
   components: {
     UserInfo,
     UserSettings,

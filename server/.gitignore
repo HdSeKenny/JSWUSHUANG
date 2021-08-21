@@ -7,3 +7,7 @@ dist
 /server/config/local.env.js
 npm-debug.log
 coverage
+
+# Local Env Files
+.env.local
+.env.*.local

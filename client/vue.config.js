@@ -3,12 +3,7 @@ const appConfig = require('./src/app.config')
 
 require('dotenv').config()
 
-const {
-  SERVER_API_BASE_URL,
-  NODE_ENV,
-  CLIENT_DEV_HOST,
-  CLIENT_DEV_PORT,
-} = process.env
+const { VUE_APP_SERVER_API_BASE_URL, NODE_ENV, CLIENT_DEV_HOST, CLIENT_DEV_PORT } = process.env
 
 /** @type import('@vue/cli-service').ProjectOptions */
 const _allConfigs = {
@@ -19,11 +14,7 @@ const _allConfigs = {
       new SvgStore({
         prefix: 'icon--',
         svgoOptions: {
-          plugins: [
-            { cleanupIDs: false },
-            { collapseGroups: false },
-            { removeTitle: true },
-          ],
+          plugins: [{ cleanupIDs: false }, { collapseGroups: false }, { removeTitle: true }],
         },
       }),
     ],
@@ -44,9 +35,7 @@ const _allConfigs = {
     // Only enable performance hints for production builds,
     // outside of tests.
     config.performance.hints(
-      process.env.NODE_ENV === 'production' &&
-        !process.env.VUE_APP_TEST &&
-        'warning'
+      process.env.NODE_ENV === 'production' && !process.env.VUE_APP_TEST && 'warning'
     )
   },
 
@@ -77,12 +66,12 @@ const _allConfigs = {
     watchOptions: {
       poll: true,
     },
-    proxy: SERVER_API_BASE_URL,
+    proxy: VUE_APP_SERVER_API_BASE_URL,
   },
 }
 
-if (SERVER_API_BASE_URL && NODE_ENV === 'development') {
-  _allConfigs.devServer.proxy = SERVER_API_BASE_URL
+if (VUE_APP_SERVER_API_BASE_URL && NODE_ENV === 'development') {
+  _allConfigs.devServer.proxy = VUE_APP_SERVER_API_BASE_URL
 }
 
 module.exports = _allConfigs
