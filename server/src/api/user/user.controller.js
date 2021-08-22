@@ -424,12 +424,10 @@ export async function dealDkp(req, res) {
 }
 
 export async function setUserCheckedName(name, checkedName) {
-  console.log('setUserCheckedName')
   try {
     await User.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
-    await DKP.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
+    return await DKP.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
   } catch (error) {
-    console.log(error)
     handleError(error)
   }
 }

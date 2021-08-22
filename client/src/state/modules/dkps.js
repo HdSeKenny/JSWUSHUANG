@@ -62,6 +62,11 @@ export const mutations = {
     saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
+  CHECKED_NAME_SUCCESS(state, newVal) {
+    state.DKPData = [newVal.newDKP]
+    saveState(STOREKEYS.DKPS, state.DKPData)
+  },
+
   SOCKET_auction_receive(state, val) {
     if (val.newStatusGood.au_type !== 'DKP') {
       return
@@ -228,12 +233,15 @@ export const actions = {
       )
   },
 
-  getMembersByOCR({ state }, { formData, name }) {
+  getMembersByOCR({ state, commit }, { formData, name }) {
     return HttpRequest.post('/api/ocr', formData, false, {
       'Content-Type': 'multipart/form-data',
     })
       .then((data) => {
-        if (name) return Promise.resolve()
+        if (name) {
+          commit('CHECKED_NAME_SUCCESS', data)
+          return Promise.resolve()
+        }
 
         const members = []
         data.words_result.forEach((wr) => {

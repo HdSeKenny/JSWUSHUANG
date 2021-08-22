@@ -152,8 +152,8 @@ export function getImageWordsByOCR(req, res) {
                   return res.status(403).json({ message: '校验失败' })
                 }
 
-                await UserCtrl.setUserCheckedName(_name, checkedName)
-                return res.status(200).json()
+                const _dkp = await UserCtrl.setUserCheckedName(_name, checkedName)
+                return res.status(200).json({ newDKP: _dkp })
               }
 
               return res.status(200).json(_res.body)

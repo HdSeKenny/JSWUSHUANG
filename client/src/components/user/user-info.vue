@@ -1,11 +1,6 @@
 <template>
   <section class="user-info">
-    <div class="avatar-wrapper">
-      <el-button type="text bold">更新头像</el-button>
-      <SlimWrapper :imageDidLoad="imageDidLoad" label="上传头像" />
-      <el-button type="primary mt10" @click="onUploadAvatar">上传</el-button>
-    </div>
-    <div class="personal mt15">
+    <div class="personal">
       <el-button type="text bold">个人信息</el-button>
       <p class="field mt0 mb5">
         <span class="label">游戏ID: </span>
@@ -28,6 +23,11 @@
         <span class="value">{{ currentUser.email }}</span>
       </p>
     </div>
+    <div class="avatar-wrapper mt15">
+      <el-button type="text bold">更新头像</el-button>
+      <SlimWrapper :imageDidLoad="imageDidLoad" label="上传头像" />
+      <el-button type="primary mt10" @click="onUploadAvatar">上传</el-button>
+    </div>
   </section>
 </template>
 
@@ -36,10 +36,11 @@ import { mapActions, mapState } from 'vuex'
 import SlimWrapper from '@components/slim/slim-wrapper.vue'
 
 export default {
-  name: 'user-info',
+  name: 'UserInfo',
   props: {
     user: {
       type: Object,
+      default: () => {},
     },
   },
   data() {

@@ -8,12 +8,12 @@
           prefix-icon="el-icon-search"
           v-model="search"
         ></el-input>
-        <el-button class="fr ml10" type="warning" @click="onDownloadExcel" size="medium"
-          >下载数据</el-button
-        >
-        <el-button class="fr" type="primary" @click="showAddNewDKP" v-if="isAdmin" size="medium"
-          >增加dkp</el-button
-        >
+        <el-button class="fr ml10" type="warning" @click="onDownloadExcel" size="medium">
+          下载数据
+        </el-button>
+        <el-button class="fr" type="primary" @click="showAddNewDKP" v-if="isAdmin" size="medium">
+          增加dkp
+        </el-button>
       </div>
       <DKPTable
         :data="filtered"
@@ -26,15 +26,6 @@
         :invalid="isAdminLoggedIn || isLookedAdmin ? [] : defaultInvalid"
       >
       </DKPTable>
-      <!-- <el-pagination
-        background
-        layout="prev, pager, next"
-        class="tac mt15 mb15"
-        :page-size="pageSize"
-        :total="filterAndSized.filtered.length"
-        @current-change="onPageChange"
-        v-if="isAdminLoggedIn">
-      </el-pagination> -->
       <el-dialog title="增加DKP记录" :visible.sync="newDKPVisible" width="450px">
         <el-form
           :model="newDKPForm"

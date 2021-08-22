@@ -48,6 +48,9 @@
               <AuctionHistory :orders="currentUser.orders" />
             </div>
           </el-tab-pane>
+          <el-tab-pane name="NAME_CHECK" label="名称校验">
+            <NameCheck />
+          </el-tab-pane>
         </template>
         <template v-if="isAdmin">
           <el-tab-pane name="DKPEDIT" label="导入数据">
@@ -79,6 +82,7 @@ import DKPHistory from '@components/dkp/DKPHistory.vue'
 import AuctionHistory from '@components/good/AuctionHistory.vue'
 import RecentGoods from '@components/good/RecentGoods.vue'
 import DKPEdit from '@components/dkp/DKPEdit.vue'
+import NameCheck from '@components/dkp/NameCheck.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -90,6 +94,7 @@ export default {
     DKPHistory,
     AuctionHistory,
     RecentGoods,
+    NameCheck,
   },
   data() {
     return {
@@ -159,10 +164,6 @@ export default {
           })
         })
     },
-  },
-
-  mounted() {
-    // this.loading = false
   },
 }
 </script>

@@ -9,7 +9,7 @@
       <el-tab-pane name="INFO" label="个人信息">
         <UserInfo :user="user" />
       </el-tab-pane>
-      <el-tab-pane name="SETTINGS" label="名称校验">
+      <el-tab-pane name="SETTINGS" label="修改名称">
         <UserSettings :user="user" />
       </el-tab-pane>
 
