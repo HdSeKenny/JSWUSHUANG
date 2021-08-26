@@ -1,13 +1,7 @@
 <template>
   <Layout v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.6)">
     <section class="page-content home">
-      <el-tabs
-        @tab-click="onHomeTabClick"
-        :value="homeTab"
-        type="border-card"
-        :class="currentUser.role"
-        class="left-tab"
-      >
+      <el-tabs v-model="tab" type="border-card" :class="currentUser.role" class="left-tab">
         <el-tab-pane name="ALL" label="DKP信息">
           <div class="list" v-if="isUser">
             <div class="user-info">
@@ -99,7 +93,7 @@ export default {
   data() {
     return {
       loading: true,
-      listTab: 'LIST',
+      tab: 'ALL',
     }
   },
   created() {

@@ -1,13 +1,13 @@
 <template>
   <section class="dkp-edit" v-loading="loading">
-    <el-alert
-      :title="notification"
-      :description="description"
-      type="info"
-      class="notification"
-      show-icon
-    ></el-alert>
     <div class="dkp-info">
+      <el-alert
+        :title="notification"
+        :description="description"
+        type="info"
+        class="notification"
+        show-icon
+      ></el-alert>
       <el-form :model="dkpForm" label-position="left" label-width="80px" class="dkp-form">
         <el-form-item label="编辑模式" prop="members">
           <el-select v-model="editModel" placeholder="请选择参与的活动">
@@ -89,20 +89,44 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <div class="ocr-members" v-if="this.dkpForm.members.length">
-        <h5 class="mb10">识别出的人员名单 ({{ this.dkpForm.members.length }}):</h5>
-        <div class="memvers-wrapper">
-          <el-tag
-            v-for="(item, i) in dkpForm.members"
-            @close="onCloseOCRMember(item)"
-            :key="i"
-            effect="plain"
-            class="mr10 mb10"
-            closable
-            >{{ item.game_name }}</el-tag
-          >
-        </div>
-        <div class="memvers-wrapper mt15" v-if="invalidMembers.length">
+
+      <div class="data-grid" v-if="errMsg">
+        <p class="m0 error">* {{ errMsg }}</p>
+      </div>
+    </div>
+    <div class="tabs">
+      <el-tabs v-model="tab" class="tab p0" v-if="dkpForm.members.length">
+        <el-tab-pane name="RECOGNIZED" :label="`识别出的 (${dkpForm.members.length})`">
+          <!-- <h5 class="mb10">识别出的人员名单 ({{ dkpForm.members.length }}):</h5> -->
+          <div class="memvers-wrapper">
+            <el-tag
+              v-for="(item, i) in dkpForm.members"
+              @close="onCloseOCRMember(item)"
+              :key="i"
+              effect="plain"
+              class="mr10 mb10"
+              closable
+              >{{ item.game_name }}</el-tag
+            >
+          </div>
+          <div class="mt15">
+            <el-input
+              class="new-member-tag"
+              v-if="newMemberVisible"
+              v-model="newMemberValue"
+              ref="saveTagInput"
+              size="small"
+              @keyup.enter.native="handleNewMemberConfirm"
+              @blur="handleNewMemberConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showNewMemberInput">
+              + 添加
+            </el-button>
+          </div>
+        </el-tab-pane>
+
+        <el-tab-pane name="UN_RECOGNIZED" label="未识别出的" v-if="invalidMembers.length">
           <h5 class="mb5 mt5">未识别出的人员名单 ({{ invalidMembers.length }}):</h5>
           <el-tag
             v-for="(item, i) in invalidMembers"
@@ -110,28 +134,14 @@
             effect="plain"
             class="mr10 mb10"
             type="danger"
-            >{{ item.game_name }}</el-tag
           >
-        </div>
-        <div class="mt15">
-          <el-input
-            class="new-member-tag"
-            v-if="newMemberVisible"
-            v-model="newMemberValue"
-            ref="saveTagInput"
-            size="small"
-            @keyup.enter.native="handleNewMemberConfirm"
-            @blur="handleNewMemberConfirm"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showNewMemberInput"
-            >+ 添加</el-button
-          >
-        </div>
-      </div>
-      <div class="data-grid" v-if="errMsg">
-        <p class="m0 error">* {{ errMsg }}</p>
-      </div>
+            {{ item.game_name }}
+          </el-tag>
+        </el-tab-pane>
+        <el-tab-pane name="NAMES" label="数据">
+          {{ JSON.stringify(validWords, null, 2) }}
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </section>
 </template>
@@ -183,6 +193,7 @@ export default {
       newMemberVisible: false,
       newMemberValue: '',
       invalidMembers: [],
+      tab: 'RECOGNIZED',
     }
   },
 
@@ -533,11 +544,13 @@ export default {
 
 <style lang="scss">
 .dkp-edit {
-  padding: 0 15px;
+  display: flex;
   .notification {
+    width: 80%;
     margin-bottom: 20px;
   }
   .dkp-info {
+    width: 50%;
     .dkp-form {
       width: 330px;
       display: inline-block;
@@ -562,6 +575,13 @@ export default {
         max-height: 450px;
         overflow: auto;
       }
+    }
+  }
+  .tabs {
+    width: 50%;
+    .el-tabs--border-card .el-tabs__content,
+    .el-tabs--top .el-tabs__content {
+      padding: 0 !important;
     }
   }
   .dkp-form-note {

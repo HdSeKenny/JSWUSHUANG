@@ -15,51 +15,6 @@ const param = qs.stringify({
 const ACCESS_TOKEN_TARGET = `https://aip.baidubce.com/oauth/2.0/token?${param}`
 const OCR_BASE_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/webimage'
 
-// eslint-disable-next-line
-export const CHINESE_REGEX =
-  /[^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]]/g
-
-export const UNREADABLE_WORDS = {
-  雪穗: '雪穂',
-  卷耳兔: '巻耳兔',
-  笙零: '笙雩',
-  需米觉得不妥: '糯米觉得不妥',
-  北: '北笙',
-  人间客了: '人间客',
-  樱花少: '樱花',
-  难的大姐: '难哄的大姐',
-  膜: '腼腆',
-  到霉蛋陈平安: '倒霉蛋陈平安',
-  唐飞琛: '唐琛',
-  唐飞炎: '唐炎',
-  唐飞伟: '唐伟',
-  唐飞剑: '唐剑',
-  唐飞男: '唐男',
-  唐飞桥: '唐桥',
-  唐飞北: '唐北',
-  唐飞强: '唐强',
-  唐飞鑫: '唐鑫',
-  蓝池: '蓝沁',
-}
-
-export const UNREADABLE_CHARACTER = ['丶', '乀']
-
-export const INVALID_CHARACTERS = [
-  '一',
-  '二',
-  '三',
-  '四',
-  '五',
-  '六',
-  '七',
-  '八',
-  '九',
-  '连云寨',
-  '连云',
-  '云寨',
-  '连云赛',
-]
-
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, path.join(config.upload.target, '..', 'ocr'))
@@ -133,20 +88,8 @@ export function getImageWordsByOCR(req, res) {
               }
 
               if (_name) {
-                let checkedName = null
-                let original = _name.replace(CHINESE_REGEX, '')
-                _res.body.words_result.forEach((wr) => {
-                  let ocrChinese = wr.words.replace(CHINESE_REGEX, '')
-                  const readableWords = UNREADABLE_WORDS[ocrChinese] || ocrChinese
-                  UNREADABLE_CHARACTER.forEach((uc) => {
-                    ocrChinese = ocrChinese.replace(uc, '')
-                    original = original.replace(uc, '')
-                  })
-
-                  if (readableWords && !INVALID_CHARACTERS.includes(readableWords) && original.includes(ocrChinese)) {
-                    checkedName = ocrChinese
-                  }
-                })
+                const [chekced] = _res.body.words_result
+                const checkedName = chekced.words
 
                 if (!checkedName) {
                   return res.status(403).json({ message: '校验失败' })

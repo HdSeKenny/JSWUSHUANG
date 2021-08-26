@@ -105,33 +105,33 @@ export default {
           {
             required: true,
             message: CHI_SIMS.enter_game_id,
-            trigger: 'change',
+            trigger: 'blur',
           },
         ],
         gameName: [
           {
             required: true,
             message: '请输入游戏名称',
-            trigger: 'change',
+            trigger: 'blur',
           },
         ],
         wechat: [
           {
             required: true,
             message: '请输入微信号',
-            trigger: 'change',
+            trigger: 'blur',
           },
         ],
         password: [
           {
             required: true,
             message: CHI_SIMS.enter_password,
-            trigger: 'change',
+            trigger: 'blur',
           },
           {
             min: 6,
             message: CHI_SIMS.short_password,
-            trigger: 'change',
+            trigger: 'blur',
           },
         ],
         confirmPassword: [

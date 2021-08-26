@@ -68,11 +68,13 @@ export const UNREADABLE_WORDS = {
   唐飞强: '唐强',
   唐飞鑫: '唐鑫',
   蓝池: '蓝沁',
+
+  如果儿: '如果ル',
 }
 
-export const UNREADABLE_CHARACTER = ['丶', '乀']
+export const UNREADABLE_CHARACTER = ['丶', '乀', '丨', 'ち', 'ゃ', 'ん', '人', 'ル']
 
-export const INVALID_CHARACTERS = [
+export const FILTERED_CHARACTERS = [
   '一',
   '二',
   '三',
@@ -86,7 +88,13 @@ export const INVALID_CHARACTERS = [
   '连云',
   '云寨',
   '连云赛',
+  '连云寨(一',
+  '医庐(',
+  '医庐(一',
+  '医庐(一)',
+  '69',
 ]
+export const INVALID_CHARACTERS = ['69', '连云', '云寨', '连云寨', '医庐']
 
 export const MESSAGE_TYPES = {
   SUCCESS: {

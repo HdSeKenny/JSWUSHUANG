@@ -8,7 +8,7 @@ export const authComputed = {
     members: (state) => state.members,
     announcement: (state) => state.announcement,
   }),
-  ...mapGetters('auth', ['loggedIn', 'isAdmin', 'isLookedAdmin', 'isRoot'])
+  ...mapGetters('auth', ['loggedIn', 'isAdmin', 'isLookedAdmin', 'isRoot']),
 }
 
 export const goodComputed = {
@@ -17,22 +17,22 @@ export const goodComputed = {
     imageUrls: (state) => state.imageUrls,
     goodTab: (state) => state.goodTab,
   }),
-  ...mapGetters('goods', ['getGoods'])
+  ...mapGetters('goods', ['getGoods']),
 }
 
 export const DKPComputed = {
   ...mapState('dkps', {
     DKPData: (state) => state.DKPData,
+    validWords: (state) => state.validWords,
   }),
-  ...mapGetters('dkps', ['DKPData'])
+  ...mapGetters('dkps', ['DKPData']),
 }
-
 
 export const orderComputed = {
   ...mapState('orders', {
     orders: (state) => state.orders,
   }),
-  ...mapGetters('orders', [])
+  ...mapGetters('orders', []),
 }
 
 export const authMethods = mapActions('auth', [
@@ -72,10 +72,7 @@ export const DKPMethods = mapActions('dkps', [
   'deleteDkp',
   'getMembersByOCR',
   'createNewDKP',
-  'resetDKPAndUserInfo'
+  'resetDKPAndUserInfo',
 ])
 
-export const orderMethods = mapActions('orders', [
-  'fetchOrders',
-  'deleteOrder',
-])
+export const orderMethods = mapActions('orders', ['fetchOrders', 'deleteOrder'])

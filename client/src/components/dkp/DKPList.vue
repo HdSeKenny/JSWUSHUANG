@@ -1,5 +1,5 @@
 <template>
-  <section class="dkp-list">
+  <section class="dkp-list" v-loading="loading">
     <div class="table-wrapper">
       <div class="search-wrapper" v-if="isAdminLoggedIn">
         <el-input
@@ -98,7 +98,7 @@ export default {
         game_name: null,
         original: 0,
         profession: '碎梦',
-        gang: '半梦半醒半浮生',
+        gang: '江湖何处来',
       },
       PROFESSIONS,
       GANGS: app.GANGS,
@@ -119,6 +119,7 @@ export default {
         ],
       },
       error: '',
+      loading: true,
     }
   },
 
@@ -192,7 +193,7 @@ export default {
                 game_name: '',
                 original: 0,
                 profession: '碎梦',
-                gang: '半梦半醒半浮生',
+                gang: '江湖何处来',
               }
               this.loading = false
               this.newDKPVisible = false
@@ -221,6 +222,9 @@ export default {
           })
         })
     },
+  },
+  mounted() {
+    this.loading = false
   },
 }
 </script>

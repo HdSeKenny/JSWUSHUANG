@@ -2,7 +2,7 @@ const app = {
   name: '江湖',
   url: 'www.jianghu.club',
   gangName: 'DKP系统',
-  GANGS: ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖寻梦'],
+  GANGS: ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖知我意'],
 }
 
 const CHI_SIMS = {
@@ -58,7 +58,7 @@ const DKP_HEADERS = {
     type: 'String',
   },
   game_name: {
-    text: '名称',
+    text: '游戏名称',
     type: 'String',
   },
   profession: {

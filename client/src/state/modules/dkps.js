@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import HttpRequest from '@state/request'
 import {
+  FILTERED_CHARACTERS,
   ACTIONS,
   CHINESE_REGEX,
   UNREADABLE_WORDS,
@@ -17,6 +18,7 @@ const STOREKEYS = {
 
 export const state = {
   DKPData: [],
+  validWords: [],
 }
 
 export const getters = {
@@ -63,7 +65,7 @@ export const mutations = {
   },
 
   CHECKED_NAME_SUCCESS(state, newVal) {
-    state.DKPData = [newVal.newDKP]
+    state.DKPData = newVal.newDKP ? [newVal.newDKP] : []
     saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
@@ -91,6 +93,9 @@ export const mutations = {
   },
 
   RESET_DKP_INFO_SUCCESS() {},
+  SET_VALID_WORDS(state, validWords) {
+    state.validWords = validWords
+  },
 }
 
 export const actions = {
@@ -242,37 +247,53 @@ export const actions = {
           commit('CHECKED_NAME_SUCCESS', data)
           return Promise.resolve()
         }
-
+        console.log('initial', data)
+        const validWords = []
+        data.words_result.forEach((result) => {
+          const word = result.words
+          const invalid = INVALID_CHARACTERS.some((ic) => word.includes(ic))
+          const filtered = FILTERED_CHARACTERS.some((fc) => word === fc)
+          if (!invalid && !filtered) {
+            validWords.push(word)
+          }
+        })
+        console.log('validWords', validWords)
         const members = []
-        data.words_result.forEach((wr) => {
-          const wdkp = state.DKPData.find((dp) => {
-            let dkpChinese = dp.game_name.replace(CHINESE_REGEX, '')
-            let ocrChinese = wr.words.replace(CHINESE_REGEX, '')
-            const readableWords = UNREADABLE_WORDS[ocrChinese] || ocrChinese
+        validWords.forEach((word) => {
+          const dkpRecord = state.DKPData.find((record) => {
+            const { checked_name, game_name } = record
+            const isCheckedName = checked_name === word || (checked_name || '').includes(word)
+            const isGameName = game_name === word || game_name.includes(word)
+            if (isCheckedName || isGameName) return true
 
+            let ocrChinese = word.replace(CHINESE_REGEX, '')
+            const readableWord = UNREADABLE_WORDS[ocrChinese]
+            if (readableWord) {
+              return game_name === readableWord || game_name.includes(readableWord)
+            }
+
+            let dkpChinese = game_name.replace(CHINESE_REGEX, '')
             UNREADABLE_CHARACTER.forEach((uc) => {
               dkpChinese = dkpChinese.replace(uc, '')
               ocrChinese = ocrChinese.replace(uc, '')
             })
-
-            return (
-              dp.checked_name === ocrChinese ||
-              (!INVALID_CHARACTERS.includes(readableWords) &&
-                readableWords &&
-                dkpChinese.includes(readableWords))
-            )
+            return dkpChinese.includes(ocrChinese)
           })
-          if (wdkp) {
+
+          if (dkpRecord) {
             members.push({
-              game_id: wdkp.game_id,
-              game_name: wdkp.game_name,
+              game_id: dkpRecord.game_id,
+              game_name: dkpRecord.game_name,
             })
           }
         })
 
+        commit('SET_VALID_WORDS', validWords)
+
         return _.uniqBy(members, 'game_id')
       })
       .catch((err) => {
+        console.log(err)
         return Promise.reject(
           new Error({
             message: err.toString(),
