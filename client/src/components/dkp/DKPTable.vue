@@ -51,6 +51,9 @@
               <el-dropdown-item command="recover">
                 <i class="el-icon-refresh-left"></i> 恢复
               </el-dropdown-item>
+              <el-dropdown-item command="gang_admin">
+                <i class="el-icon-user"></i> 设管理
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -191,9 +194,31 @@ export default {
         case 'recover':
           this.onResetDKPAndUserInfo(row)
           break
+        case 'gang_admin':
+          this.setUserGangeAdmin(row)
+          break
         default:
           break
       }
+    },
+
+    setUserGangeAdmin(row) {
+      this.$confirm(`确定要将${row.game_name}设为帮会的管理员么?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true,
+      }).then(() => {
+        const dkp = this.DKPData.find((dd) => dd.game_name == row.game_name)
+        this.setGangAdmin(dkp.game_id).then(() => {
+          this.$notify({
+            title: '提示',
+            message: '删除成功!',
+            type: 'success',
+            duration: 3000,
+          })
+        })
+      })
     },
 
     getTableHeaders() {

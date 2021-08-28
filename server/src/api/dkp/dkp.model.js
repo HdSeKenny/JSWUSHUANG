@@ -49,6 +49,10 @@ const DKPSchema = new mongoose.Schema(
         ref: 'History',
       },
     ],
+    isGangAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { strict: false }
 )

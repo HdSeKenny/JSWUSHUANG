@@ -154,7 +154,6 @@ export default {
 
 <style lang="scss" scoped>
 .accounts {
-  padding: 20px;
   background-color: #fff;
   .announcement {
     display: block;

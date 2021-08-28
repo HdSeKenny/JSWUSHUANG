@@ -70,9 +70,31 @@ export const UNREADABLE_WORDS = {
   蓝池: '蓝沁',
 
   如果儿: '如果ル',
+  '鹿、寶': '鹿丶寳',
+  鹿寶: '鹿丶寳',
 }
 
-export const UNREADABLE_CHARACTER = ['丶', '乀', '丨', 'ち', 'ゃ', 'ん', '人', 'ル']
+export const UNREADABLE_CHARACTER = [
+  '丶',
+  '乀',
+  '丨',
+  'ち',
+  'ゃ',
+  'ん',
+  '人',
+  'ル',
+  '丿',
+  '灬',
+  '、',
+]
+
+const getLevels = () => {
+  const levels = []
+  for (let i = 60; i < 100; i++) {
+    levels.push(`${i}`)
+  }
+  return levels
+}
 
 export const FILTERED_CHARACTERS = [
   '一',
@@ -84,6 +106,7 @@ export const FILTERED_CHARACTERS = [
   '七',
   '八',
   '九',
+  '长',
   '连云寨',
   '连云',
   '云寨',
@@ -92,7 +115,7 @@ export const FILTERED_CHARACTERS = [
   '医庐(',
   '医庐(一',
   '医庐(一)',
-  '69',
+  ...getLevels(),
 ]
 export const INVALID_CHARACTERS = ['69', '连云', '云寨', '连云寨', '医庐']
 

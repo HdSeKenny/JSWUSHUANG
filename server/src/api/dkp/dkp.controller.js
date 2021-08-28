@@ -55,9 +55,7 @@ export function create(req, res) {
         message: '该DKP已经存在, 请勿重复添加',
       })
     }
-    return DKP.create(req.body)
-      .then(respondWithResult(res, 201))
-      .catch(handleError(res))
+    return DKP.create(req.body).then(respondWithResult(res, 201)).catch(handleError(res))
   })
 }
 
@@ -67,9 +65,7 @@ export function importAll(req, res) {
   })
 
   return DKP.deleteMany().then(() =>
-    DKP.insertMany(data)
-      .then(respondWithResult(res, 201))
-      .catch(handleError(res))
+    DKP.insertMany(data).then(respondWithResult(res, 201)).catch(handleError(res))
   )
 }
 
@@ -152,11 +148,7 @@ export function updateDKPInfo(req, res) {
       newDkp.histories = [newHistory._id]
     }
 
-    DKP.findOneAndUpdate(
-      { _id: newDkp._id },
-      { histories: newDkp.histories },
-      { new: true }
-    )
+    DKP.findOneAndUpdate({ _id: newDkp._id }, { histories: newDkp.histories }, { new: true })
       .populate({
         path: 'histories',
         populate: [
@@ -206,9 +198,7 @@ export function findManyAndUpdate(req, res) {
   return History.create(...req.body.histories)
     .then((newHistories) => {
       const updatePromises = req.body.newData.map((b) => {
-        const bHistory = newHistories.find(
-          (nh) => nh._doc.dkp.toString() === b.dkpId
-        )
+        const bHistory = newHistories.find((nh) => nh._doc.dkp.toString() === b.dkpId)
         if (!b.histories || !b.histories.length) {
           b.data.histories = [bHistory._doc._id]
         } else {
@@ -218,9 +208,7 @@ export function findManyAndUpdate(req, res) {
         b.data.updated = new Date()
         return findOneAndUpdatePromise({ game_id: b.game_id }, b.data)
       })
-      return Promise.all(updatePromises)
-        .then(respondWithResult(res))
-        .catch(handleError(res))
+      return Promise.all(updatePromises).then(respondWithResult(res)).catch(handleError(res))
     })
     .catch(handleError(res))
 }
@@ -252,22 +240,15 @@ export function downloadDKPExcel(req, res) {
 
       // create file 'in memory'
       const moment = new Date()
-      const filename = `${
-        moment.getMonth() + 1
-      }_${moment.getDate()}_${moment.getTime()}`
-      const wbout = Buffer.from(
-        XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' })
-      )
+      const filename = `${moment.getMonth() + 1}_${moment.getDate()}_${moment.getTime()}`
+      const wbout = Buffer.from(XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' }))
       const formateFileName = `dkps_${filename}.xlsx`
 
       res.setHeader(
         'Content-Type',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       )
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${formateFileName}`
-      )
+      res.setHeader('Content-Disposition', `attachment; filename=${formateFileName}`)
       res.send(wbout)
     })
     .catch(handleError(res))
@@ -293,4 +274,12 @@ export function resetDKPInfo(req, res) {
       .then(respondWithResult(res))
       .catch(handleError(res))
   })
+}
+
+export function setUserGangeAdmin(req, res) {
+  return DKP.findOneAndUpdate({ game_id: req.params.id }, { isGangAdmin: true }, { new: true })
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res))
 }

@@ -16,6 +16,14 @@ const STOREKEYS = {
   DKPS: 'DKP_DATA',
 }
 
+const getTheCorrentOne = (data, word) => {
+  const wordLengthArr = data.map((d) => d.game_name.length)
+  const distanceArr = wordLengthArr.map((wl) => wl - word.length)
+  const min = Math.min(...distanceArr)
+  const idx = distanceArr.findIndex((d) => d === min)
+  return data[idx]
+}
+
 export const state = {
   DKPData: [],
   validWords: [],
@@ -260,10 +268,32 @@ export const actions = {
         console.log('validWords', validWords)
         const members = []
         validWords.forEach((word) => {
+          const hasManyIncludes = state.DKPData.filter(
+            (d) => d.game_name !== word && d.checked_name !== word && d.game_name.includes(word)
+          )
+
+          if (word === '鹿、寶') {
+            console.log('hasManyIncludes', hasManyIncludes)
+          }
+
+          if (hasManyIncludes.length) {
+            let _member = hasManyIncludes[0]
+            if (hasManyIncludes.length > 1) {
+              _member = getTheCorrentOne(hasManyIncludes, word)
+            }
+
+            members.push({
+              game_id: _member.game_id,
+              game_name: _member.game_name,
+            })
+
+            return
+          }
+
           const dkpRecord = state.DKPData.find((record) => {
             const { checked_name, game_name } = record
-            const isCheckedName = checked_name === word || (checked_name || '').includes(word)
-            const isGameName = game_name === word || game_name.includes(word)
+            const isCheckedName = checked_name === word
+            const isGameName = game_name === word
             if (isCheckedName || isGameName) return true
 
             let ocrChinese = word.replace(CHINESE_REGEX, '')
@@ -319,6 +349,18 @@ export const actions = {
     return HttpRequest.post('/api/dkps/reset', params)
       .then((data) => {
         commit(ACTIONS.RESET_DKP_INFO_SUCCESS, data)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
+  },
+  setGangAdmin({ commit }, params) {
+    return HttpRequest.post(`/api/dkps/${params}/setAdmin`, params)
+      .then((data) => {
+        console.log(data)
+        commit(ACTIONS.UPDATE_DKP_DATA_SUCCESS, data)
       })
       .catch((error) =>
         Promise.reject({

@@ -36,14 +36,6 @@
               更新
             </el-button>
           </div>
-          <!-- <div>
-            <el-button type="text bold" class="pt0">
-              重置铜钱
-            </el-button>
-            <el-button class="mt10 mb10 ml0 disb" type="warning" size="small" @click="onAddGold">
-              每个人的铜钱会被重置为 100000 W
-            </el-button>
-          </div> -->
         </el-tab-pane>
       </el-tabs>
     </section>

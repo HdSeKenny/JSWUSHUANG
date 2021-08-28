@@ -24,9 +24,9 @@
                     {{ currentUser.dkp_score ? currentUser.dkp_score.sum : 0 }}
                   </span></span
                 >
-                <span class="ml15"
+                <!-- <span class="ml15"
                   >我的铜钱: <span class="price">{{ currentUser.gold || 0 }}W</span></span
-                >
+                > -->
               </p>
             </div>
           </div>

@@ -3,18 +3,19 @@
     <div class="status">
       <span :class="getStyle(item.status)">
         <font-awesome-icon icon="fire-alt" class="icon"></font-awesome-icon>
-        <span class="ml10">{{STATUS_TEXTS[item.status]}}</span>
+        <span class="ml10">{{ STATUS_TEXTS[item.status] }}</span>
       </span>
       <countdown
         v-if="item.status === 1 && _getTime(item.started_at) > 0"
         class="inb countdown ml15"
         :time="_getTime(item.started_at)"
-        :interval="1000">
+        :interval="1000"
+      >
         <template slot-scope="props">
           倒计时:
-          <span class="countdown-time">{{props.hours}}</span> h
-          <span class="countdown-time">{{props.minutes}}</span> m
-          <span class="countdown-time">{{props.seconds}}</span> s
+          <span class="countdown-time">{{ props.hours }}</span> h
+          <span class="countdown-time">{{ props.minutes }}</span> m
+          <span class="countdown-time">{{ props.seconds }}</span> s
         </template>
       </countdown>
     </div>
@@ -28,36 +29,42 @@
       ></el-image>
     </div>
     <div class="fields-wrapper">
-      <p class="title">{{item.good_name}}</p>
-      <p class="field">{{CHI_SIMS['min_price']}}:
-        <span class="value price">{{item.min_price}}</span></p>
-      <p class="field">{{CHI_SIMS['range_price']}}:
-        <span class="value price">{{item.range_price}}</span></p>
-      <p class="field">{{CHI_SIMS['au_type']}}:
-        <span class="value value-blue">{{item.au_type}}</span></p>
-      <p class="field">{{CHI_SIMS['created_at']}}:
-        <span class="value value-blue">{{_formatDate(item.created_at)}}</span>
+      <p class="title">{{ item.good_name }}</p>
+      <p class="field"
+        >{{ CHI_SIMS['min_price'] }}: <span class="value price">{{ item.min_price }}</span></p
+      >
+      <p class="field"
+        >{{ CHI_SIMS['range_price'] }}: <span class="value price">{{ item.range_price }}</span></p
+      >
+      <p class="field"
+        >{{ CHI_SIMS['au_type'] }}: <span class="value value-blue">{{ item.au_type }}</span></p
+      >
+      <p class="field"
+        >{{ CHI_SIMS['created_at'] }}:
+        <span class="value value-blue">{{ _formatDate(item.created_at) }}</span>
       </p>
     </div>
     <p class="admin-actions tal ml15" v-if="isAdmin">
-      <el-button type="primary" @click="onStartAuction" v-if="item.status === 0" size="small">开始竞拍</el-button>
-      <el-button type="warning" @click="onEndCurrentAuction" v-if="item.status === 1" size="small">停止竞拍</el-button>
-      <el-button type="danger" @click="onCloseCurrentAuction" v-if="item.status !== 2" size="small">关闭竞拍</el-button>
+      <!-- <el-button type="primary" @click="onStartAuction" v-if="item.status === 0" size="small">开始竞拍</el-button> -->
+      <!-- <el-button type="warning" @click="onEndCurrentAuction" v-if="item.status === 1" size="small">停止竞拍</el-button> -->
+      <!-- <el-button type="danger" @click="onCloseCurrentAuction" v-if="item.status !== 2" size="small">关闭竞拍</el-button> -->
     </p>
     <p class="mb5 ml15 auction-title" v-if="item.status === 1">
       <el-alert type="info" :closable="false">
         <template v-slot:title>
           <div class="current-price">
             <strong>当前出价: </strong>
-            <span class="value price">{{item.current_price}}</span>
-            <strong class="ml15">竞拍者: </strong> 
+            <span class="value price">{{ item.current_price }}</span>
+            <strong class="ml15">竞拍者: </strong>
             <span class="value-blue">
-              {{item.current_payer ? item.current_payer.game_name : '无'}}
+              {{ item.current_payer ? item.current_payer.game_name : '无' }}
             </span>
           </div>
           <div class="my-dkp">
-            <strong class="">我的{{item.au_type}}: </strong>
-            <span class="price">{{currencyNumber || 0}} {{item.au_type === 'DKP' ? '' : 'W'}}</span>
+            <strong class="">我的{{ item.au_type }}: </strong>
+            <span class="price"
+              >{{ currencyNumber || 0 }} {{ item.au_type === 'DKP' ? '' : 'W' }}</span
+            >
           </div>
         </template>
       </el-alert>
@@ -65,33 +72,39 @@
     <div class="left">
       <div class="aucting-box" v-if="item.status === 1">
         <p class="history-block mt0 mb0" v-for="(ah, i) in item.auction_histories" :key="i">
-          <span class="">{{_formatDate(ah.au_date, 'MM/dd hh:mm')}}</span>
-          <span class="ml5 mr5 name" :class="{ 'last': i === (item.auction_histories.length - 1) }">
-            {{ah.au_player_name}}
+          <span class="">{{ _formatDate(ah.au_date, 'MM/dd hh:mm') }}</span>
+          <span class="ml5 mr5 name" :class="{ last: i === item.auction_histories.length - 1 }">
+            {{ ah.au_player_name }}
           </span>
-          <span class="au-price" :class="{ 'last': i === (item.auction_histories.length - 1) }">
-            {{ah.au_price}} {{item.au_type === 'DKP' ? '' : 'W'}}
+          <span class="au-price" :class="{ last: i === item.auction_histories.length - 1 }">
+            {{ ah.au_price }} {{ item.au_type === 'DKP' ? '' : 'W' }}
           </span>
         </p>
       </div>
     </div>
     <div class="right">
-      <div class="auction-action" v-if="item.status === 1
-        && ((item.current_payer && item.current_payer._id !== currentUser._id)
-        || !item.current_payer)">
+      <div
+        class="auction-action"
+        v-if="
+          item.status === 1 &&
+            ((item.current_payer && item.current_payer._id !== currentUser._id) ||
+              !item.current_payer)
+        "
+      >
         <div class="field">
           <el-input-number v-model="auctionPrice" :controls="false" :min="0" />
         </div>
-        <p class="error">{{errMsg}}</p>
+        <p class="error">{{ errMsg }}</p>
         <el-button type="primary" @click="onHandleAuction" class="participate">参与竞拍</el-button>
       </div>
     </div>
     <div class="auction-info">
       <template v-if="item.current_payer && item.status === 2">
         <p class="bold">
-          <span class="error mr5">{{item.current_payer.game_name}}</span>
-          以 <span class="error ml5 mr5">{{item.current_price}}</span> {{item.au_type}}
-          获得了此物品</p>
+          <span class="error mr5">{{ item.current_payer.game_name }}</span>
+          以 <span class="error ml5 mr5">{{ item.current_price }}</span>
+          {{ item.au_type }} 获得了此物品</p
+        >
       </template>
       <template v-if="!item.current_payer && item.status === 2">
         <p class="bold error">流拍</p>
@@ -109,12 +122,12 @@ export default {
   props: {
     good: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     onDeleteGood: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
 
   data(props) {
@@ -128,7 +141,7 @@ export default {
     }
   },
 
-  sockets:{
+  sockets: {
     auction_receive(val) {
       if (val.good_id !== this.item._id) {
         return
@@ -140,7 +153,8 @@ export default {
         return
       }
       this.item = Object.assign({}, this.item, {
-        status: 1, started_at: val.started_at
+        status: 1,
+        started_at: val.started_at,
       })
     },
     auction_end_back(val) {
@@ -148,7 +162,8 @@ export default {
         return
       }
       this.item = Object.assign({}, this.item, {
-        status: 2, ended_at: val.ended_at
+        status: 2,
+        ended_at: val.ended_at,
       })
     },
   },
@@ -157,7 +172,7 @@ export default {
     good(newValue) {
       this.item = newValue
       this.errMsg = null
-    }
+    },
   },
 
   computed: {
@@ -165,11 +180,11 @@ export default {
     ...goodComputed,
     ...DKPComputed,
     currencyNumber() {
-      const dkpNum = this.DKPData.find(
-        dkd => dkd.game_id === this.currentUser.game_id
-      ) || { sum: 0 }
+      const dkpNum = this.DKPData.find((dkd) => dkd.game_id === this.currentUser.game_id) || {
+        sum: 0,
+      }
       const goldNum = this.currentUser.gold
-      return this.item.au_type === 'DKP' ? dkpNum.sum :goldNum
+      return this.item.au_type === 'DKP' ? dkpNum.sum : goldNum
     },
   },
 
@@ -202,7 +217,7 @@ export default {
         current_price: this.auctionPrice,
         current_payer: {
           _id: this.currentUser._id,
-          game_name: this.currentUser.game_name
+          game_name: this.currentUser.game_name,
         },
         auction_histories: this.item.auction_histories || [],
         au_type: this.item.au_type,
@@ -211,13 +226,12 @@ export default {
       if (!this.item.previous_payer) {
         auctionObj.previous_payer = auctionObj.current_payer
         auctionObj.previous_price = auctionObj.current_price
-      }
-      else {
+      } else {
         // previous
         auctionObj.previous_price = this.item.current_price
         auctionObj.previous_payer = {
           _id: this.item.current_payer._id,
-          game_name: this.item.current_payer.game_name
+          game_name: this.item.current_payer.game_name,
         }
       }
 
@@ -236,16 +250,13 @@ export default {
       let msg = ''
       if (this.auctionPrice <= currentPrice) {
         msg = '不能低于当前最低竞拍价格'
-      }
-      else if ((this.auctionPrice % this.item.range_price) !== 0) {
+      } else if (this.auctionPrice % this.item.range_price !== 0) {
         msg = `竞拍价格的幅度为: ${this.item.range_price}, 你输入的价格不符合规则`
-      }
-      else if (this.item.au_type === 'DKP') {
+      } else if (this.item.au_type === 'DKP') {
         if (this.auctionPrice > this.currentUser.dkp_score.sum) {
           msg = '你没有这么多的DKP哦'
         }
-      }
-      else if (this.item.au_type === '铜钱') {
+      } else if (this.item.au_type === '铜钱') {
         if (this.auctionPrice > this.currentUser.gold) {
           msg = '你没有这么多的铜钱哦'
         }
@@ -264,42 +275,44 @@ export default {
     },
 
     onEndCurrentAuction() {
-      this.$confirm('确定提前结束竞拍吗?', '提示',{
+      this.$confirm('确定提前结束竞拍吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        center: true
-      }).then(() => {
-        this.$socket.emit('auction_end', {
-          _id: this.item._id,
-          ended_at: new Date(),
+        center: true,
+      })
+        .then(() => {
+          this.$socket.emit('auction_end', {
+            _id: this.item._id,
+            ended_at: new Date(),
+          })
         })
-      }).catch(() => {})
+        .catch(() => {})
     },
 
     onCloseCurrentAuction() {
       this.onDeleteGood(this.item._id)
-    }
+    },
   },
 
   updated() {
-    const auctingBoxEl = document.querySelector('.details .left .aucting-box');
+    const auctingBoxEl = document.querySelector('.details .left .aucting-box')
     if (auctingBoxEl) {
-      auctingBoxEl.scrollTop = auctingBoxEl.scrollHeight;
+      auctingBoxEl.scrollTop = auctingBoxEl.scrollHeight
     }
   },
 
   mounted() {
-    const auctingBoxEl = document.querySelector('.details .left .aucting-box');
+    const auctingBoxEl = document.querySelector('.details .left .aucting-box')
     if (auctingBoxEl) {
-      auctingBoxEl.scrollTop = auctingBoxEl.scrollHeight;
+      auctingBoxEl.scrollTop = auctingBoxEl.scrollHeight
     }
-  }
+  },
 }
 </script>
 
 <style lang="scss">
-$border: 2px solid #DCDFE6;
+$border: 2px solid #dcdfe6;
 
 .details {
   .status {
@@ -354,7 +367,7 @@ $border: 2px solid #DCDFE6;
     }
   }
   .right {
-    width: calc(55% - 45px);  
+    width: calc(55% - 45px);
     margin-left: 30px;
     margin-top: 10px;
     display: inline-block;
@@ -421,5 +434,4 @@ $border: 2px solid #DCDFE6;
     display: inline-block;
   }
 }
-
 </style>

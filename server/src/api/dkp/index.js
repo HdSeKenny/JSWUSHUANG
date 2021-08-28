@@ -15,6 +15,7 @@ router.delete('/:id', controller.destroy)
 
 router.post('/some/update', auth.hasRole('admin'), controller.findManyAndUpdate)
 router.get('/all/download', auth.hasRole('admin'), controller.downloadDKPExcel)
+router.post('/:id/setAdmin', auth.hasRole('admin'), controller.setUserGangeAdmin)
 
 router.post('/reset', auth.hasRole('admin'), controller.resetDKPInfo)
 

@@ -3,7 +3,7 @@
     <section class="page-content home">
       <el-tabs v-model="tab" type="border-card" :class="currentUser.role" class="left-tab">
         <el-tab-pane name="ALL" label="DKP信息">
-          <div class="list" v-if="isUser">
+          <div class="list mb10" v-if="isUser">
             <div class="user-info">
               <div class="field">
                 <p class="mt0 mb0 mr15 inb">
@@ -27,9 +27,20 @@
               </div>
             </div>
           </div>
-          <div class="dkp-info mt10">
+          <div class="dkp-info">
             <DKPList :DKPData="DKPData"></DKPList>
           </div>
+        </el-tab-pane>
+        <el-tab-pane name="ADMINS" label="管理员信息">
+          <el-table :data="gangAdmins" border>
+            <el-table-column
+              v-for="item in gangAdminsHeaders"
+              :prop="item.prop"
+              :label="item.label"
+              :key="item.prop"
+            >
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
         <template v-if="isUser">
           <el-tab-pane name="DKP_HISTORY" label="DKP记录">
@@ -94,6 +105,11 @@ export default {
     return {
       loading: true,
       tab: 'ALL',
+      gangAdminsHeaders: [
+        { prop: 'game_name', label: '游戏名' },
+        { prop: 'wechat', label: '微信号' },
+        { prop: 'gang', label: '帮会' },
+      ],
     }
   },
   created() {
@@ -119,6 +135,9 @@ export default {
     currentUserHistories() {
       const currentUserDkp = this.DKPData.find((dd) => dd.game_name === this.currentUser.game_name)
       return currentUserDkp ? currentUserDkp.histories || [] : []
+    },
+    gangAdmins() {
+      return this.DKPData.filter((d) => d.isGangAdmin)
     },
   },
 

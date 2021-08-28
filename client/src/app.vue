@@ -393,6 +393,7 @@ input[type='number'] {
   .el-tabs__content {
     height: 700px;
     padding: 20px 25px !important;
+    overflow: auto;
   }
 }
 

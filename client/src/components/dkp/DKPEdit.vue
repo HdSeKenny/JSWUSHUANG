@@ -110,17 +110,24 @@
             >
           </div>
           <div class="mt15">
-            <el-input
-              class="new-member-tag"
-              v-if="newMemberVisible"
+            <el-select
+              placeholder="搜索选择添加的名字"
               v-model="newMemberValue"
-              ref="saveTagInput"
-              size="small"
-              @keyup.enter.native="handleNewMemberConfirm"
-              @blur="handleNewMemberConfirm"
+              v-show="newMemberVisible"
+              @change="handleNewMemberConfirm"
+              :filter-method="onFilterDKPNames"
+              filterable
             >
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showNewMemberInput">
+              <el-option v-for="item in searchedNames" :key="item" :label="item" :value="item">
+              </el-option>
+            </el-select>
+
+            <el-button
+              v-show="!newMemberVisible"
+              class="button-new-tag"
+              size="small"
+              @click="showNewMemberInput"
+            >
               + 添加
             </el-button>
           </div>
@@ -147,6 +154,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import XLSX from 'xlsx'
 import { DKP_HEADERS, app, GAME_NAME_TITLES } from '@src/app.config'
 import { DKPMethods, DKPComputed, authMethods, authComputed } from '@state/helpers'
@@ -194,12 +202,16 @@ export default {
       newMemberValue: '',
       invalidMembers: [],
       tab: 'RECOGNIZED',
+      searchedNames: [],
     }
   },
 
   computed: {
     ...DKPComputed,
     ...authComputed,
+    dkpDataNames() {
+      return [...new Set(this.DKPData.map((d) => d.game_name))]
+    },
   },
 
   watch: {
@@ -512,14 +524,11 @@ export default {
 
     showNewMemberInput() {
       this.newMemberVisible = true
-      this.$nextTick((_) => {
-        this.$refs.saveTagInput.focus()
-      })
     },
 
-    handleNewMemberConfirm() {
-      if (this.newMemberValue) {
-        const dkp = this.DKPData.find((dd) => dd.game_name == this.newMemberValue)
+    handleNewMemberConfirm(command) {
+      if (command) {
+        const dkp = this.DKPData.find((dd) => dd.game_name == command)
         if (!dkp) {
           return this.$notify({
             title: '提示',
@@ -528,15 +537,18 @@ export default {
             duration: 3000,
           })
         }
-
         this.dkpForm.members.push({
           game_id: dkp.game_id,
           game_name: dkp.game_name,
         })
       }
-
       this.newMemberVisible = false
       this.newMemberValue = ''
+    },
+    onFilterDKPNames(value) {
+      _.throttle(() => {
+        this.searchedNames = this.dkpDataNames.filter((name) => name.includes(value))
+      }, 500)()
     },
   },
 }

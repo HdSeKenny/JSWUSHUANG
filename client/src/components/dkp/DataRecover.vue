@@ -2,11 +2,15 @@
   <section class="DataRecover" v-loading="loading">
     <div class="mb15 backup-list" v-if="backupedList.length">
       <h5 class="mt0 mb10">已备份列表</h5>
-      <el-tag class="single mb5" v-for="(item, idx) in backupedList" :key="idx"
+      <el-tag
+        class="single mb5"
+        v-for="(item, idx) in backupedList"
+        :key="idx"
         @click="onRecoverData(item)"
-      >{{item}}</el-tag>
+        >{{ item }}</el-tag
+      >
     </div>
-    <h4 v-else>
+    <h4 v-else class="m0">
       <font-awesome-icon icon="exclamation-circle" class="icon mr10"></font-awesome-icon>
       没有备份的数据
     </h4>
@@ -72,4 +76,3 @@ export default {
   }
 }
 </style>
-

@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     const fileFormat = fileParams[fileParams.length - 1]
     const timestamp = new Date().getTime()
     cb(null, `good_${fileParams[0]}_${timestamp}.${fileFormat}`)
-  }
+  },
 })
 
 const _upload = multer({ storage })
@@ -44,13 +44,13 @@ function patchUpdates(patches) {
   }
 }
 
-function removeEntity(res) {
-  return function (entity) {
-    if (entity) {
-      return entity.remove().then(() => res.status(204).end())
-    }
-  }
-}
+// function removeEntity(res) {
+//   return function (entity) {
+//     if (entity) {
+//       return entity.remove().then(() => res.status(204).end())
+//     }
+//   }
+// }
 
 function handleEntityNotFound(res) {
   return function (entity) {
@@ -90,12 +90,9 @@ export function show(req, res) {
 
 // Creates a new Good in the DB
 export function create(req, res) {
-  return _upload.fields([
-    { name: 'good-file' },
-    { name: 'good-info' }
-  ])(req, res, (err) => {
+  return _upload.fields([{ name: 'good-file' }, { name: 'good-info' }])(req, res, (err) => {
     if (err) {
-      return handleError(err)
+      return handleError(res)
     }
 
     const imageInfo = req.files['good-file'][0]
@@ -111,12 +108,9 @@ export function create(req, res) {
       created_at: goodInfo.created_at,
       desc: goodInfo.desc,
       status: 0,
-      image_url: `/uploads/images/goods/${imageInfo.filename}`
+      image_url: `/uploads/images/goods/${imageInfo.filename}`,
     }
-
-    return Good.create(newGood)
-      .then(respondWithResult(res, 201))
-      .catch(handleError(res))
+    return Good.create(newGood).then(respondWithResult(res, 201)).catch(handleError(res))
   })
 }
 
@@ -129,7 +123,7 @@ export function upsert(req, res) {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
-    runValidators: true
+    runValidators: true,
   })
     .exec()
     .then(respondWithResult(res))
@@ -161,34 +155,26 @@ export async function destroy(req, res) {
       const { current_price, current_payer, au_type } = good
       const isDKPAuction = au_type === 'DKP'
       const currentPayerFilter = {
-        game_name: current_payer.game_name
+        game_name: current_payer.game_name,
       }
       const _updateOptions = {
-        new: true
+        new: true,
       }
 
       if (isDKPAuction) {
         const currentPayerDKPCalc = {
           $inc: {
             payment: -parseInt(current_price),
-            sum: parseInt(current_price)
+            sum: parseInt(current_price),
           },
-          updated: new Date()
+          updated: new Date(),
         }
-        await DKP.findOneAndUpdate(
-          currentPayerFilter,
-          currentPayerDKPCalc,
-          _updateOptions,
-        )
+        await DKP.findOneAndUpdate(currentPayerFilter, currentPayerDKPCalc, _updateOptions)
       } else {
         const currentPayerGoldCalc = {
-          $inc: { gold: parseInt(current_price) }
+          $inc: { gold: parseInt(current_price) },
         }
-        await User.findOneAndUpdate(
-          currentPayerFilter,
-          currentPayerGoldCalc,
-          _updateOptions,
-        )
+        await User.findOneAndUpdate(currentPayerFilter, currentPayerGoldCalc, _updateOptions)
       }
     }
 
@@ -201,13 +187,9 @@ export async function destroy(req, res) {
 }
 
 export function saveGoodAuctionInfo(_id, data) {
-  return Good.findOneAndUpdate(
-    { _id },
-    data,
-    { new: true }
-  )
+  return Good.findOneAndUpdate({ _id }, data, { new: true })
     .exec()
-    .then(newGood => newGood)
+    .then((newGood) => newGood)
     .catch((err) => handleError(err))
 }
 
@@ -215,10 +197,10 @@ export function onStartAuction(data) {
   return Good.findOneAndUpdate(
     { _id: data._id },
     { status: 1, started_at: data.started_at },
-    { new: true },
+    { new: true }
   )
     .exec()
-    .then(newGood => newGood)
+    .then((newGood) => newGood)
     .catch((err) => handleError(err))
 }
 
@@ -226,10 +208,10 @@ export function onEndAuction(data) {
   return Good.findOneAndUpdate(
     { _id: data._id },
     { status: 2, ended_at: data.ended_at },
-    { new: true },
+    { new: true }
   )
     .exec()
-    .then(newGood => newGood)
+    .then((newGood) => newGood)
     .catch((err) => handleError(err))
 }
 
@@ -242,40 +224,64 @@ export async function updatePayersDkp(data) {
     const previousPayerFilter = { game_name: previous_payer.game_name }
     const currentPayerCalc = {
       payment: parseInt(current_price),
-      sum: -parseInt(current_price)
+      sum: -parseInt(current_price),
     }
     const previousPayerCalc = {
       payment: -parseInt(previous_price),
-      sum: parseInt(previous_price)
+      sum: parseInt(previous_price),
     }
     if (isCurrentPayer) {
       if (isDKPAuction) {
-        await DKP.findOneAndUpdate(currentPayerFilter, {
-          $inc: currentPayerCalc,
-          updated: new Date()
-        }, { new: true })
+        await DKP.findOneAndUpdate(
+          currentPayerFilter,
+          {
+            $inc: currentPayerCalc,
+            updated: new Date(),
+          },
+          { new: true }
+        )
       } else {
-        await User.findOneAndUpdate(currentPayerFilter, {
-          $inc: { gold: -parseInt(current_price) }
-        }, { new: true })
+        await User.findOneAndUpdate(
+          currentPayerFilter,
+          {
+            $inc: { gold: -parseInt(current_price) },
+          },
+          { new: true }
+        )
       }
     } else {
       if (isDKPAuction) {
-        await DKP.findOneAndUpdate(currentPayerFilter, {
-          $inc: currentPayerCalc,
-          updated: new Date()
-        }, { new: true })
-        await DKP.findOneAndUpdate(previousPayerFilter, {
-          $inc: previousPayerCalc,
-          updated: new Date()
-        }, { new: true })
+        await DKP.findOneAndUpdate(
+          currentPayerFilter,
+          {
+            $inc: currentPayerCalc,
+            updated: new Date(),
+          },
+          { new: true }
+        )
+        await DKP.findOneAndUpdate(
+          previousPayerFilter,
+          {
+            $inc: previousPayerCalc,
+            updated: new Date(),
+          },
+          { new: true }
+        )
       } else {
-        await User.findOneAndUpdate(currentPayerFilter, {
-          $inc: { gold: -parseInt(current_price) }
-        }, { new: true })
-        await User.findOneAndUpdate(previousPayerFilter, {
-          $inc: { gold: parseInt(previous_price) }
-        }, { new: true })
+        await User.findOneAndUpdate(
+          currentPayerFilter,
+          {
+            $inc: { gold: -parseInt(current_price) },
+          },
+          { new: true }
+        )
+        await User.findOneAndUpdate(
+          previousPayerFilter,
+          {
+            $inc: { gold: parseInt(previous_price) },
+          },
+          { new: true }
+        )
       }
     }
   } catch (error) {
