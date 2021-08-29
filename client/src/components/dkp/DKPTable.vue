@@ -338,6 +338,7 @@ export default {
       const isPayment = column.property === 'payment'
       const isGameIdOrName = ['game_id', 'game_name', 'sum'].includes(column.property)
       const isGang = column.property === 'gang'
+      const isSum = column.property === 'sum'
       const isOriginal = column.property === 'original'
 
       let style = {
@@ -375,12 +376,47 @@ export default {
         }
       }
 
+      if (isSum) {
+        style = {
+          color: 'rgb(3, 134, 172)',
+          fontWeight: '700',
+          fontSize: '16px',
+        }
+      }
+
       return style
+    },
+
+    calculateSum(row) {
+      const plusFields = [
+        'league_friday',
+        'league_saturday',
+        'field',
+        'territorial_stronghold',
+        'original',
+      ]
+      const reduceFields = ['payment']
+      let sum = 0
+      for (let i = 0; i < plusFields.length; i++) {
+        const field = plusFields[i]
+        sum += row[field] || 0
+      }
+
+      for (let i = 0; i < reduceFields.length; i++) {
+        const field = reduceFields[i]
+        sum -= row[field] || 0
+      }
+
+      return sum
     },
 
     columnFormatter({ row, column, cellValue, index }) {
       const isPayment = column.property === 'payment'
-      const value = cellValue || 0
+      const isSum = column.property === 'sum'
+      let value = cellValue || 0
+      if (isSum) {
+        value = cellValue || this.calculateSum(row)
+      }
       return isPayment && value !== 0 ? `- ${value}` : value
     },
 

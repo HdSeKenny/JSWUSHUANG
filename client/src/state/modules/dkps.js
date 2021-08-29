@@ -24,6 +24,29 @@ const getTheCorrentOne = (data, word) => {
   return data[idx]
 }
 
+const calculateDKPSum = (data) => {
+  const plusFields = [
+    'league_friday',
+    'league_saturday',
+    'field',
+    'territorial_stronghold',
+    'original',
+  ]
+  const reduceFields = ['payment']
+  let sum = 0
+  for (let i = 0; i < plusFields.length; i++) {
+    const field = plusFields[i]
+    sum += data[field] || 0
+  }
+
+  for (let i = 0; i < reduceFields.length; i++) {
+    const field = reduceFields[i]
+    sum -= data[field] || 0
+  }
+
+  return sum
+}
+
 export const state = {
   DKPData: [],
   validWords: [],
@@ -176,8 +199,9 @@ export const actions = {
     const newData = members.map((d) => {
       const result = { game_id: d.game_id.toString(), data: {} }
       const matched = data.dkps.find((dd) => dd.game_id == d.game_id)
+      const _sum = matched.sum ? parseInt(matched.sum) : calculateDKPSum(matched)
       result.data[activity] = parseInt(matched[activity] || 0) + parseInt(dkp)
-      result.data.sum = parseInt(matched.sum) + parseInt(dkp)
+      result.data.sum = _sum + parseInt(dkp)
       result.dkpId = matched._id
       // dkp history
       const historyObj = {
