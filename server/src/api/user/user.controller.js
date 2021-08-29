@@ -114,7 +114,11 @@ export function thoughMemberToUser(req, res) {
       const member = data[1]._doc
       Reflect.deleteProperty(member, '_id')
       Reflect.deleteProperty(member, '__v')
-      const newMember = Object.assign({}, member, { dkp_score: dkp._id, game_name: dkp.game_name, gang: dkp.gang })
+      const newMember = Object.assign({}, member, {
+        dkp_score: dkp._id,
+        game_name: dkp.game_name,
+        gang: dkp.gang,
+      })
       return User.create(newMember)
         .then(() => {
           return Member.findByIdAndRemove(req.params.id)

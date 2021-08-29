@@ -29,22 +29,36 @@ export function index(req, res) {
 }
 
 // Gets a single DKP from the DB
-export function show(req, res) {
-  return DKP.find({ game_id: req.params.id })
-    .populate({
-      path: 'histories',
-      populate: [
-        {
-          path: 'operator',
-          select: 'game_name',
-          model: 'User',
-        },
-      ],
+export async function show(req, res) {
+  try {
+    const dkps = await DKP.find({
+      $or: [{ game_id: req.params.id }, { isGangAdmin: true }],
     })
-    .exec()
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res))
+      .populate({
+        path: 'histories',
+        populate: [
+          {
+            path: 'operator',
+            select: 'game_name',
+            model: 'User',
+          },
+        ],
+      })
+      .exec()
+
+    const users = await User.find({
+      $or: [{ game_id: req.params.id }, { isGangAdmin: true }],
+    }).exec()
+
+    for (let i = 0; i < dkps.length; i++) {
+      const dkp = dkps[i]
+      const user = users.find((u) => u.game_id === dkp.game_id)
+      dkp.wechat = user ? user.wechat : ''
+    }
+    res.status(200).json(dkps)
+  } catch (error) {
+    handleError(res, 500, error)
+  }
 }
 
 // Creates a new DKP in the DB
@@ -276,10 +290,20 @@ export function resetDKPInfo(req, res) {
   })
 }
 
-export function setUserGangeAdmin(req, res) {
-  return DKP.findOneAndUpdate({ game_id: req.params.id }, { isGangAdmin: true }, { new: true })
-    .exec()
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res))
+export async function setUserGangeAdmin(req, res) {
+  try {
+    const dkp = await DKP.findOneAndUpdate(
+      { game_id: req.params.id },
+      { isGangAdmin: true },
+      { new: true }
+    ).exec()
+    await User.findOneAndUpdate(
+      { game_id: req.params.id },
+      { isGangAdmin: true },
+      { new: true }
+    ).exec()
+    return res.status(200).json(dkp)
+  } catch (error) {
+    handleError(res, 500, error)
+  }
 }

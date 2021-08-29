@@ -67,7 +67,9 @@ export function getImageWordsByOCR(req, res) {
         }
 
         const _name = req.body.name
-        const imageInfo = req.files['image-file'][0]
+        const imageInfo = req.files['image-file']
+          ? req.files['image-file'][0]
+          : { filename: `${new Date().getTime()}_temp.PNG` }
         const _url = `${OCR_BASE_URL}?access_token=${response.body.access_token}`
         const ocrImagePath = path.join(config.upload.target, '..', 'ocr', imageInfo.filename)
         const data = base64_encode(ocrImagePath)

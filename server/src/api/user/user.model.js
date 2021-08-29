@@ -56,6 +56,10 @@ const UserSchema = new Schema({
   fighting_score: Number,
   checked_name: String,
   wechat: String,
+  isGangAdmin: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 // Public profile information
@@ -232,16 +236,25 @@ UserSchema.methods = {
     var salt = Buffer.from(this.salt, 'base64')
 
     if (!callback) {
-      return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength, 'sha256').toString('base64')
+      return crypto
+        .pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength, 'sha256')
+        .toString('base64')
     }
 
-    return crypto.pbkdf2(password, salt, defaultIterations, defaultKeyLength, 'sha256', (err, key) => {
-      if (err) {
-        return callback(err)
-      } else {
-        return callback(null, key.toString('base64'))
+    return crypto.pbkdf2(
+      password,
+      salt,
+      defaultIterations,
+      defaultKeyLength,
+      'sha256',
+      (err, key) => {
+        if (err) {
+          return callback(err)
+        } else {
+          return callback(null, key.toString('base64'))
+        }
       }
-    })
+    )
   },
 }
 

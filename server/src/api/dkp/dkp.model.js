@@ -7,6 +7,7 @@ const DKPSchema = new mongoose.Schema(
     game_id: String,
     game_name: String,
     checked_name: String,
+    wechat: String,
     gang: String,
     profession: String,
     tianjiang: {

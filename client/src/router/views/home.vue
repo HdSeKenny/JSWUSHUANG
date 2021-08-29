@@ -32,7 +32,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane name="ADMINS" label="管理员信息">
-          <el-table :data="gangAdmins" border>
+          <el-table :data="gangAdmins" border size="small">
             <el-table-column
               v-for="item in gangAdminsHeaders"
               :prop="item.prop"
