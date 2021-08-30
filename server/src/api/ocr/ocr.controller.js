@@ -44,6 +44,7 @@ function base64_encode(res, file) {
     // convert binary data to base64 encoded string
     return Buffer.from(bitmap).toString('base64')
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: '失败了' })
   }
 }
@@ -72,7 +73,7 @@ export function getImageWordsByOCR(req, res) {
 
         const _name = req.body.name
         if (!req.files['image-file']) {
-          console.log(req.body)
+          console.log(req.body, '============')
           return res.status(500).json({ message: '失败了' })
         }
 
@@ -81,14 +82,14 @@ export function getImageWordsByOCR(req, res) {
           : { filename: `${new Date().getTime()}_temp.PNG` }
         const _url = `${OCR_BASE_URL}?access_token=${response.body.access_token}`
         const ocrImagePath = path.join(config.upload.target, '..', 'ocr', imageInfo.filename)
-        const data = base64_encode(ocrImagePath)
+        const data = base64_encode(res, ocrImagePath)
         return request
           .post(_url)
           .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ image: data })
           .set('accept', 'json')
-          .end((err, _res) => {
-            if (err) {
+          .end((baiduerr, baidures) => {
+            if (baiduerr) {
               return handleError(res)
             }
             fs.unlink(ocrImagePath, async (err) => {
@@ -99,7 +100,7 @@ export function getImageWordsByOCR(req, res) {
               }
 
               if (_name) {
-                const [chekced] = _res.body.words_result
+                const [chekced] = baidures.body.words_result
                 const checkedName = chekced.words
 
                 if (!checkedName) {
@@ -110,7 +111,7 @@ export function getImageWordsByOCR(req, res) {
                 return res.status(200).json({ newDKP: _dkp })
               }
 
-              return res.status(200).json(_res.body)
+              return res.status(200).json(baidures.body)
             })
           })
       })
