@@ -37,11 +37,15 @@ function handleError(res, statusCode) {
 }
 
 // function to encode file data to base64 encoded string
-function base64_encode(file) {
-  // read binary data
-  const bitmap = fs.readFileSync(file)
-  // convert binary data to base64 encoded string
-  return Buffer.from(bitmap).toString('base64')
+function base64_encode(res, file) {
+  try {
+    // read binary data
+    const bitmap = fs.readFileSync(file)
+    // convert binary data to base64 encoded string
+    return Buffer.from(bitmap).toString('base64')
+  } catch (error) {
+    return res.status(500).json({ message: '失败了' })
+  }
 }
 
 export function getAccessToken(req, res) {
@@ -67,6 +71,11 @@ export function getImageWordsByOCR(req, res) {
         }
 
         const _name = req.body.name
+        if (!req.files['image-file']) {
+          console.log(req.body)
+          return res.status(500).json({ message: '失败了' })
+        }
+
         const imageInfo = req.files['image-file']
           ? req.files['image-file'][0]
           : { filename: `${new Date().getTime()}_temp.PNG` }
