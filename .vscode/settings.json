@@ -24,12 +24,7 @@
     ".markdownlintrc": "jsonc"
   },
 
-  // ===
-  // Event Triggers
-  // ===
-
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.fixAll.stylelint": true,
@@ -80,5 +75,5 @@
   "[markdown]": {
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 80
-  }
+  },
 }

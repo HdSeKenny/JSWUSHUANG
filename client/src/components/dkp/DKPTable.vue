@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="table-page">
     <vxe-table
       :data="tableData"
       :cell-style="getCellStyle"
@@ -51,24 +51,20 @@
               <el-dropdown-item command="recover">
                 <i class="el-icon-refresh-left"></i> 恢复
               </el-dropdown-item>
-              <el-dropdown-item command="gang_admin">
-                <i class="el-icon-user"></i> 设管理
-              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
       </vxe-table-column>
     </vxe-table>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="40%" v-loading="loading">
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="360px" v-loading="loading">
       <template v-if="dialogModel === 'EDIT'">
-        <el-alert :title="notification" type="info" class="notification" show-icon></el-alert>
         <el-form label-position="right" label-width="80px" class="dkp-form mt15">
           <el-form-item label="游戏ID:">
             <p>{{ edittedObj.game_id }}</p>
           </el-form-item>
           <el-form-item label="游戏名字:">
             <el-input
-              class="game-name"
+              class="field-input"
               :value="edittedObj.game_name"
               @input="onNameChange"
             ></el-input>
@@ -84,13 +80,22 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="编辑分数:">
+          <el-form-item label="编辑选项:">
+            <el-input
+              class="field-input"
+              prefix-icon="el-icon-edit"
+              :value="edittedObj[edittedField]"
+              @input="onFieldChange"
+              v-if="edittedField === 'gang'"
+            ></el-input>
             <el-input-number
+              class="field-input"
               prefix-icon="el-icon-edit"
               :value="edittedObj[edittedField]"
               :controls="false"
               :min="0"
               @input="onFieldChange"
+              v-else
             />
           </el-form-item>
         </el-form>
@@ -175,7 +180,6 @@ export default {
       },
     }
   },
-
   methods: {
     ...authMethods,
     ...DKPMethods,
@@ -499,11 +503,23 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.game-name {
-  width: 216px;
-}
-.no-history {
-  height: 40px;
+<style lang="scss">
+.table-page {
+  .el-select,
+  .field-input {
+    width: calc(100% - 10px);
+  }
+  .no-history {
+    height: 40px;
+  }
+  .el-dialog__body {
+    padding: 0 20px;
+  }
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+  .histories-wrapper {
+    padding-bottom: 20px;
+  }
 }
 </style>

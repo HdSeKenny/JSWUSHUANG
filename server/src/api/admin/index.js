@@ -20,4 +20,10 @@ router.post('/gold/add', auth.hasRole('root'), controller.addGoldForAllUsers)
 
 router.put('/', auth.hasRole('admin'), controller.upsert)
 
+// gang admins
+router.get('/info/gang_admins', controller.indexGangAdmins)
+router.post('/gang_admin', auth.hasRole('root'), controller.createGangAdmin)
+router.put('/:id', auth.hasRole('root'), controller.upsertGangAdmin)
+router.delete('/:id', auth.hasRole('root'), controller.destroyGangAdmin)
+
 module.exports = router

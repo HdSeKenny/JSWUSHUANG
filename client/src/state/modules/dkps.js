@@ -50,6 +50,7 @@ const calculateDKPSum = (data) => {
 export const state = {
   DKPData: [],
   validWords: [],
+  gangAdmins: [],
 }
 
 export const getters = {
@@ -127,6 +128,20 @@ export const mutations = {
   SET_VALID_WORDS(state, validWords) {
     state.validWords = validWords
   },
+
+  GET_GANG_ADMINS_SUCCESS(state, data) {
+    state.gangAdmins = data
+  },
+  ADD_GANG_ADMIN_SUCCESS(state, data) {
+    state.gangAdmins.push(data)
+  },
+  UPDATE_GANG_ADMIN_SUCCESS(state, data) {
+    const gangAdmins = state.gangAdmins.filter(ga => ga._id !== data._id)
+    state.gangAdmins = [data, ...gangAdmins]
+  },
+  DELETE_GANG_ADMIN_SUCCESS(state, id) {
+    state.gangAdmins = state.gangAdmins.filter(ga => ga._id !== id)
+  },
 }
 
 export const actions = {
@@ -194,49 +209,53 @@ export const actions = {
   },
 
   calculateManyInfo({ commit, rootState }, data) {
-    const { activity, activityText, dkp, members } = data.params
-    const histories = []
-    const newData = members.map((d) => {
-      const result = { game_id: d.game_id.toString(), data: {} }
-      const matched = data.dkps.find((dd) => dd.game_id == d.game_id)
-      const _sum = matched.sum ? parseInt(matched.sum) : calculateDKPSum(matched)
-      result.data[activity] = parseInt(matched[activity] || 0) + parseInt(dkp)
-      result.data.sum = _sum + parseInt(dkp)
-      result.dkpId = matched._id
-      // dkp history
-      const historyObj = {
-        type: 'batch',
-        fields: [
-          {
-            key: activity,
-            oldValue: parseInt(matched[activity] || 0),
-            newValue: result.data[activity],
-            text: activityText,
-            symbol: '+',
-            changed_value: dkp,
-          },
-        ],
-        sum_after_changed: result.data.sum,
-        operator: rootState.auth.currentUser._id,
-        created: new Date(),
-        dkp: matched._id,
-      }
+    try {
+      const { activity, activityText, dkp, members } = data.params
+      const histories = []
+      const newData = members.map((d) => {
+        const result = { game_id: d.game_id.toString(), data: {} }
+        const matched = data.dkps.find((dd) => dd.game_id == d.game_id)
+        const _sum = matched.sum ? parseInt(matched.sum) : calculateDKPSum(matched)
+        result.data[activity] = parseInt(matched[activity] || 0) + parseInt(dkp)
+        result.data.sum = _sum + parseInt(dkp)
+        result.dkpId = matched._id
+        // dkp history
+        const historyObj = {
+          type: 'batch',
+          fields: [
+            {
+              key: activity,
+              oldValue: parseInt(matched[activity] || 0),
+              newValue: result.data[activity],
+              text: activityText,
+              symbol: '+',
+              changed_value: dkp,
+            },
+          ],
+          sum_after_changed: result.data.sum,
+          operator: rootState.auth.currentUser._id,
+          created: new Date(),
+          dkp: matched._id,
+        }
 
-      histories.push(historyObj)
-      result.histories = matched.histories
-      return result
-    })
-
-    return HttpRequest.post(`/api/dkps/some/update`, { newData, histories })
-      .then((_data) => {
-        commit(ACTIONS.UPDATE_MANY_DKP_SUCCESS, _data)
-        return _data
+        histories.push(historyObj)
+        result.histories = matched.histories
+        return result
       })
-      .catch((error) =>
-        Promise.reject({
-          message: error.response.data.message,
+
+      return HttpRequest.post(`/api/dkps/some/update`, { newData, histories })
+        .then((_data) => {
+          commit(ACTIONS.UPDATE_MANY_DKP_SUCCESS, _data)
+          return _data
         })
-      )
+        .catch((error) =>
+          Promise.reject({
+            message: error.response.data.message,
+          })
+        )
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
 
   updateManyDKPInfo: ({ commit, state, rootState, dispatch }, data) => {
@@ -295,10 +314,6 @@ export const actions = {
           const hasManyIncludes = state.DKPData.filter(
             (d) => d.game_name !== word && d.checked_name !== word && d.game_name.includes(word)
           )
-
-          if (word === '鹿、寶') {
-            console.log('hasManyIncludes', hasManyIncludes)
-          }
 
           if (hasManyIncludes.length) {
             let _member = hasManyIncludes[0]
@@ -389,6 +404,50 @@ export const actions = {
       .catch((error) =>
         Promise.reject({
           message: error.response.data.message,
+        })
+      )
+  },
+  getGangAdminsInfo({ commit }, params) {
+    return HttpRequest.get(`/api/admin/info/gang_admins`)
+      .then((data) => {
+        commit(ACTIONS.GET_GANG_ADMINS_SUCCESS, data)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
+  },
+  addNewGangAdmin({ commit }, params) {
+    return HttpRequest.post(`/api/admin/gang_admin`, params)
+      .then((data) => {
+        commit(ACTIONS.ADD_GANG_ADMIN_SUCCESS, data)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message,
+        })
+      )
+  },
+  updateGangAdmin({ commit }, params) {
+    return HttpRequest.put(`/api/admin/${params._id}`, params)
+      .then((data) => {
+        commit(ACTIONS.UPDATE_GANG_ADMIN_SUCCESS, data)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message
+        })
+      )
+  },
+  deleteGangAdmin({ commit }, params) {
+    return HttpRequest.delete(`/api/admin/${params}`, params)
+      .then((data) => {
+        commit(ACTIONS.DELETE_GANG_ADMIN_SUCCESS, params)
+      })
+      .catch((error) =>
+        Promise.reject({
+          message: error.response.data.message
         })
       )
   },

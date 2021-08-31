@@ -94,7 +94,9 @@ export function create(req, res) {
           newUser.profession = dkp._doc.profession
           newUser.avatar = `/uploads/images/users/user.png`
 
-          return Member.create(newUser).then(respondWithResult(res, 201)).catch(handleError(res))
+          return Member.create(newUser)
+            .then(respondWithResult(res, 201))
+            .catch(handleError(res))
         })
         .catch(handleError(res))
     })
@@ -429,8 +431,16 @@ export async function dealDkp(req, res) {
 
 export async function setUserCheckedName(name, checkedName) {
   try {
-    await User.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
-    return await DKP.findOneAndUpdate({ game_name: name }, { checked_name: checkedName }).exec()
+    await User.findOneAndUpdate(
+      { game_name: name },
+      { checked_name: checkedName },
+      { new: true }
+    ).exec()
+    return await DKP.findOneAndUpdate(
+      { game_name: name },
+      { checked_name: checkedName },
+      { new: true }
+    ).exec()
   } catch (error) {
     handleError(error)
   }

@@ -74,6 +74,7 @@ export const DKPMethods = mapActions('dkps', [
   'createNewDKP',
   'resetDKPAndUserInfo',
   'setGangAdmin',
+  'getGangAdminsInfo'
 ])
 
 export const orderMethods = mapActions('orders', ['fetchOrders', 'deleteOrder'])

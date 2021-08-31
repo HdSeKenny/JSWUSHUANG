@@ -15,13 +15,11 @@ export function index(req, res) {
   return DKP.find()
     .populate({
       path: 'histories',
-      populate: [
-        {
-          path: 'operator',
-          select: 'game_name',
-          model: 'User',
-        },
-      ],
+      populate: [{
+        path: 'operator',
+        select: 'game_name',
+        model: 'User',
+      }],
     })
     .exec()
     .then(respondWithResult(res))
@@ -32,22 +30,28 @@ export function index(req, res) {
 export async function show(req, res) {
   try {
     const dkps = await DKP.find({
-      $or: [{ game_id: req.params.id }, { isGangAdmin: true }],
+      $or: [{
+        game_id: req.params.id
+      }, {
+        isGangAdmin: true
+      }],
     })
       .populate({
         path: 'histories',
-        populate: [
-          {
-            path: 'operator',
-            select: 'game_name',
-            model: 'User',
-          },
-        ],
+        populate: [{
+          path: 'operator',
+          select: 'game_name',
+          model: 'User',
+        }],
       })
       .exec()
 
     const users = await User.find({
-      $or: [{ game_id: req.params.id }, { isGangAdmin: true }],
+      $or: [{
+        game_id: req.params.id
+      }, {
+        isGangAdmin: true
+      }],
     }).exec()
 
     for (let i = 0; i < dkps.length; i++) {
@@ -63,23 +67,30 @@ export async function show(req, res) {
 
 // Creates a new DKP in the DB
 export function create(req, res) {
-  return DKP.findOne({ game_id: req.body.game_id }).then((dkp) => {
+  return DKP.findOne({
+    game_id: req.body.game_id
+  }).then((dkp) => {
     if (dkp) {
       return res.status(403).json({
         message: '该DKP已经存在, 请勿重复添加',
       })
     }
-    return DKP.create(req.body).then(respondWithResult(res, 201)).catch(handleError(res))
+    return DKP.create(req.body)
+      .then(respondWithResult(res, 201))
+      .catch(handleError(res))
   })
 }
 
 export function importAll(req, res) {
   const data = req.body.map((rb) => {
-    return Object.assign({}, rb, { updated: new Date() })
+    return Object.assign({}, rb, {
+      updated: new Date()
+    })
   })
 
   return DKP.deleteMany().then(() =>
-    DKP.insertMany(data).then(respondWithResult(res, 201)).catch(handleError(res))
+    DKP.insertMany(data).then(respondWithResult(res, 201))
+      .catch(handleError(res))
   )
 }
 
@@ -88,7 +99,9 @@ export function upsert(req, res) {
   if (req.body._id) {
     Reflect.deleteProperty(req.body, '_id')
   }
-  return DKP.findOneAndUpdate({ _id: req.params.id }, req.body, {
+  return DKP.findOneAndUpdate({
+    _id: req.params.id
+  }, req.body, {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
@@ -118,7 +131,11 @@ export function updateDKPInfo(req, res) {
     Reflect.deleteProperty(req.body, '_id')
   }
 
-  const { edittedObj, edittedHistory, operator } = req.body
+  const {
+    edittedObj,
+    edittedHistory,
+    operator
+  } = req.body
   const plusFields = [
     'league_friday',
     'league_saturday',
@@ -150,7 +167,9 @@ export function updateDKPInfo(req, res) {
       sum_after_changed: edittedObj.sum,
       dkp: req.params.dkpId,
     }),
-    DKP.findOneAndUpdate({ _id: req.params.dkpId }, edittedObj, {
+    DKP.findOneAndUpdate({
+      _id: req.params.dkpId
+    }, edittedObj, {
       new: true,
     }).exec(),
   ]).then((result) => {
@@ -162,16 +181,20 @@ export function updateDKPInfo(req, res) {
       newDkp.histories = [newHistory._id]
     }
 
-    DKP.findOneAndUpdate({ _id: newDkp._id }, { histories: newDkp.histories }, { new: true })
+    DKP.findOneAndUpdate({
+      _id: newDkp._id
+    }, {
+      histories: newDkp.histories
+    }, {
+      new: true
+    })
       .populate({
         path: 'histories',
-        populate: [
-          {
-            path: 'operator',
-            select: 'game_name',
-            model: 'User',
-          },
-        ],
+        populate: [{
+          path: 'operator',
+          select: 'game_name',
+          model: 'User',
+        }],
       })
       .exec()
       .then(handleEntityNotFound(res))
@@ -191,16 +214,16 @@ export function destroy(req, res) {
 
 const findOneAndUpdatePromise = (query, data) => {
   return new Promise((resolve, reject) => {
-    return DKP.findOneAndUpdate(query, data, { new: true })
+    return DKP.findOneAndUpdate(query, data, {
+      new: true
+    })
       .populate({
         path: 'histories',
-        populate: [
-          {
-            path: 'operator',
-            select: 'game_name',
-            model: 'User',
-          },
-        ],
+        populate: [{
+          path: 'operator',
+          select: 'game_name',
+          model: 'User',
+        }],
       })
       .exec()
       .then((newOne) => resolve(newOne))
@@ -220,9 +243,12 @@ export function findManyAndUpdate(req, res) {
           b.data.histories = b.histories
         }
         b.data.updated = new Date()
-        return findOneAndUpdatePromise({ game_id: b.game_id }, b.data)
+        return findOneAndUpdatePromise({
+          game_id: b.game_id
+        }, b.data)
       })
-      return Promise.all(updatePromises).then(respondWithResult(res)).catch(handleError(res))
+      return Promise.all(updatePromises).then(respondWithResult(res))
+        .catch(handleError(res))
     })
     .catch(handleError(res))
 }
@@ -255,7 +281,10 @@ export function downloadDKPExcel(req, res) {
       // create file 'in memory'
       const moment = new Date()
       const filename = `${moment.getMonth() + 1}_${moment.getDate()}_${moment.getTime()}`
-      const wbout = Buffer.from(XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' }))
+      const wbout = Buffer.from(XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'buffer'
+      }))
       const formateFileName = `dkps_${filename}.xlsx`
 
       res.setHeader(
@@ -270,20 +299,23 @@ export function downloadDKPExcel(req, res) {
 
 export function resetDKPInfo(req, res) {
   return Promise.all([
-    DKP.findOne({ game_id: req.body.game_id }),
-    User.findOne({ game_id: req.body.game_id }),
+    DKP.findOne({
+      game_id: req.body.game_id
+    }),
+    User.findOne({
+      game_id: req.body.game_id
+    }),
   ]).then((result) => {
     const [dkp, user] = result
     return Promise.all([
-      User.findOneAndUpdate(
-        { _id: user._doc._id },
-        {
-          game_name: dkp._doc.game_name,
-          name: dkp._doc.game_name,
-          profession: dkp._doc.profession,
-          gang: dkp._doc.gang,
-        }
-      ).exec(),
+      User.findOneAndUpdate({
+        _id: user._doc._id
+      }, {
+        game_name: dkp._doc.game_name,
+        name: dkp._doc.game_name,
+        profession: dkp._doc.profession,
+        gang: dkp._doc.gang,
+      }).exec(),
     ])
       .then(respondWithResult(res))
       .catch(handleError(res))
@@ -292,16 +324,20 @@ export function resetDKPInfo(req, res) {
 
 export async function setUserGangeAdmin(req, res) {
   try {
-    const dkp = await DKP.findOneAndUpdate(
-      { game_id: req.params.id },
-      { isGangAdmin: true },
-      { new: true }
-    ).exec()
-    await User.findOneAndUpdate(
-      { game_id: req.params.id },
-      { isGangAdmin: true },
-      { new: true }
-    ).exec()
+    const dkp = await DKP.findOneAndUpdate({
+      game_id: req.params.id
+    }, {
+      isGangAdmin: true
+    }, {
+      new: true
+    }).exec()
+    await User.findOneAndUpdate({
+      game_id: req.params.id
+    }, {
+      isGangAdmin: true
+    }, {
+      new: true
+    }).exec()
     return res.status(200).json(dkp)
   } catch (error) {
     handleError(res, 500, error)

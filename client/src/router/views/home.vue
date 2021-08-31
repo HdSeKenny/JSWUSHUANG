@@ -31,16 +31,8 @@
             <DKPList :DKPData="DKPData"></DKPList>
           </div>
         </el-tab-pane>
-        <el-tab-pane name="ADMINS" label="管理员信息">
-          <el-table :data="gangAdmins" border size="small">
-            <el-table-column
-              v-for="item in gangAdminsHeaders"
-              :prop="item.prop"
-              :label="item.label"
-              :key="item.prop"
-            >
-            </el-table-column>
-          </el-table>
+        <el-tab-pane name="ADMINS" label="管理信息">
+          <GangAdmins />
         </el-tab-pane>
         <template v-if="isUser">
           <el-tab-pane name="DKP_HISTORY" label="DKP记录">
@@ -88,6 +80,7 @@ import AuctionHistory from '@components/good/AuctionHistory.vue'
 import RecentGoods from '@components/good/RecentGoods.vue'
 import DKPEdit from '@components/dkp/DKPEdit.vue'
 import NameCheck from '@components/dkp/NameCheck.vue'
+import GangAdmins from '@components/dkp/GangAdmins.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -100,16 +93,12 @@ export default {
     AuctionHistory,
     RecentGoods,
     NameCheck,
+    GangAdmins,
   },
   data() {
     return {
       loading: true,
       tab: 'ALL',
-      gangAdminsHeaders: [
-        { prop: 'game_name', label: '游戏名' },
-        { prop: 'wechat', label: '微信号' },
-        { prop: 'gang', label: '帮会' },
-      ],
     }
   },
   created() {
@@ -136,9 +125,6 @@ export default {
       const currentUserDkp = this.DKPData.find((dd) => dd.game_name === this.currentUser.game_name)
       return currentUserDkp ? currentUserDkp.histories || [] : []
     },
-    gangAdmins() {
-      return this.DKPData.filter((d) => d.isGangAdmin)
-    },
   },
 
   methods: {
@@ -148,6 +134,7 @@ export default {
       Promise.all([
         this.$store.dispatch('auth/getAnnouncement'),
         this.$store.dispatch('dkps/fetchDKPData'),
+        this.$store.dispatch('dkps/getGangAdminsInfo'),
       ])
         .then(() => {
           this.loading = false
@@ -183,9 +170,6 @@ export default {
 
 <style lang="scss">
 .home {
-  // .el-tabs__content {
-  //   height: 603px;
-  // }
   .left-tab {
     &.user {
       width: calc(100% - 300px);

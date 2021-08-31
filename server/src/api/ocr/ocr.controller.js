@@ -44,7 +44,6 @@ function base64_encode(res, file) {
     // convert binary data to base64 encoded string
     return Buffer.from(bitmap).toString('base64')
   } catch (error) {
-    console.log(error)
     return res.status(500).json({ message: '失败了' })
   }
 }
@@ -72,14 +71,11 @@ export function getImageWordsByOCR(req, res) {
         }
 
         const _name = req.body.name
-        if (!req.files['image-file']) {
-          console.log(req.body, '============')
+        if (!req.files['image-file'] || !req.files['image-file'][0]) {
           return res.status(500).json({ message: '失败了' })
         }
 
-        const imageInfo = req.files['image-file']
-          ? req.files['image-file'][0]
-          : { filename: `${new Date().getTime()}_temp.PNG` }
+        const [imageInfo] = req.files['image-file']
         const _url = `${OCR_BASE_URL}?access_token=${response.body.access_token}`
         const ocrImagePath = path.join(config.upload.target, '..', 'ocr', imageInfo.filename)
         const data = base64_encode(res, ocrImagePath)

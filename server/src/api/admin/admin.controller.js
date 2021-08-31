@@ -6,17 +6,63 @@ import DKP from '../../api/dkp/dkp.model'
 import History from '../../api/history/history.model'
 import Member from '../../api/user/member.model'
 import Admin from './admin.model'
-import { respondWithResult, handleError, handleEntityNotFound } from '../utils'
+import GangAdmin from './gang_admin.model'
+import {
+  respondWithResult,
+  handleError,
+  handleEntityNotFound,
+  removeEntity
+} from '../utils'
 
 const BACKUP_FOLDER = './src/backup/'
 
 // Gets a list of Admins
 export function index(req, res) {
-  return Admin.find()
+  return Admin
+    .find()
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res))
 }
+
+export function indexGangAdmins(req, res) {
+  return GangAdmin
+    .find()
+    .exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res))
+}
+
+export function createGangAdmin(req, res) {
+  return GangAdmin
+    .create(req.body)
+    .then(respondWithResult(res, 201))
+    .catch(handleError(res))
+}
+
+export function upsertGangAdmin(req, res) {
+  if (req.body._id) {
+    Reflect.deleteProperty(req.body, '_id')
+  }
+  return GangAdmin.findOneAndUpdate({ _id: req.params.id }, req.body, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    runValidators: true
+  })
+    .exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res))
+}
+
+export function destroyGangAdmin(req, res) {
+  return GangAdmin.findById(req.params.id)
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(removeEntity(res))
+    .catch(handleError(res))
+}
+
 
 // Gets a single Admin from the DB
 export function show(req, res) {
@@ -29,7 +75,8 @@ export function show(req, res) {
 
 // Creates a new Admin in the DB
 export function create(req, res) {
-  return Admin.create(req.body)
+  return Admin
+    .create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res))
 }
@@ -40,9 +87,7 @@ export function upsert(req, res) {
     .then((admins) => {
       if (admins && admins.length) {
         admins[0].announcement = req.body.announcement
-        return admins[0]
-          .save()
-          .then(respondWithResult(res))
+        return admins[0].save().then(respondWithResult(res))
           .catch(handleError(res))
       }
       return create(req, res)
@@ -76,15 +121,17 @@ export function backup(req, res) {
         JSON.stringify(AllDataObj, null, 2),
         (err) => {
           if (err) {
-            return res.status(500).json({ message: '数据备份错误' })
+            return res.status(500).json({
+              message: '数据备份错误'
+            })
           }
           fs.readdir(BACKUP_FOLDER, (err, filenames) => {
             if (err) {
-              return res.status(500).json({ message: '获取备份列表错误' })
+              return res.status(500).json({
+                message: '获取备份列表错误'
+              })
             }
-            const backupFiles = filenames.filter(
-              (f) => !['.keep', '.DS_Store'].includes(f)
-            )
+            const backupFiles = filenames.filter((f) => !['.keep', '.DS_Store'].includes(f))
             return res.status(200).json(backupFiles)
           })
         }
@@ -110,10 +157,11 @@ export function resetGang(req, res) {
       const dkps = data[1]
       for (let i = 0; i < users.length; i++) {
         const dkp = dkps.find((dd) => dd._doc.game_id === users[i].game_id)
-        await User.findOneAndUpdate(
-          { _id: users[i]._id },
-          { gang: dkp._doc.gang }
-        )
+        await User.findOneAndUpdate({
+          _id: users[i]._id
+        }, {
+          gang: dkp._doc.gang
+        })
       }
       return res.status(200).json('ok')
     })
@@ -123,7 +171,9 @@ export function resetGang(req, res) {
 export function getBackup(req, res) {
   fs.readdir(BACKUP_FOLDER, (err, filenames) => {
     if (err) {
-      return res.status(500).json({ message: '获取备份列表错误' })
+      return res.status(500).json({
+        message: '获取备份列表错误'
+      })
     }
     const backupFiles = filenames
       .filter((f) => !['.keep', '.DS_Store'].includes(f))
@@ -160,8 +210,7 @@ export function createAdminUser(req, res) {
     created_at: new Date(),
   }
   const newUser = new User(looked_admin)
-  return User.create(newUser)
-    .then(respondWithResult(res, 201))
+  return User.create(newUser).then(respondWithResult(res, 201))
     .catch(handleError(res))
 }
 
@@ -190,33 +239,50 @@ export function recover(req, res) {
       .deleteMany()
       .then(() => Member.create(...allData.members)),
   ])
-    .then(() => res.status(200).json({ message: '恢复成功' }))
+    .then(() => res.status(200).json({
+      message: '恢复成功'
+    }))
     .catch(handleError(res))
 }
 
 export function addGoldForAllUsers(req, res) {
-  return User.updateMany({}, { gold: 100000 })
-    .then(respondWithResult(res))
+  return User.updateMany({}, {
+    gold: 100000
+  }).then(respondWithResult(res))
     .catch(handleError(res))
 }
 
 export async function recoverPersonalData(req, res) {
-  const { recoverGameId, backupFilename } = req.body
-  const rawData = fs.readFileSync(`${BACKUP_FOLDER}${backupFilename}`)
-  const { users, dkps, histories } = JSON.parse(rawData)
-  const recoverUser = users.find((u) => u.game_id === recoverGameId)
-  const recoverDkp = dkps.find((d) => d.game_id === recoverGameId)
-  const recoverHistories = histories.filter((h) => h.dkp === recoverDkp._id)
   try {
-    const user = await User.findOne({ game_id: recoverGameId })
-    const dkp = await DKP.findOne({ game_id: recoverGameId })
+    const {
+      recoverGameId,
+      backupFilename
+    } = req.body
+    const rawData = fs.readFileSync(`${BACKUP_FOLDER}${backupFilename}`)
+    const {
+      users,
+      dkps,
+      histories
+    } = JSON.parse(rawData)
+    const recoverUser = users.find((u) => u.game_id === recoverGameId)
+    const recoverDkp = dkps.find((d) => d.game_id === recoverGameId)
+    const recoverHistories = histories.filter((h) => h.dkp === recoverDkp._id)
+
+    const user = await User.findOne({
+      game_id: recoverGameId
+    })
+    const dkp = await DKP.findOne({
+      game_id: recoverGameId
+    })
     Object.assign(user, recoverUser)
     Object.assign(dkp, recoverDkp)
     await user.save()
     await dkp.save()
     await History.create(...recoverHistories)
 
-    return res.status(200).json({ message: '恢复成功' })
+    return res.status(200).json({
+      message: '恢复成功'
+    })
   } catch (error) {
     console.log(error.toString())
 
