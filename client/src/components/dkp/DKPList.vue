@@ -56,7 +56,7 @@
           </el-form-item>
           <el-form-item label="帮会名">
             <el-select v-model="newDKPForm.gang" class="field-input">
-              <el-option v-for="p in GANGS" :key="p" :label="p" :value="p"></el-option>
+              <el-option v-for="p in gangs" :key="p" :label="p" :value="p"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="" v-if="error">
@@ -79,7 +79,7 @@
 import DKPTable from '@components/dkp/DKPTable.vue'
 import { mapActions } from 'vuex'
 import { authComputed, DKPComputed, DKPMethods } from '@state/helpers'
-import { PROFESSIONS, app, CHI_SIMS } from '@src/app.config'
+import { PROFESSIONS, GANGS, CHI_SIMS } from '@src/app.config'
 
 export default {
   name: 'DKPList',
@@ -101,7 +101,7 @@ export default {
         gang: '江湖何处来',
       },
       PROFESSIONS,
-      GANGS: app.GANGS,
+      gangs: GANGS,
       rules: {
         game_id: [
           {

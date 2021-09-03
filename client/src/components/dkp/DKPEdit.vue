@@ -156,7 +156,7 @@
 <script>
 import _ from 'lodash'
 import XLSX from 'xlsx'
-import { DKP_HEADERS, app, GAME_NAME_TITLES } from '@src/app.config'
+import { DKP_HEADERS, GANGS, GAME_NAME_TITLES } from '@src/app.config'
 import { DKPMethods, DKPComputed, authMethods, authComputed } from '@state/helpers'
 
 export default {
@@ -368,7 +368,7 @@ export default {
             game_name: row['游戏名称'] || row['名称'] || row['玩家'],
             gang: row['帮会名'] || row['帮会'],
           }))
-          .filter((xr) => app.GANGS.includes(xr.gang))
+          .filter((xr) => GANGS.includes(xr.gang))
 
         if (!validRows.length) {
           this.errMsg = '数据库没有找到匹配的玩家，请先导入数据'
@@ -388,7 +388,7 @@ export default {
               }
               return member
             })
-            .filter((xr) => app.GANGS.includes(xr.gang))
+            .filter((xr) => GANGS.includes(xr.gang))
         }
       }
     },

@@ -2,8 +2,9 @@ const app = {
   name: '江湖',
   url: 'www.jianghu.club',
   gangName: 'DKP系统',
-  GANGS: ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖知我意'],
 }
+
+const GANGS = ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖知我意', '江湖来故人']
 
 const CHI_SIMS = {
   game_id: '游戏ID',
@@ -133,6 +134,7 @@ const USER_TABLE_HEADERS = [
 const GAME_NAME_TITLES = ['游戏ID', '游戏名称', '名称', '玩家']
 
 module.exports = {
+  GANGS,
   app,
   STATUS_TEXTS,
   CHI_SIMS,

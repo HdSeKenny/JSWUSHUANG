@@ -107,7 +107,7 @@
       </template>
       <template v-else>
         <template v-if="historyObj.histories && historyObj.histories.length">
-          <DKPHistory :histories="historyObj.histories" />
+          <DKPHistory :dkp="historyObj" />
         </template>
         <template v-if="!historyObj.histories || historyObj.histories.length === 0">
           <div class="no-history">没有历史记录</div>
@@ -516,7 +516,11 @@ export default {
     padding: 0 20px;
   }
   .el-form-item {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    &:first-child,
+    &:last-child {
+      margin-bottom: 15px;
+    }
   }
   .histories-wrapper {
     padding-bottom: 20px;

@@ -209,53 +209,47 @@ export const actions = {
   },
 
   calculateManyInfo({ commit, rootState }, data) {
-    try {
-      const { activity, activityText, dkp, members } = data.params
-      const histories = []
-      const newData = members.map((d) => {
-        const result = { game_id: d.game_id.toString(), data: {} }
-        const matched = data.dkps.find((dd) => dd.game_id == d.game_id)
-        const _sum = matched.sum ? parseInt(matched.sum) : calculateDKPSum(matched)
-        result.data[activity] = parseInt(matched[activity] || 0) + parseInt(dkp)
-        result.data.sum = _sum + parseInt(dkp)
-        result.dkpId = matched._id
-        // dkp history
-        const historyObj = {
-          type: 'batch',
-          fields: [
-            {
-              key: activity,
-              oldValue: parseInt(matched[activity] || 0),
-              newValue: result.data[activity],
-              text: activityText,
-              symbol: '+',
-              changed_value: dkp,
-            },
-          ],
-          sum_after_changed: result.data.sum,
-          operator: rootState.auth.currentUser._id,
-          created: new Date(),
-          dkp: matched._id,
-        }
+    const { activity, activityText, dkp, members } = data.params
+    const histories = []
+    const newData = members.map((d) => {
+      const result = { game_id: d.game_id.toString(), data: {} }
+      const matched = data.dkps.find((dd) => dd.game_id == d.game_id)
+      const _sum = matched.sum ? parseInt(matched.sum) : calculateDKPSum(matched)
+      result.data[activity] = parseInt(matched[activity] || 0) + parseInt(dkp)
+      result.data.sum = _sum + parseInt(dkp)
+      result.dkpId = matched._id
+      // dkp history
+      const historyObj = {
+        type: 'batch',
+        fields: [
+          {
+            key: activity,
+            oldValue: parseInt(matched[activity] || 0),
+            newValue: result.data[activity],
+            text: activityText,
+            symbol: '+',
+            changed_value: dkp,
+          },
+        ],
+        sum_after_changed: result.data.sum,
+        operator: rootState.auth.currentUser._id,
+        created: new Date(),
+        dkp: matched._id,
+      }
 
-        histories.push(historyObj)
-        result.histories = matched.histories
-        return result
+      histories.push(historyObj)
+      result.histories = matched.histories
+      return result
+    })
+
+    return HttpRequest.post(`/api/dkps/some/update`, { newData, histories })
+      .then((_data) => {
+        commit(ACTIONS.UPDATE_MANY_DKP_SUCCESS, _data)
       })
-
-      return HttpRequest.post(`/api/dkps/some/update`, { newData, histories })
-        .then((_data) => {
-          commit(ACTIONS.UPDATE_MANY_DKP_SUCCESS, _data)
-          return _data
-        })
-        .catch((error) =>
-          Promise.reject({
-            message: error.response.data.message,
-          })
-        )
-    } catch (error) {
-      return Promise.reject(error)
-    }
+      .catch((error) => {
+        console.log('calculateManyInfo error', error)
+        return Promise.reject(error)
+      })
   },
 
   updateManyDKPInfo: ({ commit, state, rootState, dispatch }, data) => {

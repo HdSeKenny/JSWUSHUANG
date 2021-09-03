@@ -1,7 +1,7 @@
 <template>
   <section class="histories-wrapper">
-    <template v-if="histories && histories.length">
-      <div v-for="(h, i) in histories" :key="i" class="history-block">
+    <template v-if="dkp && dkp.histories && dkp.histories.length">
+      <div v-for="(h, i) in dkp.histories" :key="i" class="history-block">
         <div class="date mr5">{{ formatDate(h.created) }}</div>
         <div class="content">
           <p v-for="(f, j) in h.fields" :key="`${i}_${j}`" class="mt0">
@@ -17,7 +17,7 @@
                 {{ f.symbol }} {{ f.changed_value }}
               </span>
               <span class="ml10"
-                >剩余: <span class="value-blue">{{ h.sum_after_changed }}</span></span
+                >剩余: <span class="value-blue">{{ getSumAfterChange(h) }}</span></span
               >
             </template>
             <template v-else>
@@ -37,12 +37,67 @@
 export default {
   name: 'DKPHistory',
   props: {
-    histories: Array,
+    dkp: Object,
   },
   methods: {
     formatDate(date) {
       return this.$formatDate(date, 'yyyy, MM/dd hh:mm')
     },
+    getSumAfterChange(h) {
+      if (h.sum_after_changed) return h.sum_after_changed
+      return '数据丢失'
+
+      // const {
+      //   fields: [field],
+      //   sum_after_changed,
+      // } = h
+      // const { newValue, oldValue, symbol, changed_value, key } = field
+
+      // let new_sum_after_changed = 0
+    },
+
+    calculateDKPSum(row) {
+      const plusFields = [
+        'league_friday',
+        'league_saturday',
+        'field',
+        'territorial_stronghold',
+        'original',
+      ]
+      const reduceFields = ['payment']
+      let sum = 0
+      for (let i = 0; i < plusFields.length; i++) {
+        const field = plusFields[i]
+        sum += row[field] || 0
+      }
+
+      for (let i = 0; i < reduceFields.length; i++) {
+        const field = reduceFields[i]
+        sum -= row[field] || 0
+      }
+
+      return sum
+    },
+  },
+  computed: {
+    // histories() {
+    //   const histories = []
+    //   const _sum = calculateDKPSum(this.dkp)
+    //   let previous, current
+    //   this.dkp.histories.reverse().forEach((h, i) => {
+    //     const {
+    //       fields: [field],
+    //       sum_after_changed,
+    //     } = h
+    //     let _sum_changed = null
+    //     if (i === 0) {
+    //       _sum_changed = sum_after_changed || _sum
+    //       previous = _sum
+    //       current = _sum
+    //     } else if (!sum_after_changed) {
+    //     }
+    //   })
+    // },
   },
 }
 </script>

@@ -56,15 +56,15 @@
 <script>
 import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
-import { app } from '@src/app.config'
+import { GANGS } from '@src/app.config'
 import { MESSAGE_TYPES } from '@state/constants'
 
 export default {
   name: 'GangAdmins',
   data() {
     return {
-      gang: app.GANGS[0],
-      gangs: app.GANGS,
+      gang: GANGS[0],
+      gangs: GANGS,
       gangModalVisible: false,
       error: null,
       wechat: null,
@@ -123,7 +123,7 @@ export default {
         .then(() => {
           this.loading = false
           this.gangModalVisible = false
-          this.gang = app.GANGS[0]
+          this.gang = GANGS[0]
           this.gameName = null
           this.gameId = null
           this.wechat = null

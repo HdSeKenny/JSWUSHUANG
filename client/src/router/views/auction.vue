@@ -1,13 +1,8 @@
 <template>
   <Layout v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.6)">
     <section class="page-content auction">
-      <el-tabs
-        type="border-card"
-        @tab-click="onGoodTabClick"
-        :value="goodTab"
-        :class="currentUser.role"
-      >
-        <el-tab-pane name="ALL" label="所有商品">
+      <el-tabs type="border-card" v-model="tab" :class="currentUser.role">
+        <el-tab-pane name="_all" label="所有商品">
           <div class="search-wrapper">
             <el-input
               class="search"
@@ -105,7 +100,7 @@
             @loaded-all="allImagesLoaded"
           />
         </el-tab-pane>
-        <el-tab-pane name="ADD" label="上架商品" v-if="isAdmin">
+        <el-tab-pane name="_add" label="上架商品" v-if="isAdmin">
           <AuctionAdd />
         </el-tab-pane>
       </el-tabs>
@@ -126,6 +121,7 @@ import { getAuctionStyle } from './utils.js'
 export default {
   components: { Layout, GoodDetails, AuctionAdd },
   data() {
+    const current = this.$router.history.current
     return {
       STATUS_TEXTS,
       CHI_SIMS,
@@ -138,9 +134,18 @@ export default {
       cardBorderStyle: {
         padding: '0px',
       },
+      tab: current.query.tab || '_all',
     }
   },
-
+  watch: {
+    tab(newVal) {
+      this.$router.push({
+        query: {
+          tab: newVal,
+        },
+      })
+    },
+  },
   methods: {
     ...goodMethods,
 

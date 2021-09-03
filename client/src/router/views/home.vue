@@ -2,7 +2,7 @@
   <Layout v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.6)">
     <section class="page-content home">
       <el-tabs v-model="tab" type="border-card" :class="currentUser.role" class="left-tab">
-        <el-tab-pane name="ALL" label="DKP信息">
+        <el-tab-pane name="_all" label="DKP信息">
           <div class="list mb10" v-if="isUser">
             <div class="user-info">
               <div class="field">
@@ -31,29 +31,29 @@
             <DKPList :DKPData="DKPData"></DKPList>
           </div>
         </el-tab-pane>
-        <el-tab-pane name="ADMINS" label="管理信息">
+        <el-tab-pane name="_adm" label="管理信息">
           <GangAdmins />
         </el-tab-pane>
         <template v-if="isUser">
-          <el-tab-pane name="DKP_HISTORY" label="DKP记录">
+          <el-tab-pane name="_dkph" label="DKP记录">
             <div class="dkp-history">
-              <DKPHistory :histories="currentUserHistories" />
+              <DKPHistory :dkp="currentUserDKP" />
             </div>
           </el-tab-pane>
-          <el-tab-pane name="AU_HISTORY" label="竞拍记录">
+          <el-tab-pane name="_auh" label="竞拍记录">
             <div class="auction-history">
               <AuctionHistory :orders="currentUser.orders" />
             </div>
           </el-tab-pane>
-          <el-tab-pane name="NAME_CHECK" label="名称校验">
+          <el-tab-pane name="_namec" label="名称校验">
             <NameCheck />
           </el-tab-pane>
         </template>
         <template v-if="isAdmin">
-          <el-tab-pane name="DKPEDIT" label="导入数据">
+          <el-tab-pane name="_edit" label="导入数据">
             <DKPEdit :DKPData="DKPData"></DKPEdit>
           </el-tab-pane>
-          <el-tab-pane name="DATAMANAGE" label="数据管理">
+          <el-tab-pane name="_datam" label="数据管理">
             <el-button type="primary" @click="onBackUpData">数据备份</el-button>
           </el-tab-pane>
         </template>
@@ -96,9 +96,10 @@ export default {
     GangAdmins,
   },
   data() {
+    const current = this.$router.history.current
     return {
       loading: true,
-      tab: 'ALL',
+      tab: current.query.tab || '_all',
     }
   },
   created() {
@@ -107,6 +108,13 @@ export default {
 
   watch: {
     $route: 'fetchData',
+    tab(newVal) {
+      this.$router.push({
+        query: {
+          tab: newVal,
+        },
+      })
+    },
   },
 
   computed: {
@@ -121,9 +129,8 @@ export default {
       isLookedAdmin: (state) => state.isLookedAdmin,
       isUser: (state) => state.isUser,
     }),
-    currentUserHistories() {
-      const currentUserDkp = this.DKPData.find((dd) => dd.game_name === this.currentUser.game_name)
-      return currentUserDkp ? currentUserDkp.histories || [] : []
+    currentUserDKP() {
+      return this.DKPData.find((dd) => dd.game_name === this.currentUser.game_name) || {}
     },
   },
 
