@@ -1,6 +1,7 @@
 /* eslint-disable, camelcase */
 import _ from 'lodash'
 import HttpRequest from '@state/request'
+// import IndexDB from '@state/indexdb'
 import {
   FILTERED_CHARACTERS,
   ACTIONS,
@@ -10,7 +11,7 @@ import {
   UNREADABLE_CHARACTER,
 } from '@state/constants'
 
-import { saveState, getSavedState } from './utils'
+import { getSavedState } from './utils'
 
 const STOREKEYS = {
   DKPS: 'DKP_DATA',
@@ -60,17 +61,18 @@ export const getters = {
 export const mutations = {
   GET_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = newVal.sort((a, b) => new Date(b.updated) - new Date(a.updated))
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
+    // IndexDB.save(STOREKEYS.DKPS, state.DKPData, 'dkps')
   },
   IMPORT_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = newVal
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
   UPDATE_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = state.DKPData.filter((d) => d.game_id !== newVal.game_id)
     state.DKPData.push(newVal)
     state.DKPData = state.DKPData.sort((a, b) => new Date(b.updated) - new Date(a.updated))
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   UPDATE_MANY_DKP_SUCCESS(state, newVal) {
@@ -78,27 +80,27 @@ export const mutations = {
     const temp = state.DKPData.filter((d) => !gameIds.includes(d.game_id))
     const newDKPData = temp.concat(newVal).sort((a, b) => new Date(b.updated) - new Date(a.updated))
     state.DKPData = newDKPData
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   CLEAR_DKP_DATA_SUCCESS(state) {
     state.DKPData = []
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   DELETE_DKP_SUCCESS(state, id) {
     state.DKPData = state.DKPData.filter((d) => d._id !== id)
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   ADD_NEW_DKP_SUCCESS(state, newVal) {
     state.DKPData.unshift(newVal)
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   CHECKED_NAME_SUCCESS(state, newVal) {
     state.DKPData = newVal.newDKP ? [newVal.newDKP] : []
-    saveState(STOREKEYS.DKPS, state.DKPData)
+    // saveState(STOREKEYS.DKPS, state.DKPData)
   },
 
   SOCKET_auction_receive(state, val) {
@@ -149,6 +151,10 @@ export const actions = {
     if (state.DKPData.length) {
       return Promise.resolve(state.DKPData)
     }
+
+    // IndexDB.get(STOREKEYS.DKPS, (data) => {
+    //   console.log(data)
+    // })
 
     const stored = getSavedState(STOREKEYS.DKPS)
 
