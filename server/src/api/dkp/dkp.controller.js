@@ -26,44 +26,24 @@ export function index(req, res) {
     .catch(handleError(res))
 }
 
-// Gets a single DKP from the DB
-export async function show(req, res) {
-  try {
-    const dkps = await DKP.find({
-      $or: [{
-        game_id: req.params.id
-      }, {
-        isGangAdmin: true
+export function show(req, res) {
+  return DKP.find({
+    game_id: req.params.id
+  })
+    .populate({
+      path: 'histories',
+      populate: [{
+        path: 'operator',
+        select: 'game_name',
+        model: 'User',
       }],
     })
-      .populate({
-        path: 'histories',
-        populate: [{
-          path: 'operator',
-          select: 'game_name',
-          model: 'User',
-        }],
-      })
-      .exec()
-
-    const users = await User.find({
-      $or: [{
-        game_id: req.params.id
-      }, {
-        isGangAdmin: true
-      }],
-    }).exec()
-
-    for (let i = 0; i < dkps.length; i++) {
-      const dkp = dkps[i]
-      const user = users.find((u) => u.game_id === dkp.game_id)
-      dkp.wechat = user ? user.wechat : ''
-    }
-    res.status(200).json(dkps)
-  } catch (error) {
-    handleError(res, 500, error)
-  }
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res))
 }
+
 
 // Creates a new DKP in the DB
 export function create(req, res) {
