@@ -1,96 +1,78 @@
-// quite untested, adapted from BigstickCarpet's gist, attempt to make it simpler to use
+const DKP_DB_NAME = 'DKPSSync'
+const CURRENT_DB_SCHEMA_VERSION = 1
 
-function openIndexedDB(fileindex) {
-  // This works on all devices/browsers, and uses IndexedDBShim as a final fallback
-  const indexedDB =
-    window.indexedDB ||
-    window.mozIndexedDB ||
-    window.webkitIndexedDB ||
-    window.msIndexedDB ||
-    window.shimIndexedDB
-  const openDB = indexedDB.open('dkp_database', 1)
+let _db
 
-  openDB.onupgradeneeded = function() {
-    const db = {}
-    db.result = openDB.result
-    db.store = db.result.createObjectStore('dkp_objects_store', { keyPath: 'id' })
-    if (fileindex) db.index = db.store.createIndex('name_index', fileindex)
+const getDKPIndexedStore = () => new Promise((resolve, reject) => {
+  if (_db) {
+    const tx = _db.transaction(DKP_DB_NAME, 'readwrite')
+    const store = tx.objectStore(DKP_DB_NAME)
+    return resolve(store)
   }
-
-  return openDB
-}
-
-function getStoreIndexedDB(openDB) {
-  const db = {}
-  db.result = openDB.result
-  db.tx = db.result.transaction('dkp_objects_store', 'readwrite')
-  db.store = db.tx.objectStore('dkp_objects_store')
-  db.index = db.store.index('name_index')
-
-  return db
-}
-
-function saveIndexedDB(filename, filedata, fileindex) {
-  const openDB = openIndexedDB(fileindex)
-
-  openDB.onsuccess = function() {
-    var db = getStoreIndexedDB(openDB)
-
-    db.store.put({ id: filename, data: filedata })
-  }
-
-  return true
-}
-
-// function findIndexedDB(filesearch, callback) {
-//   return loadIndexedDB(null, callback, filesearch)
-// }
-
-function loadIndexedDB(filename, filesearch, callback) {
-  var openDB = openIndexedDB()
-
-  openDB.onsuccess = function() {
-    var db = getStoreIndexedDB(openDB)
-
-    var getData
-    if (filename) {
-      getData = db.store.get(filename)
-    } else {
-      getData = db.index.get(filesearch)
+  const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
+  if (indexedDB) {
+    const open = indexedDB.open('DkpSystem', CURRENT_DB_SCHEMA_VERSION)
+    open.onupgradeneeded = (event) => {
+      // schema for version 1
+      const db = event.target.result
+      db.createObjectStore(DKP_DB_NAME, { keyPath: 'key' })
     }
 
-    getData.onsuccess = function() {
-      callback(getData.result.data)
-    }
-
-    db.tx.oncomplete = function() {
-      db.result.close()
+    open.onsuccess = (event) => {
+      _db = event.target.result
+      const tx = _db.transaction(DKP_DB_NAME, 'readwrite')
+      const store = tx.objectStore(DKP_DB_NAME)
+      resolve(store)
     }
   }
+  else {
+    // eslint-disable-next-line no-console
+    console.log('client did not support indexedDB, saved report sync disabled')
+  }
+})
 
-  return true
+const getSavedDKPData = (store) => new Promise((resolve) => {
+  const savedDKPData = store.get('savedDKPData')
+  savedDKPData.onsuccess = (event) => {
+    const { result } = event.target
+    if (result) {
+      console.log('getSavedDKPData success')
+      return resolve(result.value)
+    }
+    // return the default value
+    return resolve(null)
+  }
+})
+
+const clearAll = (store) => new Promise((resolve, reject) => {
+  const clear = store.clear()
+  clear.onsuccess = () => {
+    resolve()
+  }
+  clear.onerror = (event) => {
+    const { errorCode } = event.target
+    reject('indexedDB: error on clear.', errorCode)
+  }
+})
+
+const dbHelper = {
+  update(savedDKPData) {
+    return getDKPIndexedStore().then((store) => {
+      store.put({ key: 'savedDKPData', value: savedDKPData })
+    })
+  },
+
+  get() {
+    return getDKPIndexedStore().then((store) => {
+      return getSavedDKPData(store)
+    })
+  },
+
+  clearAllForLogin() {
+    return getDKPIndexedStore().then((store) => {
+      return clearAll(store)
+    })
+  }
 }
 
-// function example () {
-//   var fileindex = ["name.last", "name.first"];
-//   saveIndexedDB(12345, {name: {first: "John", last: "Doe"}, age: 42});
-//   saveIndexedDB(67890, {name: {first: "Bob", last: "Smith"}, age: 35}, fileindex);
-
-//   loadIndexedDB(12345, callbackJohn);
-//   findIndexedDB(["Smith", "Bob"], callbackBob);
-// }
-
-// function callbackJohn(filedata) {
-//   console.log(filedata.name.first)
-// }
-
-// function callbackBob(filedata) {
-//   console.log(filedata.name.first)
-// }
-
-const _indexdb = {
-  save: saveIndexedDB,
-  get: loadIndexedDB,
-}
-
-export default _indexdb
+export default dbHelper

@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parserOptions: {
-    sourceType: 'script'
+    sourceType: 'script',
   },
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#bulb-rules
@@ -11,7 +11,7 @@ module.exports = {
     // https://github.com/prettier/eslint-config-prettier
     'prettier',
     'prettier/standard',
-    'prettier/vue'
+    'prettier/vue',
   ],
   rules: {
     // Only allow debugger in development
@@ -44,8 +44,8 @@ module.exports = {
       {
         atComponent: 'v-slot',
         default: 'v-slot',
-        named: 'longform'
-      }
+        named: 'longform',
+      },
     ],
     'vue/valid-v-slot': 'error',
     'vue/attributes-order': 'off',
@@ -55,26 +55,28 @@ module.exports = {
     'dot-notation': 'off',
 
     'one-var': 'off',
-    'eqeqeq': 'off',
+    eqeqeq: 'off',
     'prefer-promise-reject-errors': 'off',
-    'camelcase': 'off'
+    camelcase: 'off',
+    semi: 2,
+    // 'linebreak-style': 'off',
   },
   overrides: [
     {
       files: ['src/**/*', 'tests/unit/**/*', 'tests/e2e/**/*'],
       parserOptions: {
         parser: 'babel-eslint',
-        sourceType: 'module'
+        sourceType: 'module',
       },
       env: {
-        browser: true
-      }
+        browser: true,
+      },
     },
     {
       files: ['**/*.unit.js'],
       parserOptions: {
         parser: 'babel-eslint',
-        sourceType: 'module'
+        sourceType: 'module',
       },
       env: { jest: true },
       globals: {
@@ -83,8 +85,8 @@ module.exports = {
         shallowMountView: false,
         createComponentMocks: false,
         createModuleStore: false,
-        scope: false
-      }
-    }
-  ]
+        scope: false,
+      },
+    },
+  ],
 }

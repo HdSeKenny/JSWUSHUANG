@@ -1,24 +1,31 @@
 /* eslint-disable, camelcase */
 import _ from 'lodash'
 import HttpRequest from '@state/request'
-// import IndexDB from '@state/indexdb'
+import indexedStore from '@state/indexdb'
 import {
   FILTERED_CHARACTERS,
   ACTIONS,
-  CHINESE_REGEX,
+  // CHINESE_REGEX,
   UNREADABLE_WORDS,
   INVALID_CHARACTERS,
   UNREADABLE_CHARACTER,
 } from '@state/constants'
 
-import { getSavedState } from './utils'
+// import { getSavedState } from './utils'
 
-const STOREKEYS = {
-  DKPS: 'DKP_DATA',
-}
+// const STOREKEYS = {
+//   DKPS: 'DKP_DATA',
+// }
 
 const getTheCorrentOne = (data, word) => {
-  const wordLengthArr = data.map((d) => d.game_name.length)
+  const wordLengthArr = data.map((d) => {
+    let gameName = d.game_name
+    UNREADABLE_CHARACTER.forEach((uc) => {
+      gameName = gameName.replace(uc, '')
+    })
+
+    return gameName.length
+  })
   const distanceArr = wordLengthArr.map((wl) => wl - word.length)
   const min = Math.min(...distanceArr)
   const idx = distanceArr.findIndex((d) => d === min)
@@ -61,46 +68,43 @@ export const getters = {
 export const mutations = {
   GET_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = newVal.sort((a, b) => new Date(b.updated) - new Date(a.updated))
-    // saveState(STOREKEYS.DKPS, state.DKPData)
-    // IndexDB.save(STOREKEYS.DKPS, state.DKPData, 'dkps')
+    indexedStore.update(state.DKPData)
   },
   IMPORT_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = newVal
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    indexedStore.update(state.DKPData)
   },
   UPDATE_DKP_DATA_SUCCESS(state, newVal) {
     state.DKPData = state.DKPData.filter((d) => d.game_id !== newVal.game_id)
-    state.DKPData.push(newVal)
-    state.DKPData = state.DKPData.sort((a, b) => new Date(b.updated) - new Date(a.updated))
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    state.DKPData.unshift(newVal)
+    indexedStore.update(state.DKPData)
   },
 
   UPDATE_MANY_DKP_SUCCESS(state, newVal) {
     const gameIds = newVal.map((nv) => nv.game_id)
     const temp = state.DKPData.filter((d) => !gameIds.includes(d.game_id))
-    const newDKPData = temp.concat(newVal).sort((a, b) => new Date(b.updated) - new Date(a.updated))
-    state.DKPData = newDKPData
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    state.DKPData = [...newVal, ...temp]
+    indexedStore.update(state.DKPData)
   },
 
   CLEAR_DKP_DATA_SUCCESS(state) {
     state.DKPData = []
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    indexedStore.update(state.DKPData)
   },
 
   DELETE_DKP_SUCCESS(state, id) {
     state.DKPData = state.DKPData.filter((d) => d._id !== id)
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    indexedStore.update(state.DKPData)
   },
 
   ADD_NEW_DKP_SUCCESS(state, newVal) {
     state.DKPData.unshift(newVal)
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    indexedStore.update(state.DKPData)
   },
 
   CHECKED_NAME_SUCCESS(state, newVal) {
     state.DKPData = newVal.newDKP ? [newVal.newDKP] : []
-    // saveState(STOREKEYS.DKPS, state.DKPData)
+    indexedStore.update(state.DKPData)
   },
 
   SOCKET_auction_receive(state, val) {
@@ -152,34 +156,30 @@ export const actions = {
       return Promise.resolve(state.DKPData)
     }
 
-    // IndexDB.get(STOREKEYS.DKPS, (data) => {
-    //   console.log(data)
-    // })
+    indexedStore.get().then(stored => {
+      if (stored && stored.length) {
+        commit(ACTIONS.GET_DKP_DATA_SUCCESS, stored)
+        return Promise.resolve(stored)
+      }
 
-    const stored = getSavedState(STOREKEYS.DKPS)
+      const { currentUser } = rootState.auth
+      const admins = ['admin', 'looked_admin', 'root']
+      const requestWrapper = () =>
+        admins.includes(currentUser.role)
+          ? HttpRequest.get('/api/dkps')
+          : HttpRequest.get(`/api/dkps/${currentUser.game_id}`)
 
-    if (stored && stored.length) {
-      commit(ACTIONS.GET_DKP_DATA_SUCCESS, stored)
-      return Promise.resolve(stored)
-    }
-
-    const { currentUser } = rootState.auth
-    const admins = ['admin', 'looked_admin', 'root']
-    const requestWrapper = () =>
-      admins.includes(currentUser.role)
-        ? HttpRequest.get('/api/dkps')
-        : HttpRequest.get(`/api/dkps/${currentUser.game_id}`)
-
-    return requestWrapper()
-      .then((data) => {
-        commit(ACTIONS.GET_DKP_DATA_SUCCESS, data)
-        return data
-      })
-      .catch((error) =>
-        Promise.reject({
-          message: error.message || error.response.data.message,
+      return requestWrapper()
+        .then((data) => {
+          commit(ACTIONS.GET_DKP_DATA_SUCCESS, data)
+          return data
         })
-      )
+        .catch((error) =>
+          Promise.reject({
+            message: error.message || error.response.data.message,
+          })
+        )
+    })
   },
 
   importAllExcelData({ commit, state, rootState }, data) {
@@ -311,8 +311,13 @@ export const actions = {
         console.log('validWords', validWords)
         const members = []
         validWords.forEach((word) => {
+          let _word = word
+          UNREADABLE_CHARACTER.forEach((uc) => {
+            _word = _word.replace(uc, '')
+          })
+
           const hasManyIncludes = state.DKPData.filter(
-            (d) => d.game_name !== word && d.checked_name !== word && d.game_name.includes(word)
+            (d) => d.game_name !== word && d.checked_name !== word && d.game_name.includes(_word)
           )
 
           if (hasManyIncludes.length) {
@@ -335,18 +340,17 @@ export const actions = {
             const isGameName = game_name === word
             if (isCheckedName || isGameName) return true
 
-            let ocrChinese = word.replace(CHINESE_REGEX, '')
-            const readableWord = UNREADABLE_WORDS[ocrChinese]
+            const readableWord = UNREADABLE_WORDS[word]
             if (readableWord) {
               return game_name === readableWord || game_name.includes(readableWord)
             }
 
-            let dkpChinese = game_name.replace(CHINESE_REGEX, '')
+            let dkpChinese = game_name
             UNREADABLE_CHARACTER.forEach((uc) => {
               dkpChinese = dkpChinese.replace(uc, '')
-              ocrChinese = ocrChinese.replace(uc, '')
             })
-            return dkpChinese.includes(ocrChinese)
+
+            return dkpChinese.includes(_word)
           })
 
           if (dkpRecord) {

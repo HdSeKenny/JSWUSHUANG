@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { getSavedState, clear } from './modules/utils'
+import indexedStore from '@state/indexdb'
+import { getSavedState } from './modules/utils'
 import { MESSAGES } from './constants'
 
 const authenticated = (noAuth, options) => new Promise((resolve, reject) => {
@@ -33,7 +34,7 @@ const HttpRequest = {
         .catch((error) => {
           if (error.response.status === 401
             && error.response.statusText === 'Unauthorized') {
-            clear()
+            indexedStore.clearAllForLogin()
           }
           return Promise.reject(error)
         })

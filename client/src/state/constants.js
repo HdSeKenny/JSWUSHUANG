@@ -78,6 +78,9 @@ export const UNREADABLE_WORDS = {
   如果儿: '如果ル',
   '鹿、寶': '鹿丶寳',
   鹿寶: '鹿丶寳',
+  "类": '氼氼',
+  "娇娥": 'ぃ婖娥',
+  "十空": '十一空゛'
 }
 
 export const UNREADABLE_CHARACTER = [
@@ -92,11 +95,14 @@ export const UNREADABLE_CHARACTER = [
   '丿',
   '灬',
   '、',
+  'ゝ',
+  'ツ',
+  'シ',
 ]
 
 const getLevels = () => {
   const levels = []
-  for (let i = 60; i < 100; i++) {
+  for (let i = 0; i < 100; i++) {
     levels.push(`${i}`)
   }
   return levels

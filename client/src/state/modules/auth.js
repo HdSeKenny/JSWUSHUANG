@@ -1,6 +1,7 @@
 import HttpRequest from '@state/request'
+import indexedStore from '@state/indexdb'
 import { ACTIONS } from '@state/constants'
-import { getSavedState, saveState, clear } from './utils'
+import { getSavedState, saveState } from './utils'
 
 const BASE_URL = '/api/users'
 
@@ -213,7 +214,7 @@ export const actions = {
   logOut({ commit, dispatch }) {
     dispatch('dkps/clearDKPData', {}, { root: true })
     commit('CLEAR_ALL_DATA')
-    clear()
+    indexedStore.clearAllForLogin()
   },
 
   // Validates the current user's token and refreshes it

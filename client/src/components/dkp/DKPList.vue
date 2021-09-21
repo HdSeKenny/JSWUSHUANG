@@ -120,6 +120,7 @@ export default {
       },
       error: '',
       loading: true,
+      limit: 50,
     }
   },
 
@@ -147,7 +148,7 @@ export default {
         const nameInclude = td.game_name ? td.game_name.includes(this.search) : false
         const idInclude = td.game_id ? td.game_id.toString().includes(this.search) : false
         return nameInclude || idInclude
-      })
+      }).slice(0, this.limit)
 
       // let sized = []
       // if (filtered.length) {

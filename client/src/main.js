@@ -10,6 +10,7 @@ import imagePreloader from 'vue-image-preloader'
 import '@src/plugins/elementui'
 import '@src/plugins/vxe-table'
 import '@components/_globals'
+import '@state/indexdb'
 
 import router from '@router'
 import store from '@state/store'
