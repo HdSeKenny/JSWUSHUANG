@@ -6,7 +6,7 @@
   >
     <div>
       <el-card shadow="never" class="login-card tac" v-if="showLogin">
-        <img src="@assets/images/logo.png" alt="logo" width="170" />
+        <!-- <img src="@assets/images/logo.png" alt="logo" width="170" /> -->
         <!-- <div class="no-account bold pointer" @click="signup">
           {{ chiSims.create_account }}
         </div> -->
@@ -157,6 +157,7 @@ $login-card-margin: 10px auto;
   .login-card {
     width: $login-card-width;
     background: $transparent-six-color;
+    margin-top: 300px;
     text-align: left;
     border: none;
   }

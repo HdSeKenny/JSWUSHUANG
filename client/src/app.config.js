@@ -1,10 +1,10 @@
 const app = {
-  name: '江湖',
-  url: 'www.jianghu.club',
+  name: '未梦幽',
+  url: 'www.weimengyou.club',
   gangName: 'DKP系统',
 }
 
-const GANGS = ['江湖何处来', '江湖如一梦', '江湖与君同', '江湖意相逢', '江湖知我意', '江湖来故人']
+const GANGS = ['未梦幽']
 
 const CHI_SIMS = {
   game_id: '游戏ID',

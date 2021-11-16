@@ -98,7 +98,7 @@ export default {
         game_name: null,
         original: 0,
         profession: '碎梦',
-        gang: '江湖何处来',
+        gang: '未梦幽',
       },
       PROFESSIONS,
       gangs: GANGS,
@@ -194,7 +194,7 @@ export default {
                 game_name: '',
                 original: 0,
                 profession: '碎梦',
-                gang: '江湖何处来',
+                gang: '未梦幽',
               }
               this.loading = false
               this.newDKPVisible = false
