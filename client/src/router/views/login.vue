@@ -6,7 +6,7 @@
   >
     <div>
       <el-card shadow="never" class="login-card tac" v-if="showLogin">
-        <!-- <img src="@assets/images/logo.png" alt="logo" width="170" /> -->
+        <img src="@assets/images/logo3.png" alt="logo" width="170" />
         <!-- <div class="no-account bold pointer" @click="signup">
           {{ chiSims.create_account }}
         </div> -->
@@ -25,7 +25,7 @@
             :placeholder="chiSims.enter_password"
             @keyup.enter.native="tryToLogIn"
             type="password"
-            class="mt15"
+            class="password mt15"
           />
           <el-alert :title="error" type="error" v-if="error"> </el-alert>
           <el-row class="signin mt5">
@@ -157,7 +157,7 @@ $login-card-margin: 10px auto;
   .login-card {
     width: $login-card-width;
     background: $transparent-six-color;
-    margin-top: 300px;
+    margin-top: 150px;
     text-align: left;
     border: none;
   }

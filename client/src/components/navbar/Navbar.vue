@@ -10,8 +10,7 @@
     >
       <div class="brand">
         <h3 class="logo" @click="goBackHome">
-          <!-- <img src="@assets/images/logo_nav.png" alt="logo" width="80" /> -->
-          未梦幽
+          <img src="@assets/images/logo3.png" alt="logo" width="80" />
         </h3>
       </div>
       <el-submenu index="" v-if="loggedIn" class="user-info-nav">
