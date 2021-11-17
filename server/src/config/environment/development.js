@@ -9,5 +9,5 @@ module.exports = {
   },
 
   // Seed database on startup
-  seedDB: process.env.SEED_DB || false
+  seedDB: true
 }

@@ -204,7 +204,7 @@ export default {
 .signup-card {
   width: 360px;
   border: none;
-  margin-top: 300px;
+  margin-top: 260px;
   background-color: $transparent-six-color;
 }
 .signup-form {

@@ -2,7 +2,7 @@
 import { mapState } from 'vuex'
 import appConfig from '@src/app.config'
 import GoodAuctionHandle from '@components/good/GoodAuctionHandle.vue'
-import loginBackgroundImage from '@assets/images/login-bg.jpeg'
+import loginBackgroundImage from '@assets/images/login-bg-2.png'
 
 export default {
   page: {
@@ -412,6 +412,20 @@ input[type='number'] {
 .login-page {
   .el-input,
   .el-input--prefix {
+    &.password {
+      .el-input__inner {
+        border: 2px solid #fff;
+        // color: black;
+        &::placeholder {
+          // color: black;
+          font-weight: 600;
+        }
+      }
+      .el-input__icon {
+        // color: black;
+        font-weight: 600;
+      }
+    }
     .el-input__inner {
       border: 2px solid #fff;
       color: $white-color;
@@ -428,7 +442,7 @@ input[type='number'] {
 .el-input,
 .el-input--prefix {
   .el-input__inner {
-    background: $transparent-six-color;
+    background: $transparent-three-color;
     border: 2px solid $border-color;
   }
 }
