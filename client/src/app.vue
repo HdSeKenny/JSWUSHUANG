@@ -94,6 +94,7 @@ body {
   overflow: auto;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
 }
 .layout {
   &.el-loading-parent--relative {

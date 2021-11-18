@@ -1,7 +1,7 @@
 <template>
   <el-card shadow="never" class="signup-card" v-loading="loading">
     <div class="apply bold m0 tac">
-      <!-- <img src="@assets/images/logo.png" alt="logo" width="170" /> -->
+      <img src="@assets/images/logo3.png" alt="logo" width="300" />
     </div>
     <el-alert :title="error" type="error" v-if="error" class="mb10"> </el-alert>
     <el-form
@@ -204,10 +204,11 @@ export default {
 .signup-card {
   width: 360px;
   border: none;
-  margin-top: 260px;
+  // margin-top: 260px;
   background-color: $transparent-six-color;
 }
 .signup-form {
+  margin-top: 30px;
   .el-input {
     margin: 5px 0;
   }

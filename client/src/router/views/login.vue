@@ -6,11 +6,11 @@
   >
     <div>
       <el-card shadow="never" class="login-card tac" v-if="showLogin">
-        <img src="@assets/images/logo3.png" alt="logo" width="170" />
+        <img src="@assets/images/logo3.png" alt="logo" width="300" />
         <!-- <div class="no-account bold pointer" @click="signup">
           {{ chiSims.create_account }}
         </div> -->
-        <form class="login-form mt5" @submit.prevent="tryToLogIn">
+        <form class="login-form" @submit.prevent="tryToLogIn">
           <el-input
             v-model="gameId"
             name="gameId"
@@ -157,11 +157,11 @@ $login-card-margin: 10px auto;
   .login-card {
     width: $login-card-width;
     background: $transparent-six-color;
-    margin-top: 150px;
     text-align: left;
     border: none;
   }
   .login-form {
+    margin-top: 30px;
     .el-input {
       margin: 5px 0;
     }
